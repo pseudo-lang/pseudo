@@ -1,5 +1,5 @@
 # base generator with common functionality
-class Generator:
+class CodeGenerator:
     '''
     options:
       indent: the size of indent, example: python - 4, ruby - 2
