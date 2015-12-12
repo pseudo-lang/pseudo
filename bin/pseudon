@@ -4,6 +4,61 @@ import sys
 import os
 import types
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
+import pseudon.loader
+import pseudon.generators.python_generator as python
+import pseudon.generators.ruby_generator as ruby
+import pseudon.generators.php_generator as php
+import pseudon.generators.js_generator as js
+
+USAGE = '''
+pseudon <input-filename> <output-format>+
+
+where <output-format> can be:
+  py / python 
+  rb / ruby
+  php 
+  js / javascript
+  all
+  i / intermediate
+
+<input-filename> can be either a .pseudon.yaml intemediate file or
+a python / ruby / js / php file using pseudon-translateable subset of the 
+language
+however, if it's a source file(not an intermediate one) pseudon expects
+that pseudon-python for python or pseudon-<x> for language <x> is installed
+and accessible from path
+'''
+
+GENERATORS = [javascript, python, ruby, php]
+
+SUPPORTED_FORMATS = {
+    'js': javascript, 'javascript': javascript,
+    'py': python, 'python': python,
+    'rb': ruby, 'ruby': ruby,
+    'php': php
+}
 
 if __name__ == '__main__':
-    pass
+    if len(sys.argv) < 3:
+        print(USAGE)
+        exit()
+
+    input_filename = sys.argv[1]
+    output_formats = sys.argv[2:]
+
+    intermediate_code = pseudon.loader.load_input(input_filename)
+    base = input_filename.rpartition('.')[2]
+    if output_formats[0] in ['i', 'intemediate']:
+        with open('%s.pseudon.yaml' % base, 'f') as f:
+            f.write(intermediate_code)
+        exit()
+
+    if output_formats[0] == 'all':
+        generators = GENERATORS
+    else:
+        generators = [SUPPORTED_FORMATS[format] for format in output_formats]
+
+    for generator in generators:
+        output_source = generator.generate(intermediate_code)
+        with open('%s.%s' % (base, generator.file_extension)) as f:
+            f.write(output_source)
