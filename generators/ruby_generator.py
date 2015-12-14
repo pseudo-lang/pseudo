@@ -1,11 +1,15 @@
-from pseudon.code_generator import CodeGenerator
+from pseudon.code_generator import CodeGenerator, join, indent, eventually
 
 
 class RubyGenerator(CodeGenerator):
 
     templates = {
-        'program': '%code~join<\n>~'
-        'function': 'def %name(%args~join<,>):\n' +
-                    '%body~indent<1>~' +
-                    'end\n'
+        'program': join('%{code}', '\n'),
+        'function': ['def %{name}', eventually('args', '('),
+                     join('args', ','), eventually('args', ')'), '\n',
+                     indent('body', 1), '%{indent}end\n'],
+        'class': ['class %{name}', eventually('parent', '< %{parent}'), '\n',
+                  indent('methods', 1), '\n'],
+        'name': '%{label}',
+        'int': '%{value}'
     }

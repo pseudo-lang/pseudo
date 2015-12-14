@@ -1,10 +1,12 @@
-from pseudon.code_generator import CodeGenerator
+from pseudon.code_generator import CodeGenerator, join, indent, eventually
 
 
 class PHPGenerator(CodeGenerator):
 
     templates = {
-        'program': '%code~join<\n>~'
-        'function': 'function %name(%args~join<,>) {\n' +
-                    '%body~indent<1>~\n}\n'
+        'program': ['<?php\n', join('%{code}', '\n')],
+        'function': ['function %{name}(', join('args', ','), ') {\n', indent('body', 1, ';'), '%{indent}}\n'],
+        'class': ['class %{name}', eventually('parent', ' extends %{parent}'), ' {\n', indent('methods', 1), '%{indent}}\n'],
+        'name': '$%{label}',
+        'int': '%{value}'
     }

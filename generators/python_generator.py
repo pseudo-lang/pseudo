@@ -1,10 +1,14 @@
-from pseudon.code_generator import CodeGenerator
+from pseudon.code_generator import CodeGenerator, join, indent, eventually
 
 
 class PythonGenerator(CodeGenerator):
 
     templates = {
-        'program': '%code~join<\n>~'
-        'function': 'def %name(%args~join<,>):\n' +
-                    '%body~indent<1>~\n'
+        'program': join('%{code}', '\n'),
+        'function': ['def %{name}(', join('args', ','), '):\n',
+                     indent('body', 1), '\n'],
+        'class': ['class %{name}:', eventually('parent', '(%{parent})'), ':\n',
+                  indent('methods', 1), '\n'],
+        'name': '%{label}',
+        'int': '%{value}'
     }
