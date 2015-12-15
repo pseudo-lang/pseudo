@@ -1,12 +1,15 @@
 import types
 import yaml
-from pseudon_tree import Node
+from pseudon.pseudon_tree import Node
+
 
 COMMANDS = {
     'py': lambda filename: ['pseudon-python', filename],
     'rb': lambda filename: ['pseudon-ruby', filename],
-    'php': lambda filename: ['pseudon-php', filename],
-    'js': lambda filename: ['pseudon-javascript', filename]
+    'js': lambda filename: ['pseudon-javascript', filename],
+    'swift': lambda filename: ['pseudon-swift', filename],
+    'java': lambda filename: ['pseudon-java', filename],
+    'cs': lambda filename: ['pseudon-csharp', filename]
 }
 
 
@@ -21,6 +24,10 @@ def load_input(filename, call_command):
         with open('%s.pseudon.yaml' % base, 'r') as f:
             intermediate_code = f.read()
         call_command(['rm', '%s.pseudon.yaml' % base])
+    return intermediate_code
+
+
+def as_tree(intermediate_code):
     intermediate_code = yaml.load(intermediate_code)
     return convert_to_syntax_tree(intermediate_code)
 

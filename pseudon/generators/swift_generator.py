@@ -4,7 +4,7 @@ from pseudon.code_generator import CodeGenerator, join, indent, eventually
 class SwiftGenerator(CodeGenerator):
 
     templates = {
-        'program': '%code~join<\n>~'
-        'function': 'def %name(%args~join<,>):\n' +
-                    '%body~indent<1>~\n'
+        'program': join('%{code}', '\n'),
+        'function': ['def %{name}(', join('args', ','), '):\n',
+                     indent('body', 1), '\n']
     }

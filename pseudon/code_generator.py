@@ -1,6 +1,6 @@
 # base generator with common functionality
 import re
-from pseudon_ast import Node
+from pseudon.pseudon_tree import Node
 
 
 class CodeGenerator:
@@ -45,7 +45,7 @@ class CodeGenerator:
             elif callable(element):
                 expanded.append(element(node, depth))
             elif isinstance(element, TemplateEventually):
--                expanded.append(element.expand(
+                expanded.append(element.expand(
                     node, depth, self._expand_string))
             elif isinstance(element, TemplateFunction):
                 expanded.append(element.expand(node, depth, self._offset))
