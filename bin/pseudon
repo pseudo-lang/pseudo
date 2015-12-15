@@ -9,6 +9,7 @@ import pseudon.generators.python_generator as python
 import pseudon.generators.ruby_generator as ruby
 import pseudon.generators.php_generator as php
 import pseudon.generators.js_generator as js
+from subprocess import call
 
 USAGE = '''
 pseudon <input-filename> <output-format>+
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     input_filename = sys.argv[1]
     output_formats = sys.argv[2:]
 
-    intermediate_code = pseudon.loader.load_input(input_filename)
+    intermediate_code = pseudon.loader.load_input(input_filename, call)
     base = input_filename.rpartition('.')[2]
     if output_formats[0] in ['i', 'intemediate']:
         with open('%s.pseudon.yaml' % base, 'f') as f:
