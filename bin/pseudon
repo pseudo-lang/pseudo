@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 import sys
 import os
@@ -7,8 +7,16 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import pseudon.loader
 import pseudon.generators.python_generator as python
 import pseudon.generators.ruby_generator as ruby
-import pseudon.generators.php_generator as php
+import pseudon.generators.swift_generator as swift
 import pseudon.generators.js_generator as js
+import pseudon.generators.csharp_generator as csharp
+import pseudon.api_translators.python_translator as python_translator
+import pseudon.api_translators.ruby_translator as ruby_translator
+import pseudon.api_translators.swift_translator as swift_translator
+import pseudon.api_translators.js_translator as js_translator
+import pseudon.api_translators.java_translator as java_translator
+import pseudon.api_translators.csharp_translator as csharp_translator
+
 from subprocess import call
 
 USAGE = '''
@@ -17,26 +25,41 @@ pseudon <input-filename> <output-format>+
 where <output-format> can be:
   py / python 
   rb / ruby
-  php 
+  s / swift
   js / javascript
-  all
-  i / intermediate
+  ja / java
+  cs / csharp
+  -all
+  -intermediate
+  -typed
+  api
 
 <input-filename> can be either a .pseudon.yaml intemediate file or
-a python / ruby / js / php file using pseudon-translateable subset of the 
+a python / ruby / js / swift file using pseudon-translateable subset of the 
 language
 however, if it's a source file(not an intermediate one) pseudon expects
 that pseudon-python for python or pseudon-<x> for language <x> is installed
 and accessible from path
 '''
 
-GENERATORS = [javascript, python, ruby, php]
+GENERATORS = [javascript, python, ruby, swift, csharp]
+
+API_TRANSLATORS = {
+    'js': js_translator, 'javascript': js_translator,
+    'py': python_translator, 'python': python_translator,
+    'rb': ruby_translator, 'ruby': ruby_translator,
+    's': swift_translator, 'swift': swift_translator,
+    'ja': java_translator, 'java': java_translator,
+    'cs': csharp_translator, 'csharp': csharp_translator
+}
+
 
 SUPPORTED_FORMATS = {
     'js': javascript, 'javascript': javascript,
     'py': python, 'python': python,
     'rb': ruby, 'ruby': ruby,
-    'php': php
+    's': swift, 'swift': swift,
+    'cs': csharp, 'csharp': csharp
 }
 
 if __name__ == '__main__':
@@ -48,10 +71,23 @@ if __name__ == '__main__':
     output_formats = sys.argv[2:]
 
     intermediate_code = pseudon.loader.load_input(input_filename, call)
-    base = input_filename.rpartition('.')[2]
-    if output_formats[0] in ['i', 'intemediate']:
+    ext, _, base = input_filename.rpartition('.')
+    if output_formats[0] == 'intermediate':
         with open('%s.pseudon.yaml' % base, 'f') as f:
             f.write(intermediate_code)
+        exit()
+
+    converted = pseudon.loader.as_tree(intermediate_code)
+    typed = pseudon.type_engine.TypeEngine().inference(converted)
+
+    if output_formats[0] == 'typed':
+        print(typed)
+        exit()
+
+    api = API_TRANSLATORS[ext]().api_translate(typed)
+
+    if output_formats[0] == 'api':
+        print(api)
         exit()
 
     if output_formats[0] == 'all':
@@ -60,6 +96,6 @@ if __name__ == '__main__':
         generators = [SUPPORTED_FORMATS[format] for format in output_formats]
 
     for generator in generators:
-        output_source = generator.generate(intermediate_code)
+        output_source = generator.generate(api)
         with open('%s.%s' % (base, generator.file_extension)) as f:
             f.write(output_source)
