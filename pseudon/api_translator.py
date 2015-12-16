@@ -11,7 +11,7 @@ class ApiTranslator(TreeTransformer):
         # self.env = Env()
         # self.current_class = None
 
-    def api_translate(typed_tree):
+    def api_translate(self, typed_tree):
         return self.transform(typed_tree)
 
     # def tranform_class(self, node):

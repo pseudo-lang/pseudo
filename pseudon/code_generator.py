@@ -31,7 +31,7 @@ class CodeGenerator:
         else:
             raise NotImplementedError("no action for %s" % node['type'])
 
-    def _generate_from_template(template, node, depth):
+    def _generate_from_template(self, template, node, depth):
         if not isinstance(template, list):
             template = [template]  # cleaner dsl
 
@@ -46,9 +46,10 @@ class CodeGenerator:
                 expanded.append(element(node, depth))
             elif isinstance(element, TemplateEventually):
                 expanded.append(element.expand(
-                    node, depth, self._expand_string))
+                    node, depth, self._expand_string, self._generate_node))
             elif isinstance(element, TemplateFunction):
-                expanded.append(element.expand(node, depth, self._offset))
+                expanded.append(element.expand(
+                    node, depth, self._offset, self._generate_node))
 
         return ''.join(expanded)
 
@@ -64,7 +65,7 @@ class CodeGenerator:
 
 class TemplateFunction:
 
-    def expand(node, depth, offset_function):
+    def expand(node, depth, offset_function, generate):
         pass
 
 
@@ -74,8 +75,10 @@ class TemplateJoin(TemplateFunction):
         self.field = field
         self.delimiter = delimiter
 
-    def expand(self, node, depth, offset_function):
-        return self.delimiter.join(getattr(node, self.field))
+    def expand(self, node, depth, offset_function, generate):
+        f = generate(getattr(node, self.field), depth)
+        print(f)
+        return self.delimiter.join(generate(getattr(node, self.field), depth))
 
 
 class TemplateIndent(TemplateFunction):
@@ -85,8 +88,9 @@ class TemplateIndent(TemplateFunction):
         self.depth = depth
         self.end_symbol = end_symbol
 
-    def expand(self, node, depth, offset_function):
-        return '\n'.join('%s%s' % (offset_function(depth + self.depth), a) for a in getattr(node, self.field)) + '\n'
+    def expand(self, node, depth, offset_function, generate):
+        q = generate(getattr(node, self.field))
+        return '\n'.join('%s%s' % (offset_function(depth + self.depth), a) for a in q) + '\n'
 
 
 class TemplateEventually(TemplateFunction):
@@ -95,7 +99,7 @@ class TemplateEventually(TemplateFunction):
         self.field = field
         self.template = template
 
-    def expand(self, node, depth, expand_to_string_function):
+    def expand(self, node, depth, expand_to_string_function, generate):
         if getattr(node, self.field):
             return expand_to_string_function(self.template, node, depth)
         else:

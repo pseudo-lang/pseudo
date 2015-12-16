@@ -14,7 +14,7 @@ COMMANDS = {
 
 
 def load_input(filename, call_command):
-    extension, _, base = filename.rpartition('.')
+    base, _, extension = filename.rpartition('.')
     with open(filename) as f:
         source = f.read()
     if extension == 'yaml':

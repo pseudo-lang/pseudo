@@ -1,6 +1,8 @@
 from pseudon.tree_transformer import TreeTransformer
 from pseudon.env import Env
 import pseudon.types
+from pseudon.types import *
+from pprint import pprint
 
 
 class TypeEngine(TreeTransformer):
@@ -8,7 +10,7 @@ class TypeEngine(TreeTransformer):
     def __init__(self):
         self.env = Env()
         self.scope = 'static'
-        self.types = TYPES
+        self.types = pseudon.types.TYPES
 
     def inference(self, tree):
         # go thru stuff
@@ -17,6 +19,7 @@ class TypeEngine(TreeTransformer):
         return self.transform(tree)
 
     def transform_function(self, node):
+        print(node.__dict__)
         self.env.values[node.name] = self.to_type(node.type_hint[-1])
         node.pseudon_type = [self.to_type(
             arg.type_hint) for arg in node.args] + [self.env.values[node.name]]

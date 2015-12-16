@@ -1,7 +1,7 @@
 from pseudon.code_generator import CodeGenerator, join, indent, eventually
 
 
-class JsGenerator(CodeGenerator):
+class JSGenerator(CodeGenerator):
 
     templates = {
         'program': join('%{code}', '\n'),

@@ -4,7 +4,7 @@ from pseudon.code_generator import CodeGenerator, join, indent, eventually
 class RubyGenerator(CodeGenerator):
 
     templates = {
-        'program': join('%{code}', '\n'),
+        'program': join('code', '\n'),
         'function': ['def %{name}', eventually('args', '('),
                      join('args', ','), eventually('args', ')'), '\n',
                      indent('body', 1), '%{indent}end\n'],
