@@ -26,10 +26,10 @@ class CodeGenerator:
             return node
         elif node.type in self.templates:
             return self._generate_from_template(self.templates[node.type], node, depth)
-        elif hasattr(self, 'generate_%s' % node['type']):
-            return getattr(self, 'generate_%s' % node['type'])(node, depth)
+        elif hasattr(self, 'generate_%s' % node.type):
+            return getattr(self, 'generate_%s' % node.type)(node, depth)
         else:
-            raise NotImplementedError("no action for %s" % node['type'])
+            raise NotImplementedError("no action for %s" % node.type)
 
     def _generate_from_template(self, template, node, depth):
         if not isinstance(template, list):
@@ -58,7 +58,7 @@ class CodeGenerator:
 
     def _expand_string(self, template, node, depth):
         return re.sub(r'%\{(\w+)\}',
-                      lambda match: self._generate_node(gettatr(node, match.group(
+                      lambda match: self._generate_node(getattr(node, match.group(
                           1)), 0) if match.group(1) != 'indent' else self._offset(depth),
                       template)
 
@@ -78,7 +78,7 @@ class TemplateJoin(TemplateFunction):
     def expand(self, node, depth, offset_function, generate):
         f = generate(getattr(node, self.field), depth)
         print(f)
-        return self.delimiter.join(generate(getattr(node, self.field), depth))
+        return self.delimiter.join(map(generate, getattr(node, self.field)))
 
 
 class TemplateIndent(TemplateFunction):

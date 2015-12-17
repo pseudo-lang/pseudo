@@ -11,5 +11,6 @@ class RubyGenerator(CodeGenerator):
         'class': ['class %{name}', eventually('parent', '< %{parent}'), '\n',
                   indent('methods', 1), '\n'],
         'name': '%{label}',
+        'local': '%{name}',
         'int': '%{value}'
     }
