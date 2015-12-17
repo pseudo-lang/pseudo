@@ -1,0 +1,14 @@
+code:
+- args:
+  - {name: e, type: local, type_hint: Int}
+  body:
+  - type: return
+    value:
+      left: {name: e, type: local}
+      op: +
+      right: {type: int, value: 1}
+      type: binary
+  name: add
+  type: function
+  type_hint: [Int, '@unknown']
+type: program
