@@ -10,6 +10,13 @@ class Env:
         while current is not None:
             if key in current.values:
                 return current.values[key]
+            current = current.parent
 
     def __setitem__(self, key, value):
         self.values[key] = value
+
+    def motherify(self):
+        return self.parent
+
+    def child_env(self, values=None):
+        return Env(values, self)

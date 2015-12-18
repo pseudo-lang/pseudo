@@ -10,7 +10,7 @@ class RubyTranslator(ApiTranslator):
             'pop':  		'#pop',
             'length': 		'#length'
         },
-        'Dict': {
+        'Dictionary': {
             'length':	 	'#length'
         }
     }

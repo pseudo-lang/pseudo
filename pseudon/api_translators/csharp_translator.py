@@ -8,8 +8,8 @@ class CSharpTranslator(ApiTranslator):
         'List': {
             'Add': '#push',
             'Remove': {
-                (-1, [t]): '#pop',
-                (Int, [t]): '#remove'
+                (-1, (t)): '#pop',
+                (Int, (t)): '#remove'
             },
             '.Count': '#length'
         },

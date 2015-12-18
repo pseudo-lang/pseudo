@@ -42,7 +42,7 @@ that pseudon-python for python or pseudon-<x> for language <x> is installed
 and accessible from path
 '''
 
-GENERATORS = [javascript, python, ruby, swift, csharp]
+GENERATORS = [js, python, ruby, swift, csharp]
 
 API_TRANSLATORS = {
     'js': js_translator, 'javascript': js_translator,
@@ -55,7 +55,7 @@ API_TRANSLATORS = {
 
 
 SUPPORTED_FORMATS = {
-    'js': javascript, 'javascript': javascript,
+    'js': js, 'javascript': js,
     'py': python, 'python': python,
     'rb': ruby, 'ruby': ruby,
     's': swift, 'swift': swift,

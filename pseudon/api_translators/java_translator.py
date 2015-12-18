@@ -7,12 +7,12 @@ class JavaTranslator(ApiTranslator):
     api = {
         'List': {
             'add': {
-                (-1, t, [t]): '#push',
-                (Int, t, [1]): '#insert',
+                (-1, t, (t)): '#push',
+                (Int, t, (t)): '#insert',
             },
             'remove': {
-                (-1, [t]): '#pop',
-                (Int, [t]): '#remove'
+                (-1, (t)): '#pop',
+                (Int, (t)): '#remove'
             },
             'size': '#length'
         },
