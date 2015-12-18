@@ -8,17 +8,17 @@ class CSharpGenerator(CodeGenerator):
         return self.name.capitalize()
 
     def header(self, node, indent):
-        return 'using System;\nnamespace %s;\n{\n' % self.namespace()
+        return 'using System;\nnamespace %s;\n{\n' % self.namespace(node, indent)
 
     templates = {
-        'program': indented('''
+        'program': '''
                    %<#header>
                      %<code>
                      %<main>
                    }
-                   '''),
+                   ''',
 
-        'main':    indented('''
+        'main':    '''
                    class %<#namespace>
                    {
                      static void Main()
@@ -26,20 +26,22 @@ class CSharpGenerator(CodeGenerator):
                        %<body>
                      }
                    }
-                   '''),
+                   ''',
 
-        'function': indented('''
+        'function': '''
                     %<return_type> %<name>(%<args:join ','>)
                     {
                       %<body>
                     }
-                    '''),
+                    ''',
 
-        'class': indented('''
-                  class %<name> %?<:%<parent>>
+        'class': '''
+                  class %<name>%<.parent>
                   {
                     %<methods>
-                  }'''),
+                  }''',
+
+        'class.parent': ' :%<parent>',
 
         'name': '%<label>',
 

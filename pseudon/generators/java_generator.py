@@ -6,9 +6,9 @@ class JavaGenerator(CodeGenerator):
 
     templates = {
         'program': '%<code>',
-        'function': indented('''
+        'function': '''
                     public %{return_type} %<name>(%<args:join ','> {
                       %<body>
                     }
-                    ''')
+                    '''
     }

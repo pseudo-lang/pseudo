@@ -64,7 +64,7 @@ class ApiTranslator(TreeTransformer):
             return
 
     def _parse_part(self, part, receiver, args, equivalent):
-        if part[0] == '%': #%{w}
+        if part[0] == '%': #%{v}
             inside = part[2:-1]
             if inside.isnum():
                 inside = int(inside)

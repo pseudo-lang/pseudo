@@ -13,16 +13,16 @@ class RubyGenerator(CodeGenerator):
     templates = {
         'module': "%<code>",
 
-        'function': indented('''
+        'function': '''
                     def %<name>%<#lquote>%<args:join ', '>%<#rquote>
                       %<body>
                     end
-                    '''),
+                    ''',
 
-        'class':  indented('''
+        'class':  '''
                   class %<name>%?< < %<parent>>:
                     %<methods>
-                  '''),
+                  ''',
 
         'name': '%<label>',
         'int': '%<value>'

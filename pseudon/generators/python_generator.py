@@ -19,15 +19,15 @@ class PythonGenerator(CodeGenerator):
     templates = {
         'module': "%<code>",
 
-        'function': indented('''
+        'function': '''
                     def %<name>(%<args:join ','>):
                         %<#body>
-                    '''),
+                    ''',
 
-        'class':  indented('''
+        'class':  '''
                   class %<name>%?<(%<parent>)>:
                       %<#methods>
-                  '''),
+                  ''',
 
         'name': '%<label>',
         'int': '%<value>'

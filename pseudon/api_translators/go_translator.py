@@ -1,6 +1,6 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator
-from pseudon.pseudon_tree import Node, method_call, call, if_statement, foreach, item_assignment, assignment
+from pseudon.pseudon_tree import Node, method_call, call, if_statement, foreach, item_assignment, item_assignment
 
 
 class GoTranslator(ApiTranslator):

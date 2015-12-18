@@ -15,6 +15,8 @@ However Pseudon support a very clear and somehow limited subset of a language:
   * iteration (for-in loops / while)
   * conditionals (if / else if / else)
   * standard math/logical operations
+  * basic exception-based error handling
+
 
 Those constructs and entities have almost the same behavior and very same-spirited api in a lot of the dynamic languages which Pseudon would support.
 
@@ -42,7 +44,6 @@ or in pseudon AST format and we can translate to any of the supported target lan
 - [x] python
 - [x] ruby
 - [x] javascript
-
 - [ ] java
 - [ ] c#
 - [ ] c++
@@ -70,7 +71,7 @@ more easy-to-approach for users solution
 
 ## Implementation
 
-
+[progress](progress.md)
 
 ## License
 

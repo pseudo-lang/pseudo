@@ -14,7 +14,7 @@ class JSTranslator(ApiTranslator):
             'pop':          '#pop',
             'length':       '.length',
             'insert':       '.splice(%0, 0, %1)',
-            'remove_at':    lambda receiver, index: call(receiver, 'splice', [index, Node('int', index.value + 1)]),
+            'remove_at':    lambda receiver, index: method_call(receiver, 'splice', [index, Node('int', index.value + 1)]),
             'remove':       lambda receiver, index, value: method_call(
                             receiver, 'splice', [method_call(receiver, 'indexOf', [index]), value])
         },

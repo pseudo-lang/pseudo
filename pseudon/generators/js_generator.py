@@ -6,9 +6,9 @@ class JSGenerator(CodeGenerator):
 
     templates = {
         'program': '%<code>',
-        'function': indented('''
+        'function': '''
                     function %<name>(%<args:join ','>{
                       %<body>
                     }
-                    ''')
+                    '''
     }

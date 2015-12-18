@@ -11,14 +11,14 @@ class CppGenerator(CodeGenerator):
         return 'using System;\nnamespace %s;\n{\n' % self.namespace()
 
     templates = {
-        'program': indented('''
+        'program': '''
                    %<#header>
                      %<code>
                      %<main>
                    }
-                   '''),
+                   ''',
 
-        'main':    indented('''
+        'main':    '''
                    class %<#namespace>
                    {
                      static void Main()
@@ -26,20 +26,20 @@ class CppGenerator(CodeGenerator):
                        %<body>
                      }
                    }
-                   '''),
+                   ''',
 
-        'function': indented('''
+        'function': '''
                     %<return_type> %<name>(%<args:join ','>)
                     {
                       %<body>
                     }
-                    '''),
+                    ''',
 
-        'class': indented('''
+        'class': '''
                   class %<name> %?<:%<parent>>
                   {
                     %<methods>
-                  }'''),
+                  }''',
 
         'name': '%<label>',
 

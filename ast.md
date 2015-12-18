@@ -1,6 +1,5 @@
 
 - [module](#module)
-- [local](#local)
 - [literals](#literals)
   - [int](#int)
   - [float](#float)
@@ -8,10 +7,37 @@
   - [none](#none)
   - [list](#list)
   - [dict](#dict)
+- [idents](#idents)
+  - [local](#local)
+  - [typename](#typename)
+  - [instance_variable](#instance_variable)
+  - [attr](#attr)
 - [assignments](#assignments)
   - [local_assignment](#local_assignment)
   - [instance_assignment](#instance_assignment)
   - [attr_assignment](#attr_assignment)
+- [calls](#calls)
+  - [call](#call)
+  - [method_call](#method_call)
+  - [standard_call](#standard_call)
+- [operations](#operations)
+  - [binary_op](#binary_op)
+  - [unary_op](#unary_op)
+  - [standard_math](#standard_math)
+  - [comparison](#comparison)
+- [control flow](#control flow)
+  - [if](#if_statement)
+  - [for_each](#for_each_statement)
+  - [for_range](#for_range_statement)
+  - [while](#while_statement)
+  - [switch](#switch_statement)
+- [functions](#functions)
+  - [function](#function)
+  - [method](#method)
+  - [anonimoys_function](#anonimoys_function)
+- [classes](#classes)
+  - [class](#class)
+  - [this](#this)
 
 # module
 
@@ -32,24 +58,6 @@ code:
   - type: int
     value: 42
 ``` 
-
-## local
-
-contains a local name value, written in snake_case by convention
-
-```python
-Local
-  name: str
-```
-
-```python
-e
-```
-
-```yaml
-type: local
-name: 'e'
-```
 
 # literals
 
@@ -168,6 +176,87 @@ pairs:
       name: v
 ```
 
+# idents
+
+## local
+
+usually a local variable or an argument to the current function
+
+```python
+Local
+  name: str
+```
+
+```python
+e #python
+```
+
+```ruby
+e #ruby
+```
+
+```yaml
+type: local
+name: e
+```
+
+## typename
+
+usually the name of a class or type
+
+```python
+Typename
+  name: str
+```
+
+```python
+Animal
+```
+
+```yaml
+type: typename
+name: Animal
+```
+
+## instance_variable
+
+an instance variable accessed in a method of its class
+
+```python
+InstanceVariable
+  name: str
+```
+
+```python
+self.e #python
+```
+
+```ruby
+@e #ruby
+```
+
+```yaml
+type: instance_variable
+name: e
+```
+
+## attr
+
+an attribute of an object
+
+```python
+Attr
+  receiver: Expression
+  attr: str
+```
+
+```yaml
+type: attr
+receiver:
+  type: int
+  value: 2
+attr: size
+```
 
 # assignments
 

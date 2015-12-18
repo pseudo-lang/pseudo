@@ -6,9 +6,9 @@ class GolangGenerator(CodeGenerator):
 
     templates = {
         'program': '%<code>',
-        'function': indented('''
+        'function': '''
                     func %<name>() {\n
                         %<body>
                     }
-                    ''')
+                    '''
     }
