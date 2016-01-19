@@ -2,9 +2,10 @@ from pseudon.code_generator import CodeGenerator, join, indent, eventually
 
 
 class PythonGenerator(CodeGenerator):
+    '''Python code generator'''
 
     templates = {
-        'program': join('%{code}', '\n'),
+        'module': join('%{code}', '\n'),
         'function': ['def %{name}(', join('args', ','), '):\n',
                      indent('body', 1), '\n'],
         'class': ['class %{name}', eventually('parent', '(%{parent})'), ':\n',

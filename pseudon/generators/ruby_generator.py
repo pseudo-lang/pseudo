@@ -5,7 +5,7 @@ class RubyGenerator(CodeGenerator):
     '''Ruby code generator'''
 
     templates = {
-        'program': join('code', '\n'),
+        'module': join('code', '\n'),
         'function': ['def %{name}', eventually('args', '('),
                      join('args', ','), eventually('args', ')'), '\n',
                      indent('body', 1), '%{indent}end\n'],
