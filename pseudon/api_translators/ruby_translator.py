@@ -3,14 +3,25 @@ from pseudon.api_translator import ApiTranslator
 
 
 class RubyTranslator(ApiTranslator):
+    '''Ruby api translator'''
 
     api = {
         'List': {
-            'push': 		'#push',
-            'pop':  		'#pop',
-            'length': 		'#length'
+            'push':         '#push',
+            'pop':          '#pop',
+            'length':       '#length'
         },
         'Dictionary': {
-            'length':	 	'#length'
+            'length':       '#length',
+            'keys':         '#keys',
+            'values':       '#values'
+        },
+        'Enumerable': {
+            'map':          '#map',
+            'filter':       '#select'
+        },
+
+        'Int': {
+            '+':            '#+'
         }
     }

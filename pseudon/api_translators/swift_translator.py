@@ -3,6 +3,7 @@ from pseudon.api_translator import ApiTranslator
 
 
 class SwiftTranslator(ApiTranslator):
+    '''Swift api translator'''
 
     api = {
         'List': {

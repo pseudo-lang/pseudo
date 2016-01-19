@@ -3,6 +3,7 @@ from pseudon.api_translator import ApiTranslator
 
 
 class JavaTranslator(ApiTranslator):
+    '''Java api translator'''
 
     api = {
         'List': {

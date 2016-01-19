@@ -2,6 +2,7 @@ from pseudon.code_generator import CodeGenerator, join, indent, eventually
 
 
 class RubyGenerator(CodeGenerator):
+    '''Ruby code generator'''
 
     templates = {
         'program': join('code', '\n'),
@@ -12,5 +13,5 @@ class RubyGenerator(CodeGenerator):
                   indent('methods', 1), '\n'],
         'name': '%{label}',
         'local': '%{name}',
-        'int': '%{value}'
+        'int': '%{value}',
     }

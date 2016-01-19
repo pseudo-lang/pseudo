@@ -3,14 +3,15 @@ from pseudon.api_translator import ApiTranslator
 
 
 class PythonTranslator(ApiTranslator):
+    '''Python api translator'''
 
     api = {
         'List': {
-            'append': 		'#push',
-            'pop': 	  		'#pop',
-            '__len__': 		'#length'
+            'push':         '#append',
+            'pop':          '#pop',
+            'length':       'Global.len'
         },
         'Dictionary': {
-            '__len__': 		'#length'
+            'length':       'Global.len'
         }
     }
