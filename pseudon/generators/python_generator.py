@@ -1,15 +1,34 @@
-from pseudon.code_generator import CodeGenerator, join, indent, eventually
+from pseudon.code_generator import CodeGenerator, indented
 
 
 class PythonGenerator(CodeGenerator):
     '''Python code generator'''
 
+    def body(self, node, indent):
+        if node.body:
+            return self.render_nodes(node.body, indent)
+        else:
+            return '%spass\n' % self.offset(indent)
+
+    def methods(self, node, indent):
+        if node.methods:
+            return self.render_nodes(node.methods, indent)
+        else:
+            return '%spass\n' % self.offset(indent)
+
     templates = {
-        'module': join('%{code}', '\n'),
-        'function': ['def %{name}(', join('args', ','), '):\n',
-                     indent('body', 1), '\n'],
-        'class': ['class %{name}', eventually('parent', '(%{parent})'), ':\n',
-                  indent('methods', 1), '\n'],
-        'name': '%{label}',
-        'int': '%{value}'
+        'module': "%<code>",
+
+        'function': indented('''
+                    def %<name>(%<args:join ','>):
+                        %<#body>
+                    '''),
+
+        'class':  indented('''
+                  class %<name>%?<(%<parent>)>:
+                      %<#methods>
+                  '''),
+
+        'name': '%<label>',
+        'int': '%<value>'
     }

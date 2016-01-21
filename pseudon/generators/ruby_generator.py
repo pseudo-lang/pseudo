@@ -1,17 +1,29 @@
-from pseudon.code_generator import CodeGenerator, join, indent, eventually
+from pseudon.code_generator import CodeGenerator, indented
 
 
 class RubyGenerator(CodeGenerator):
     '''Ruby code generator'''
 
+    def lquote(self, node, indent):
+        return '(' if node.args else ''
+
+    def rquote(self, node, indent):
+        return ')' if node.args else ''
+
     templates = {
-        'module': join('code', '\n'),
-        'function': ['def %{name}', eventually('args', '('),
-                     join('args', ','), eventually('args', ')'), '\n',
-                     indent('body', 1), '%{indent}end\n'],
-        'class': ['class %{name}', eventually('parent', '< %{parent}'), '\n',
-                  indent('methods', 1), '\n'],
-        'name': '%{label}',
-        'local': '%{name}',
-        'int': '%{value}',
+        'module': "%<code>",
+
+        'function': indented('''
+                    def %<name>%<#lquote>%<args:join ', '>%<#rquote>
+                      %<body>
+                    end
+                    '''),
+
+        'class':  indented('''
+                  class %<name>%?< < %<parent>>:
+                    %<methods>
+                  '''),
+
+        'name': '%<label>',
+        'int': '%<value>'
     }

@@ -1,10 +1,14 @@
-from pseudon.code_generator import CodeGenerator, join, indent, eventually
+from pseudon.code_generator import CodeGenerator, indented
 
 
 class JSGenerator(CodeGenerator):
+    '''JS generator'''
 
     templates = {
-        'program': join('%{code}', '\n'),
-        'function': ['function %{name}(', join('args', ','), '){\n',
-                     indent('body', 1), '\n}\n'],
+        'program': '%<code>',
+        'function': indented('''
+                    function %<name>(%<args:join ','>{
+                      %<body>
+                    }
+                    ''')
     }

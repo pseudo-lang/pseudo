@@ -1,14 +1,14 @@
 from pseudon.code_generator import CodeGenerator, indented
 
 
-class GolangGenerator(CodeGenerator):
-    '''Go generator'''
+class JavaGenerator(CodeGenerator):
+    '''Java generator'''
 
     templates = {
         'program': '%<code>',
         'function': indented('''
-                    func %<name>() {\n
-                        %<body>
+                    public %{return_type} %<name>(%<args:join ','> {
+                      %<body>
                     }
                     ''')
     }

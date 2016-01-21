@@ -3,12 +3,16 @@ from pseudon.api_translator import ApiTranslator
 from pseudon.pseudon_tree import Node, method_call, call
 
 
-class PythonTranslator(ApiTranslator):
+class CppTranslator(ApiTranslator):
     '''
-    Python api translator
+    C++ api translator
 
-        Java specific:
+    C++ specific:
 
+        `%{begin}`:
+            expands to %{self}.begin(), useful for vector methods
+        `%{end}`:
+            expands to %{self}.end(), useful for vector methods
         `%{new}`:
             expands to new %{equivalent}
 
@@ -48,53 +52,37 @@ class PythonTranslator(ApiTranslator):
 
                  `call(callee: str/Node, args: [Node])`
                      which helps with call nodes with normal `local` name callees
+
+
     '''
 
-    @staticmethod
-    def expand_map(receiver, func):
-        if func.type == 'lambda':
-            return Node(
-                '_list_comp',
-                sequence=receiver)
-        else:
-            return call('map', [func, receiver])
+    def begin_placeholder(self, receiver, *args, equivalent):
+        return method_call(receiver, 'begin', [])
 
-    @staticmethod
-    def expand_filter(receiver, func):
-        if func.type == 'lambda':
-            return Node(
-                '_list_comp')
-        else:
-            return call('filter', [func, receiver])
+    def end_placeholder(self, receiver, *args, equivalent):
+        return method_call(receiver, 'end', [])
+
+    def new_placeholder(self, receiver, *args, equivalent):
+        return Node('new_instance', klass=equivalent, args=[])
 
     api = {
         'List': {
-            'push':         '#append',
-            'pop':          '#pop',
-            'length':       'len',
-            'insert':       '#insert',
-            'remove_at':    lambda receiver, index: Node('_del', node=Node('index', z=receiver, index=index)),
-            'remove':       'remove'
+            '@equivalent':  'vector',
+
+            'push':         '#push_back',
+            'insert':       '#insert(%{begin}, %{0})',
+            'remove_at':    '#erase(%{begin}, %{0})',
+            'length':       '#size'
         },
         'Dictionary': {
-            'length':       'Global.len',
-            'keys':         '#keys',
-            'values':       '#values'
         },
         'Enumerable': {
-            'map':          expand_map,
-            'filter':       expand_filter,
-            'reduce':       'functools.reduce'
-        },
-        'Int': {
-            '+':            '#+',
-            '-':            '#-',
-            '/':            '#/'
         }
     }
 
     dependencies = {
-        'Enumerable': {
-            'map':  'functools'
+        'List': {
+            '@all': 'vector',
+            'remove': 'algorithm'
         }
     }

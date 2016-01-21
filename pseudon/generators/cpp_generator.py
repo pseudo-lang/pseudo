@@ -1,8 +1,8 @@
 from pseudon.code_generator import CodeGenerator, indented
 
 
-class CSharpGenerator(CodeGenerator):
-    '''CSharp code generator'''
+class CppGenerator(CodeGenerator):
+    '''Cpp code generator'''
 
     def namespace(self, node, indent):
         return self.name.capitalize()
