@@ -5,7 +5,7 @@ PreCommit:
   Pep257:
     enabled: true
     on_warn: fail
-    command: ['pep257', '--ignore=D300,D400,D100,D203']
+    command: ['pep257', '--ignore=D300,D400,D100,D203,D102,D202']
   HardTabs:
     enabled: true
     on_warn: fail

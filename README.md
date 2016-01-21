@@ -39,15 +39,14 @@ or in pseudon AST format and we can translate to any of the supported target lan
 
 ## Target languages
 
-[x] python
-[x] ruby
-[x] javascript
+- [x] python
+- [x] ruby
+- [x] javascript
 
-[ ] go
-[ ] php
-[ ] perl
-[ ] c++
-[ ] java
+- [ ] java
+- [ ] c#
+- [ ] c++
+- [ ] go
 
 ## How to translate back?
 
@@ -55,7 +54,7 @@ Each language is supposed to have its own pseudon generator.
 
 * [pseudon-ruby](https://github.com/alehander42/pseudon-ruby)
 * [pseudon-python](https://github.com/alehander42/pseudon-python)
-* [pseudon-perl](https://github.com/alehander42/pseudon-perl)
+* [pseudon-js](https://github.com/alehander42/pseudon-js)
 
 ## Intermediate AST format
 
