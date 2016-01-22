@@ -47,3 +47,24 @@ Also that's already implemented in `pseudon-python`, `pseudon-ruby` and `pseudon
 one can always take a look to those implementations or to ask in the issues/maintainer email.
 
 
+function('fib', ['n'], [
+    if_statement(
+        comparison('>', 'n', 1), [
+            math_op('+', call('fib', [math_op('-', 'fib', 1)]), call('fib', [math_op('-', 'fib', 2)]))
+        ], [
+            1
+        ])])
+
+basically you have <node-type> functions with the same name as node types and they initialize 
+node fields by order given in `ast.md` (usually the same order as in code, except for binary operators)
+
+strings and numbers can be used as shortcuts: wherever pseudon expects a node and sees a literal,
+it converts it to a node with `local`/`typename` for strings and `int`/`float` type for numbers
+
+BEWARE: string nodes can be only created with string('value')
+
+
+
+
+
+

@@ -1,18 +1,17 @@
 from pseudon.tree_transformer import TreeTransformer
 from pseudon.types import *
 from pseudon.env import Env
-from pseudon.pseudon_tree import Node
+from pseudon.pseudon_tree import Node, to_node
 
 
 class ApiTranslator(TreeTransformer):
+    '''Api translator'''
 
-    def __init__(self):
-        pass
-        # self.env = Env()
-        # self.current_class = None
+    def __init__(self, tree):
+        self.tree = tree
 
-    def api_translate(self, typed_tree):
-        return self.transform(typed_tree)
+    def api_translate(self):
+        return self.transform(tree)
 
     # def tranform_class(self, node):
     #     self.env[node.name] = node.pseudon_type
@@ -35,34 +34,46 @@ class ApiTranslator(TreeTransformer):
     def transform_method_call(self, node):
         l = node.receiver.pseudon_type.label
         if l in self.api and node.message.name in self.api[l]:
-            node = self._expand_api(self.api[l][
-                                    node.message.name], node.receiver, node.args, node.pseudon_type) or node
+            node = self._expand_api(self.api[l][node.message.name], node.receiver, node.args, self.api[l]['@equivalent']) or node
         return node
 
-    def _expand_api(self, api, receiver, args, pseudon_type):
-        if isinstance(api, dict):
-            for j, path in api.items():
-                if self._match_api(pseudon_type, j, args):
-                    args = [arg for arg, other
-                            in zip(pseudon_type, j)
-                            if isinstance(other, PseudonType)]
-                    return self._expand_api(path, receiver, args, pseudon_type)
-        elif not isinstance(api, str):
-            return
-        elif api[0] == '#':
-            return Node('method_call', {receiver: receiver, message: api[1:], args: args})
-        elif api[0] == '.':
-            return Node('attr', {receiver: receiver, slot: api[1:]})
-
-    def _match_api(self, original, api_type, args):
-        for o, a, r in zip(original, api_type, args):
-            if not (isinstance(a, PseudonType) and o.is_compatible_with(a) or
-                    getattr(r, 'value', None) == a):
-                return False
-        return True
-
-    def _to_pseudon_type(self, value):
-        if hasattr(pseudon.types, str):
-            return getattr(pseudon.types, str)
+    def _expand_api(self, api, receiver, args, equivalent):
+        if callable(api):
+            return api(receiver, *args)
+        elif isinstance(api, str):
+            if '(' in api:
+                call, arg_code = api[:-1].split('(')
+                args = [self._parse_part(a.strip(), receiver, args, equivalent) for a in arg_code.split(',')]
+            else:
+                call, arg_code = api, ''
+            
+            if '#' in call:
+                a, b = call.split('#')
+                method_receiver = self._parse_part(a, receiver, args, equivalent) if a else receiver
+                return Node('method_call', receiver=method_receiver, message=b, args=args)
+            elif '.' in call:
+                a, b = call.split('.')
+                static_receiver = self._parse_part(a, receiver, args, equivalent) if a else receiver
+                if arg_code:
+                    return Node('static_call', receiver=static_receiver, message=b, args=args)
+                else:
+                    return Node('attr', object=static_receiver)
+            else:
+                return Node('call', message=call, args=[])
         else:
-            return pseudon.CustomType(value)
+            return
+
+    def _parse_part(self, part, receiver, args, equivalent):
+        if part[0] == '%': #%{w}
+            inside = part[2:-1]
+            if inside.isnum():
+                inside = int(inside)
+                return args[inside]
+            elif inside == 'self':
+                return receiver
+            elif inside == 'equivalent':
+                return to_node(equivalent)
+            else:
+                return getattr(self, '%s_placeholder' % inside)(receiver, *args, equivalent=equivalent)
+        else:
+            return to_node(part)

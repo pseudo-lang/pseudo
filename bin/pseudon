@@ -60,8 +60,6 @@ and accessible from path
 # }
 
 
-SUPPORTED_FORMATS = {'js', 'javascript', 'py', 'python', 'rb', 'ruby', 'php', 'java'}
-FILE_EXTENSIONS = {'js': 'js', 'javascript': 'js', 'py': 'py', 'python': 'py', 'rb': 'rb', 'ruby': 'rb', 'php': 'php', 'java': 'java'}
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
@@ -97,9 +95,9 @@ if __name__ == '__main__':
     #     generators = GENERATORS
     # else:
     for format in output_formats:
-      if format in SUPPORTED_FORMATS:
+      if format in pseudon.SUPPORTED_FORMATS:
         output_source = pseudon.generate(intermediate_code, format)
-        with open('%s.%s' % (base, FILE_EXTENSIONS[format]), 'w') as f:
+        with open('%s.%s' % (base, pseudon.FILE_EXTENSIONS[format]), 'w') as f:
             f.write(output_source)
       else:
         print('%s is not supported' % format)
