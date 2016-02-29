@@ -2,7 +2,7 @@ from pseudon import generate
 from pseudon.pseudon_tree import Node
 
 def gen(ast):
-	return generate(ast, 'python')
+	return generate(ast, 'python')[:-1] #without last \n
 
 def test_module():
 	source = gen(Node('module', code=[]))
@@ -67,7 +67,75 @@ def test_attr_assignment():
 		 value=Node('local', name='ham')))
 	assert source == 'T.egg = ham'
 
+def test_call():
+	source = gen(Node('call', function=Node('local', name='map'), args=[Node('local', name='x')]))
+	assert source == 'map(x)'
+
+def test_method_call():
+	source = gen(Node('method_call', receiver=Node('local', name='e'), message='filter', args=[Node('int', value=42)])
+	assert source == 'e.filter(42)'
+
+def test_standard_call():
+	source = gen(Node('standard_call', function=Node('local', name='display'), args=[Node('int', value=42)]))
+	assert source == 'print(42)'
+
+	source = gen(Node('standard_call', function=Node('local', name='read'), args=[]))
+	assert source == 'input()'
+
+def test_standard_method_call():
+	source = gen(Node('standard_method_call', receiver=Node('local', name='l', type='List[Int]'), message='length', args=[]))
+	assert source == 'len(l)'
+
+	source = gen(Node('standard_method_call', receiver=Node('str', value='l'), message='substr', args=[Node('int', value=0), Node('int', value=2)]))
+	assert source == 'l[0:2]'
+
+def test_binary_op():
+	source = gen(Node('binary_op', op='+', left=Node('local', name='ham'), right=Node('local', name='egg')))
+	assert source == 'ham + egg'
+
+def test_unary_op():
+	source = gen(Node('unary_op', op='-', value=Node('local', name='a')))
+	assert source == '-a'
+
+def test_standard_math():
+	source = gen(Node('module', code=[
+		Node('standard_math', op='sin', args=[Node('local', name='ham')])]))
+	assert source == 'import math\nsin(ham)'
+
+def test_comparison():
+	source = gen(Node('comparison', op='>', left=Node('local', name='egg'), right=Node('local', name='ham')))
+	assert source == 'egg > ham'
 
 
+def test_if():
+	source = gen(Node('if', 
+		test=Node('comparison',
+			op='==',
+			left=Node('local', name='egg'), 
+			right=Node('local', name='ham')),
+		block=[
+			Node('standard_method_call',
+				receiver=Node('local', name='l', type='List[String]'),
+				message='sublist',
+				args=[Node('int', value=0), Node('int', value=2)])],
+		otherwise=Node('if', 
+			test=Node('comparison',
+				op='==',
+				left=Node('local', name='egg'), 
+				right=Node('local', name='ham')),
+			block=[
+				Node('standard_call', function=Node('local', name='display'), args=[Node('float', '4.2')])
+			],
+			otherwise=[
+				Node('local', 'z', type='List[String]')
+			])))
+
+	assert source == \
+'''if egg == ham:
+    l[0:2]
+elif egg == ham:
+	print(4.2)
+else:
+	z'''
 
 

@@ -20,6 +20,7 @@
   - [call](#call)
   - [method_call](#method_call)
   - [standard_call](#standard_call)
+  - [standard_method_call](#standard_method_call)
 - [operations](#operations)
   - [binary_op](#binary_op)
   - [unary_op](#unary_op)
@@ -38,6 +39,8 @@
 - [classes](#classes)
   - [class](#class)
   - [this](#this)
+  - [constructor](#constructor)
+
 
 # module
 
