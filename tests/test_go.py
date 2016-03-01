@@ -14,7 +14,7 @@ def gen_with_imports(ast):
     else:
         imports = []
     s = ls.index('func mai')
-    source = '\n'.join(ls[s + 1:-1])
+    source = '\n'.join(l[1:] for l in ls[s + 1:-1])
     return imports, source
 
 def dedent_with_tabs(source):

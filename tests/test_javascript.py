@@ -75,9 +75,76 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
         }''')
 
     for_each_statement = textwrap.dedent('''\
-        _.each(sequence, function(a) {
+        _.forEach(sequence, function(a) {
             a.sub();
+        })''')
+
+    for_range = textwrap.dedent('''\
+        for(var j = 0;j < 42;j += 2) {
+          analyze(j);
         }''')
 
+    for_each_with_index = [
+        textwrap.dedent('''\
+          _.forEach(z, function(k, j) {
+            analyze(j, k);
+          })'''),
 
+        textwrap.dedent('''\
+          _.forEach(z, function(j, k) {
+            analyze(j, k);
+          })''')
+    ]
 
+    for_each_in_zip = textwrap.dedent('''\
+        _.zip(z, zz).forEach(function(k, l) {
+          a(k, l);
+        }''')
+
+    while_statement = textwrap.dedent('''\
+        while (f() >= 42) {
+          b = g();
+        }''')
+
+    function_definition = textwrap.dedent('''\
+        function weird(z) {
+          var fixed = fix(z);
+          return fixed;
+        }''')
+
+    method_definition = textwrap.dedent('''\
+        function parse(source) {
+          this.ast = null;
+          return [source];
+        }''')
+
+    anonymous_function = [
+        'function(source) { return ves(source.length); }',
+
+        textwrap.dedent('''\
+            function(source) {
+              console.log(source);
+              return ves(source);
+            }''')
+    ]
+
+    class_statement = [textwrap.dedent('''\
+        function A(a) {
+          this.a = a;
+        }
+
+        A.prototype = _.create(B.prototype, {
+          'constructor': A
+        });
+
+        A.prototype.parse = function() {
+            return 42;
+        }''')]
+
+    this = 'this'
+
+    constructor = textwrap.dedent('''\
+        function A(a, b) {
+          this.a = a;
+          this.b = b;
+        }''')

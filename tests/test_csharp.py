@@ -20,14 +20,12 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         while lines[l].startswith('using'):
             imports.append(lines[l][6:-1])
             l += 1
-        if not ls[l].strip():
-            l += 1
-        source = '\n'.join(ls[l:])
+        source = '\n'.join(main)
         return imports, source
 
     # make declarative style great again
 
-    # expected ruby translation for each example in suite:
+    # expected c# translation for each example in suite:
 
     module = ''
 
@@ -117,9 +115,9 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
           }'''),
 
         textwrap.dedent('''\
-          foreach(var item in z)
+          foreach(var _item in z)
           {
-            Analyze(item.key, item.value)
+            Analyze(_item.key, _item.value)
           }''')
     ]
 

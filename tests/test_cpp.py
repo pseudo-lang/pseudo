@@ -1,176 +1,197 @@
+import unittest
 import textwrap
 from pseudon import generate
 from pseudon.pseudon_tree import Node
+import pseudon.tests.suite as suite
 
 #v
-def gen(ast):
-    return generate(ast, 'cpp')[:-1] #without last \n
+class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
+    def gen(ast):
+        raw = generate(ast, 'cpp')
+        return raw[:-1] # no \n end
 
-def gen_with_includes(ast):
-    result = generate(Node('module', main=[ast]))[:-1]
-    ls = result.split('\n')
-    includes, out = [], []
-    current = 'include'
-    for l in ls:
-        l = l.strip()
-        if not l:
-            continue
-        elif l.startswith('int main('):
-            current = 'out'
-        elif current == 'include' and l.startswith('#include<'):
-            includes.append(l[9:-1])
-        else:
-            out.append(l)
-    return includes, '\n'.join(out[:-1])
+    def gen_with_imports(ast):
+        raw = generate(Node('module', main=[ast]))[:-1]
+        lines = raw.split('\n')
+        main = '\n'.join([line[4:] for line in lines[lines.find('    int main') + 1:-1]])
+        
+        l = 0
+        imports = []
+        while lines[l].startswith('#include'):
+            imports.append(lines[l][9:-1])
+            l += 1
+        source = '\n'.join(main)
+        return imports, source
 
-def test_module():
-    source = gen(Node('module', code=[]))
-    assert source == '''\
-int main() {
-}'''
+    # make declarative style great again
 
-def test_int():
-    source = gen(Node('int', value=42))
-    assert source == '42'
+    # expected c++ translation for each example in suite:
 
-def test_float():
-    source = gen(Node('float', value=42.420))
-    assert source == '42.42'
+    module = ''
 
-def test_str():
-    source = gen(Node('string', value='la'))
-    assert source == '"la"'
+    int_ = '42'
 
-def test_boolean():
-    source = gen(Node('boolean', value=True))
-    assert source == 'true'
+    float_ = '42.42'
 
-def test_null():
-    source = gen(Node('null'))
-    assert source == 'NULL'
+    string = '"la"'
 
-def test_dictionary():
-    includes, source = gen_with_includes(Node('dictionary', pairs=[
-        [Node('string', value='la'), Node('int', 0)]],
-        type='Dictionary[String,Int]'))
-    assert includes == ['iostream', 'unordered_map']
-    assert source == 'unordered_map<string, int>{ { "la", 0 } };'
+    boolean = 'true'
 
-def test_list():
-    includes, source = gen_with_includes(Node('list', elements=[Node('string', value='la')], type='List[String]'))
-    assert includes == ['iostream', 'vector']
-    assert source == 'vector<string>{ "la" };'
+    null = 'NULL'
 
-def test_local():
-    source = gen(Node('local', name='egg'))
-    assert source == 'egg'
+    dictionary = (
+        ['iostream', 'unordered_map'],
+        'unordered_map<string, int>{ { "la", 0 } };'
+    )
 
-def test_typename():
-    source = gen(Node('typename', name='Egg'))
-    assert source == 'Egg'
+    list_ = (
+        ['iostream', 'vector'],
+        'vector<string>{ "la" };'
+    )
 
-def test_instance_variable():
-    source = gen(Node('instance_variable', name='egg'))
-    assert source == 'this.egg'
+    local = 'egg'
 
-def test_attr():
-    source = gen(Node('attr', receiver=Node('local', name='e'), attr='egg'))
-    assert source == 'e.egg'
+    typename = 'Egg'
 
-def test_local_assignment():
-    source = gen(Node('local_assignment', local='egg', value=Node('local', name='ham')))
-    assert source == 'egg = ham'
+    instance_variable = 'this.egg'
 
-def test_instance_assignment():
-    source = gen(Node('instance_assignment', name='egg', value=Node('local', name='ham')))
-    assert source == 'this.egg = ham'
+    attr = 'e.egg'
 
-def test_attr_assignment():
-    source = gen(Node('attr_assignment', 
-        attr=Node('attr', receiver=Node('typename', name='T'), attr='egg'), 
-         value=Node('local', name='ham')))
-    assert source == 'T.egg = ham'
+    local_assignment = 'egg = ham'
 
-def test_call():
-    source = gen(Node('call', function=Node('local', name='map'), args=[Node('local', name='x')]))
-    assert source == 'map(x)'
+    instance_assignment = 'this.egg = ham'
 
-def test_method_call():
-    source = gen(Node('method_call', receiver=Node('local', name='e'), message='filter', args=[Node('int', value=42)])
-    assert source == 'e.filter(42)'
+    attr_assignment = 'T.egg = ham'
 
-def test_standard_call():
-    includes, source = gen_with_includes(Node('standard_call', function=Node('local', name='display'), args=[Node('int', value=42)]))
-    assert source == 'Console.WriteLine(42)'
+    call = 'map(x)'
 
-    includes, source = gen_with_includes(
-        Node('local_assignment', 
-            local='a',
-            value=Node('standard_call', function=Node('local', name='read'), args=[])))
-    assert includes == ['iostream']
-    assert source == 'cin << a'
+    method_call = 'e.filter(42)'
 
-def test_standard_method_call():
-    includes, source = gen_with_includes(Node('standard_method_call', receiver=Node('local', name='l', type='List[Int]'), message='length', args=[]))
-    assert includes == ['vector']
-    assert source == 'l.length'
+    standard_call = [
+        'Console.WriteLine(42)',
+        (['iostream'], 'string _result;cin << _result'),
+        (['math', 'log(ham)'),
+        (['fstream', 'string'], 'ifstream ifs("f.py");\nstring _result((istreambuf_iterator<char>(ifs)), (istreambuf_iterator<char>()));')
+    ]
 
-    includes, source = gen_with_includes(Node('standard_method_call', receiver=Node('str', value='l'), message='substr', args=[Node('int', value=0), Node('int', value=2)]))
-    assert includes == ['string']
-    assert source == 'l.substr(0, 2)'
+    standard_method_call = [
+        'l.size()',
+        '"l".substr(0, 2)'
+    ]
 
-def test_binary_op():
-    source = gen(Node('binary_op', op='+', left=Node('local', name='ham'), right=Node('local', name='egg')))
-    assert source == 'ham + egg'
+    binary_op = 'ham + egg'
 
-def test_unary_op():
-    source = gen(Node('unary_op', op='-', value=Node('local', name='a')))
-    assert source == '-a'
+    unary_op = '-a'
 
-def test_standard_math():
-    includes, source = gen_with_includes(Node('module', code=[
-        Node('standard_math', op='sin', args=[Node('local', name='ham')])]))
-    assert includes == ['math']
-    assert source == 'sin(ham)'
+    comparison = 'egg > ham'
 
-def test_comparison():
-    source = gen(Node('comparison', op='>', left=Node('local', name='egg'), right=Node('local', name='ham')))
-    assert source == 'egg > ham'
+    if_statement = (
+        ['vector'],
+        textwrap.dedent('''\
+            if (egg == ham) {
+                l.sublist(l.begin(), l.begin() + 2);
+            } 
+            else if (egg == ham) {
+                cout << 4.2;
+            } 
+            else {
+                z;
+            }''')
+    )
 
 
-def test_if():
-    includes, source = gen_with_includes(Node('if', 
-        test=Node('comparison',
-            op='==',
-            left=Node('local', name='egg'), 
-            right=Node('local', name='ham')),
-        block=[
-            Node('standard_method_call',
-                receiver=Node('local', name='l', type='List[String]'),
-                message='sublist',
-                args=[Node('int', value=0), Node('int', value=2)])],
-        otherwise=Node('if', 
-            test=Node('comparison',
-                op='==',
-                left=Node('local', name='egg'), 
-                right=Node('local', name='ham')),
-            block=[
-                Node('standard_call', function=Node('local', name='display'), args=[Node('float', '4.2')])
-            ],
-            otherwise=[
-                Node('local', 'z', type='List[String]')
-            ])))
+    for_each_statement = (
+        ['vector'],
+        textwrap.dedent('''\
+        for(auto a = sequence.begin(); a != sequence.end(); a++) {
+          a->sub();
+        }''')
+    )
 
-    assert includes == ['iostream', 'vector']
-    assert source == textwrap.dedent('''\
-                if (egg == ham) {
-                  l.subList(l.begin(), l.begin() + 2);
-                }
-                else if (egg == ham) {
-                  cout << 4.2;
-                }
-                else {
-                    z;
-                }''')
+    for_range = textwrap.dedent('''\
+        for(int j = 0;j < 42; j += 2) {
+          analyze(j);
+        }''')
 
+    for_each_with_index = [
+        textwrap.dedent('''\
+          for(int j = 0;j < z.size();j ++) 
+          {
+            var k = z[j];
+            analyze(j, k);
+          }'''),
 
+        (['unordered_map'],
+         textwrap.dedent('''\
+          foreach(auto _item in z)
+          {
+            analyze(_item->first, _item->second);
+          }'''))
+    ]
+
+    for_each_in_zip = textwrap.dedent('''\
+        for(var _index = 0;_index < min(z.size(), zz.size()
+);_index ++)
+        {
+          var k = z[_index];
+          var l = zz[_index];
+          a(k, l);
+        }
+        ''')
+
+    while_statement = textwrap.dedent('''\
+        while (f() >= 42)
+        {
+          b = g();
+        }''')
+
+    function_definition = textwrap.dedent('''\
+        int weird(int z)
+        {
+          int fixed = fix(z);
+          return fixed;
+        }''')
+
+    method_definition = (
+        ['vector', 'string'],
+        textwrap.dedent('''\
+        vector<string> parse(string source)
+        {
+          this->ast = Null;
+          return vector<string>{ source };
+        }'''))
+
+    anonymous_function = [
+        (['vector'],
+         '[](auto source) { return ves(source.size()); }'),
+
+        textwrap.dedent('''\
+            [](auto source) {
+                cout << source;
+                return ves(source);
+            }''')
+    ]
+
+    class_statement = [textwrap.dedent('''\
+        class A : B { 
+            public int a;
+
+            public:
+
+            A(int a) {
+                this->a = a;
+            }
+
+            int parse() {
+                return 42;
+            }''')]
+
+    this = 'this'
+
+    constructor = (
+        ['string'],
+        textwrap.dedent('''\
+            A(int a, string b) {
+                this.a = a;
+                this.b = b;
+            }'''))

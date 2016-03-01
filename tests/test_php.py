@@ -7,7 +7,7 @@ import pseudon.tests.suite as suite
 #v
 class TestPHP(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
     def gen(ast):
-        return generate(ast, 'ruby')[:-1] #without last \n
+        return generate(ast, 'php')[:-1] #without last \n
 
     def gen_with_imports(ast):
         result = generate(Node('module', main=[ast]))[:-1]
@@ -24,7 +24,7 @@ class TestPHP(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
 
     # make declarative style great again
 
-    # expected ruby translation for each example in suite:
+    # expected php translation for each example in suite:
 
     module = ''
 
@@ -90,74 +90,76 @@ class TestPHP(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
         }''')
 
     for_each_statement = textwrap.dedent('''\
-        sequence.each do |a|
-          a.sub
-        end''')
+        foreach($sequence as $a) {
+          $a->sub();
+        }''')
 
     for_range = textwrap.dedent('''\
-        (0...42).step(2).each do |j|
-          analyze(j)
-        end''')
+        for($j = 0;$j < 42;$j += 2) {
+          analyze($j);
+        }''')
 
     for_each_with_index = [
         textwrap.dedent('''\
-          z.each_with_index do |k, j|
-            analyze(j, k)
-          end'''),
+          foreach($z as $j => $k) {
+            analyze($j, $k);
+          }'''),
 
         textwrap.dedent('''\
-          z.each do |j, k|
-            analyze(j, k)
-          end''')
+          foreach($z as $j => $k) {
+            analyze($j, $k);
+          }''')
     ]
 
     for_each_in_zip = textwrap.dedent('''\
-        z.zip(zz).each do |k, l|
-          a(k, l)
-        end''')
+        foreach(array_combine($z, $zz) as $k => $l) {
+          a($k, $l);
+        }''')
 
     while_statement = textwrap.dedent('''\
-        while f() >= 42
-          b = g
-        end''')
+        while (f() >= 42) {
+          $b = g();
+        }''')
 
     function_definition = textwrap.dedent('''\
-        def weird(z)
-          fixed = fix(z)
-          fixed
-        end''')
+        function weird($z) {
+          $fixed = fix($z);
+          return $fixed;
+        }''')
 
     method_definition = textwrap.dedent('''\
-        def parse(source):
-          @ast = None
-          [source]
-        end''')
+        function parse($source) {
+          $this->ast = NULL;
+          return [$source];
+        }''')
 
     anonymous_function = [
-        '-> source { ves(source.length) }',
+        'function($source) { return ves(array_length($source)); }',
 
         textwrap.dedent('''\
-            -> source do
-              puts source
-              ves(source)
-            end''')
+            function($source) {
+              echo $source;
+              return ves($source);
+            }''')
     ]
 
     class_statement = [textwrap.dedent('''\
-        class A < B
-          def initialize(a)
-            @a = a
-          end
+        class A extends B {
+          public $a;
+          
+          function __construct($a) {
+            $this->a = $a;
+          }
 
-          def parse
-            42
-          end
-        end''')]
+          public function parse() {
+            return 42;
+          }
+        }''')]
 
-    this = 'self'
+    this = '$this'
 
     constructor = textwrap.dedent('''\
-        def initialize(a, b):
-          @a = a
-          @b = b
-        end''')
+        function __construct($a, $b) {
+          $this->a = $a;
+          $this->$b = $b;
+        }''')
