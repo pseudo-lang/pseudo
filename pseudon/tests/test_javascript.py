@@ -3,7 +3,7 @@ from pseudon.pseudon_tree import Node
 
 #v
 def gen(ast):
-    return generate(ast, 'python')[:-1] #without last \n
+    return generate(ast, 'javascript')[:-1] #without last \n
 
 def test_module():
     source = gen(Node('module', code=[]))
@@ -23,16 +23,16 @@ def test_str():
 
 def test_boolean():
     source = gen(Node('boolean', value=True))
-    assert source == 'True'
+    assert source == 'true'
 
 def test_null():
     source = gen(Node('null'))
-    assert source == 'None'
+    assert source == 'null'
 
 def test_dictionary():
     source = gen(Node('dictionary', pairs=[
         [Node('string', value='la'), Node('int', 0)]]))
-    assert source == "{'la': 0}"
+    assert source == "{la: 0}"
 
 def test_list():
     source = gen(Node('list', elements=[Node('string', value='la')]))
@@ -48,7 +48,7 @@ def test_typename():
 
 def test_instance_variable():
     source = gen(Node('instance_variable', name='egg'))
-    assert source == 'self.egg'
+    assert source == 'this.egg'
 
 def test_attr():
     source = gen(Node('attr', receiver=Node('local', name='e'), attr='egg'))
@@ -60,7 +60,7 @@ def test_local_assignment():
 
 def test_instance_assignment():
     source = gen(Node('instance_assignment', name='egg', value=Node('local', name='ham')))
-    assert source == 'self.egg = ham'
+    assert source == 'this.egg = ham'
 
 def test_attr_assignment():
     source = gen(Node('attr_assignment', 
@@ -78,17 +78,17 @@ def test_method_call():
 
 def test_standard_call():
     source = gen(Node('standard_call', function=Node('local', name='display'), args=[Node('int', value=42)]))
-    assert source == 'print(42)'
+    assert source == 'console.log(42)'
 
     source = gen(Node('standard_call', function=Node('local', name='read'), args=[]))
-    assert source == 'input()'
+    assert source == 'console.read()'
 
 def test_standard_method_call():
     source = gen(Node('standard_method_call', receiver=Node('local', name='l', type='List[Int]'), message='length', args=[]))
-    assert source == 'len(l)'
+    assert source == 'l.length'
 
     source = gen(Node('standard_method_call', receiver=Node('str', value='l'), message='substr', args=[Node('int', value=0), Node('int', value=2)]))
-    assert source == 'l[0:2]'
+    assert source == 'l.slice(0, 2)'
 
 def test_binary_op():
     source = gen(Node('binary_op', op='+', left=Node('local', name='ham'), right=Node('local', name='egg')))
@@ -101,7 +101,7 @@ def test_unary_op():
 def test_standard_math():
     source = gen(Node('module', code=[
         Node('standard_math', op='sin', args=[Node('local', name='ham')])]))
-    assert source == 'import math\nmath.sin(ham)'
+    assert source == 'Math.sin(ham)'
 
 def test_comparison():
     source = gen(Node('comparison', op='>', left=Node('local', name='egg'), right=Node('local', name='ham')))
@@ -132,11 +132,12 @@ def test_if():
             ])))
 
     assert source == \
-'''if egg == ham:
-    l[0:2]
-elif egg == ham:
-    print(4.2)
-else:
-    z'''
+'''if (egg == ham) {
+    l.slice(0, 2);
+} else if (egg == ham) {
+    console.log(4.2)
+} else {
+    z
+}'''
 
 
