@@ -24,6 +24,10 @@ class RubyGenerator(CodeGenerator):
                     %<methods>
                   ''',
 
-        'name': '%<label>',
-        'int': '%<value>'
+        'local': '%<name>',
+        'int': '%<value>',
+        'float': '%<value>',
+        'string': safe_single,
+        'boolean': '%<value>',
+        'null': 'nil'
     }

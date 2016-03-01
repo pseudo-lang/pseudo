@@ -17,6 +17,27 @@ class CodeGenerator:
         self._single_indent = symbol * (self.indent)
         self._parsed_templates = {k: self._parse_template(v, k) for k, v in templates}
 
+    def safe_single(self, node, indent):
+        if "'" in node.value:
+            if '"' in node.value:
+                s = "'%s'" % node.value.replace("'", "\\'")
+            else:
+                s = '"%s"' % node.value
+        else:
+            s = "'%s'" % node.value
+        return '%s%s' % (self.offset(indent), s)
+
+    def safe_double(self, node, indent):
+        if '"' in node.value:
+            if "'" in node.value:
+                s = '"%s"' % node.value.replace('"', '\\"')
+            else:
+                s = "'%s'" % node.value
+        else:
+            s = '"%s"' % node.value
+        return '%s%s' % (self.offset(indent), s)
+
+
     def generate(self, tree):
         '''
         generates code based on templates and gen functions

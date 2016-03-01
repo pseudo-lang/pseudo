@@ -29,8 +29,5 @@ class PHPGenerator(CodeGenerator):
         'class':  '''
                   class %<name>%?<(%<parent>)>:
                       %<#methods>
-                  ''',
-
-        'name': '%<label>',
-        'int': '%<value>'
+                  '''
     }

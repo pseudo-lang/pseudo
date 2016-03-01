@@ -16,18 +16,12 @@ class PythonGenerator(CodeGenerator):
         else:
             return '%spass\n' % self.offset(indent)
 
-    def safe_single(self, node, indent):
-        if "'" in node.value:
-            if '"' in node.value:
-                s = "'%s'" % node.value.replace("'", "\'")
-            else:
-                s = '"%s"' % node.value
-        else:
-            s = "'%s'" % node.value
-        return '%s%s' % (self.offset(indent), s)
-
     def to_boolean(self, node, indent):
-        if 
+        if node.value == 'true':
+            return self.offset(indent) + 'True'
+        else:
+            return self.offset(indent) + 'False'
+
     templates = {
         'module': "%<code>",
 
@@ -41,7 +35,8 @@ class PythonGenerator(CodeGenerator):
                       %<#methods>
                   ''',
 
-        'name': '%<label>',
+        'local': '%<name>',
+        'typename': '%<name>',
         'int': '%<value>',
         'float': '%<value>',
         'string': safe_single,
