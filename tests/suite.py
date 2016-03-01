@@ -16,6 +16,8 @@ class TestLanguage(type):
                 for example, exp in zip(examples, expected):
                     if isinstance(exp, str):
                         self.assertEqual(self.gen(example), exp)
+                    elif exp[0] == 'raw':
+                        self.assertEqual(self.gen(example), exp)
                     else:
                         imports, source = self.gen_with_imports(example)
                         self.assertEqual(imports, exp[0])

@@ -185,3 +185,69 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
           this.a = a;
           this.b = b;
         }''')
+
+    try_statement = [
+        textwrap.dedent('''\
+            try
+            {
+              a();
+              h(2);
+            }
+            catch (Exception e)
+            {
+              Console.WriteLine(e);
+            }'''),
+
+        ('raw', 
+        textwrap.dedent('''\
+            using System;
+
+            public class NeptunError : Exception
+            {
+                public NeptunError(string message)
+                    : base(message)
+                {
+                }
+            }
+
+            public class Program
+            {
+                public static void Main()
+                {
+                    try
+                    {
+                        a();
+                        h(2);
+                    }
+                    catch (NeptunError e)
+                    {
+                        Console.WriteLine(e);
+                    }
+                }
+            }
+            '''))
+    ]
+
+    throw_statement = (
+        'raw',
+        textwrap.dedent('''\
+        using System;
+
+            public class NeptunError : Exception
+            {
+                public NeptunError(string message)
+                    : base(message)
+                {
+                }
+            }
+
+            public class Program
+            {
+                public static void Main()
+                {
+                    raise NeptunError('no tea');
+                }
+            }
+            '''))
+
+

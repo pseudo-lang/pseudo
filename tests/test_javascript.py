@@ -148,3 +148,38 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
           this.a = a;
           this.b = b;
         }''')
+
+    try_statement = [
+        textwrap.dedent('''\
+            try {
+                a();
+                h(2);
+            } catch(e) {
+                console.log(e);
+            }''')
+
+        textwrap.dedent('''\
+            function NeptunError(message) {
+                this.message = message;
+            }
+            NeptunError.prototype = new Error;
+
+            try {
+                a();
+                h(2);
+            } catch(e) {
+                if (e instanceof NeptunError) {
+                    console.log(e);
+                } else {
+                    throw e;
+                }
+            }''')
+    ]
+
+    throw_statement = textwrap.dedent('''\
+        function NeptunError(message) {
+                this.message = message;
+            }
+        NeptunError.prototype = new Error;
+
+        throw new NeptunError('no tea')''')
