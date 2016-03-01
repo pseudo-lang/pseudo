@@ -44,10 +44,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
          "la": 0
         }''')
 
-    list_ = (
-        ['iostream', 'vector'],
-        'vector<string>{ "la" };'
-    )
+    list_ = '[]string{"la"}'
 
     local = 'egg'
 
@@ -68,15 +65,17 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     method_call = 'e.filter(42)'
 
     standard_call = [
-        'Console.WriteLine(42)',
-        (['iostream'], 'string _result;cin << _result'),
-        (['math', 'log(ham)'),
-        (['fstream', 'string'], 'ifstream ifs("f.py");\nstring _result((istreambuf_iterator<char>(ifs)), (istreambuf_iterator<char>()));')
+        (['fmt'], 'fmt.Println(42)'),
+        (['bufio', 'os'], dedent_with_tabs('''\
+            reader := bufio.NewReader(os.Stdin)
+            reader.ReadString('\n')'''),
+        (['math', 'Math.Log(ham)'),
+        (['io/ioutil'], 'ioutil.ReadFile("f.py")')
     ]
 
     standard_method_call = [
-        'l.size()',
-        '"l".substr(0, 2)'
+        'len(l)',
+        '"l"[0:2]'
     ]
 
     binary_op = 'ham + egg'
@@ -86,25 +85,22 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     comparison = 'egg > ham'
 
     if_statement = (
-        ['vector'],
-        textwrap.dedent('''\
-            if (egg == ham) {
-                l.sublist(l.begin(), l.begin() + 2);
-            } 
-            else if (egg == ham) {
-                cout << 4.2 << "\n";
+        ['fmt'],
+        dedent_with_tabs('''\
+            if egg == ham {
+                l[0:2]
+            } else if egg == ham {
+                fmt.Println(4.2)
             } 
             else {
-                z;
-            }''')
+                z
+            }'''))
     )
 
 
-    for_each_statement = (
-        ['vector'],
-        textwrap.dedent('''\
-        for(auto a = sequence.begin(); a != sequence.end(); a++) {
-          a->sub();
+    for_each_statement = dedent_with_tabs('''\
+        for _, a := range sequence {
+          a.sub()
         }''')
     )
 
@@ -185,45 +181,4 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
             int parse() {
                 return 42;
             }''')]
-
-    this = 'this'
-
-    constructor = (
-        ['string'],
-        textwrap.dedent('''\
-            A(int a, string b) {
-                this.a = a;
-                this.b = b;
-            }'''))
-
-    try_statement = [
-        (['stdexcept', 'exception'], 
-         textwrap.dedent('''\
-            try {
-              a();
-              h(2);
-            } catch (exception& e) {
-              cout << e.what() << "\n";
-            }''')),
-
-        (['stdexcept', 'exception'], 
-         textwrap.dedent('''\
-            class NeptunError : runtime_error {
-            }
-
-            try {
-              a();
-              h(2);
-            } catch (NeptunError& e) {
-              cout << e.what() << "\n";
-            }'''))
-    ]
-
-    throw_statement = (['stdexcept', 'exception'], 
-        textwrap.dedent('''\
-        class NeptunError extends runtime_error {
-        }
-
-        throw NeptunError("no tea");'''))
-
 
