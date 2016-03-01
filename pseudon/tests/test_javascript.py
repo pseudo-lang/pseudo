@@ -1,143 +1,83 @@
+import unittest
+import textwrap
 from pseudon import generate
 from pseudon.pseudon_tree import Node
+import pseudon.tests.suite as suite
 
 #v
-def gen(ast):
-    return generate(ast, 'javascript')[:-1] #without last \n
+class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
+    def gen(ast):
+        return generate(ast, 'javascript')[:-1] #without last \n
 
-def test_module():
-    source = gen(Node('module', code=[]))
-    assert source == ''
+    # make declarative style great again
 
-def test_int():
-    source = gen(Node('int', value=42))
-    assert source == '42'
+    # expected javascript source for each example in suite:
 
-def test_float():
-    source = gen(Node('float', value=42.420))
-    assert source == '42.42'
+    module = ''
 
-def test_str():
-    source = gen(Node('string', value='la'))
-    assert source == "'la'"
+    int_ = '42'
 
-def test_boolean():
-    source = gen(Node('boolean', value=True))
-    assert source == 'true'
+    float_ = '42.42'
 
-def test_null():
-    source = gen(Node('null'))
-    assert source == 'null'
+    string = "'la'"
 
-def test_dictionary():
-    source = gen(Node('dictionary', pairs=[
-        [Node('string', value='la'), Node('int', 0)]]))
-    assert source == "{la: 0}"
+    boolean = 'true'
 
-def test_list():
-    source = gen(Node('list', elements=[Node('string', value='la')]))
-    assert source == "['la']"
+    null = 'null'
 
-def test_local():
-    source = gen(Node('local', name='egg'))
-    assert source == 'egg'
+    dictionary = '{la: 0}'
 
-def test_typename():
-    source = gen(Node('typename', name='Egg'))
-    assert source == 'Egg'
+    list_ = "['la']"
 
-def test_instance_variable():
-    source = gen(Node('instance_variable', name='egg'))
-    assert source == 'this.egg'
+    local = 'egg'
 
-def test_attr():
-    source = gen(Node('attr', receiver=Node('local', name='e'), attr='egg'))
-    assert source == 'e.egg'
+    typename = 'Egg'
 
-def test_local_assignment():
-    source = gen(Node('local_assignment', local='egg', value=Node('local', name='ham')))
-    assert source == 'egg = ham'
+    instance_variable = 'this.egg'
 
-def test_instance_assignment():
-    source = gen(Node('instance_assignment', name='egg', value=Node('local', name='ham')))
-    assert source == 'this.egg = ham'
+    attr = 'e.egg'
 
-def test_attr_assignment():
-    source = gen(Node('attr_assignment', 
-        attr=Node('attr', receiver=Node('typename', name='T'), attr='egg'), 
-         value=Node('local', name='ham')))
-    assert source == 'T.egg = ham'
+    local_assignment = 'egg = ham'
 
-def test_call():
-    source = gen(Node('call', function=Node('local', name='map'), args=[Node('local', name='x')]))
-    assert source == 'map(x)'
+    instance_assignment = 'this.egg = ham'
 
-def test_method_call():
-    source = gen(Node('method_call', receiver=Node('local', name='e'), message='filter', args=[Node('int', value=42)])
-    assert source == 'e.filter(42)'
+    attr_assignment = 'T.egg = ham'
 
-def test_standard_call():
-    source = gen(Node('standard_call', function='display', args=[Node('int', value=42)]))
-    assert source == 'console.log(42)'
+    call = 'map(x)'
 
-    source = gen(Node('standard_call', function='read', args=[]))
-    assert source == 'console.read()'
+    method_call = 'e.filter(42)'
 
-def test_standard_method_call():
-    source = gen(Node('standard_method_call', receiver=Node('local', name='l', type='List[Int]'), message='length', args=[]))
-    assert source == 'l.length'
+    standard_call = [
+        'console.log(42)',
+        'console.read()'
+    ]
 
-    source = gen(Node('standard_method_call', receiver=Node('str', value='l'), message='substr', args=[Node('int', value=0), Node('int', value=2)]))
-    assert source == 'l.slice(0, 2)'
+    standard_method_call = [
+        'l.length',
+        'l.slice(0, 2)'
+    ]
 
-def test_binary_op():
-    source = gen(Node('binary_op', op='+', left=Node('local', name='ham'), right=Node('local', name='egg')))
-    assert source == 'ham + egg'
+    binary_op = 'ham + egg'
 
-def test_unary_op():
-    source = gen(Node('unary_op', op='-', value=Node('local', name='a')))
-    assert source == '-a'
+    unary_op = '-a'
 
-def test_standard_math():
-    source = gen(Node('module', code=[
-        Node('standard_math', op='sin', args=[Node('local', name='ham')])]))
-    assert source == 'Math.sin(ham)'
+    standard_math = 'Math.sin(ham)'
 
-def test_comparison():
-    source = gen(Node('comparison', op='>', left=Node('local', name='egg'), right=Node('local', name='ham')))
-    assert source == 'egg > ham'
+    comparison = 'egg > ham'
 
+    if_statement = textwrap.dedent('''\
+        if (egg == ham) {
+            l.slice(0, 2);
+        } else if (egg == ham) {
+            console.log(4.2);
+        } else {
+            z;
+        }''')
 
-def test_if():
-    source = gen(Node('if', 
-        test=Node('comparison',
-            op='==',
-            left=Node('local', name='egg'), 
-            right=Node('local', name='ham')),
-        block=[
-            Node('standard_method_call',
-                receiver=Node('local', name='l', type='List[String]'),
-                message='sublist',
-                args=[Node('int', value=0), Node('int', value=2)])],
-        otherwise=Node('if', 
-            test=Node('comparison',
-                op='==',
-                left=Node('local', name='egg'), 
-                right=Node('local', name='ham')),
-            block=[
-                Node('standard_call', function='display', args=[Node('float', '4.2')])
-            ],
-            otherwise=[
-                Node('local', 'z', type='List[String]')
-            ])))
+    for_each_statement = textwrap.dedent('''\
+        _.each(sequence, function(a) {
+            a.sub();
+        }''')
 
-    assert source == textwrap.dedent('''\
-                if (egg == ham) {
-                    l.slice(0, 2);
-                } else if (egg == ham) {
-                    console.log(4.2);
-                } else {
-                    z;
-                }''')
 
 

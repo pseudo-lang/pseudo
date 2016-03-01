@@ -74,7 +74,7 @@ def test_call():
     assert source == 'map(x)'
 
 def test_method_call():
-    source = gen(Node('method_call', receiver=Node('local', name='e'), message='filter', args=[Node('int', value=42)])
+    source = gen(Node('method_call', receiver=Node('local', name='e'), message='filter', args=[Node('int', value=42)]))
     assert source == 'e.filter(42)'
 
 def test_standard_call():
