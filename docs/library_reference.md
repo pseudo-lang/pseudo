@@ -13,13 +13,13 @@
 
 ## List
 
-```python
+```ruby
 List[T]
 ```
 
 ### push
 
-```python
+```ruby
 push(element: T) -> Void
 ```
 
@@ -27,13 +27,13 @@ pushed an element at the end of the list
 
 ## Dictionary
 
-```python
+```ruby
 Dictionary[K, V]
 ```
 
 ### setitem
 
-```python
+```ruby
 setitem(key: K, value: V) -> Void
 ```
 
@@ -45,7 +45,7 @@ set/update the value corresponding to key, usually equivalent to `[key] = value`
 
 ### log
 
-```python
+```ruby
 log(x: Number, base: Number) -> Float
 ```
 
@@ -55,7 +55,7 @@ the logarithm of x to the given base
 
 ### display
 
-```python
+```ruby
 display(*args: Any) -> Void
 ```
 
