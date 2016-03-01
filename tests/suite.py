@@ -237,3 +237,43 @@ Constructor = [Node('constructor',
                 Node('instance_assignment', name='a', value=Node('local', name='a', type='Int')),
                 Node('instance_assignment', name='b', value=Node('local', name='b', type='String'))
             ])]
+
+u = Node('try_statement', block=[
+        Node('call', function=Node('local', name='a'), args=[]),
+        Node('call', function=Node('local', name='h'), args=[Node('int', -4)])
+    ], handlers=[
+        Node('exception_handler',
+            exception='NeptunError',
+            instance='e',
+            block=[
+                Node('standard_call', namespace='io', function='display', args=[Node('local', name='e')])
+            ])
+    ])
+
+u2 = Node('class_definition',
+           name='NeptunError',
+           parent='Exception',
+           constructor=None,
+           attrs=[],
+           methods=[]),
+
+TryStatement = [
+    u,
+
+    Node('block', block=[
+        u2,
+        u
+    ])
+]
+
+ThrowStatement = [
+    Node('block', block=[
+        u2,
+
+        Node('throw_statement',
+            exception='NeptunError',
+            value=Node('string', value='no tea'))
+    ])
+]
+
+

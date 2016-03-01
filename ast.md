@@ -41,7 +41,9 @@
   - [class_definition](#class_definition)
   - [this](#this)
   - [constructor](#constructor)
-
+- [exception handling](#exception handling)
+  - [try_statement](#try_statement)
+  - [throw_statement](#throw_statement)
 
 # module
 

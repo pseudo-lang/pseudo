@@ -149,3 +149,30 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         def __init__(self, a, b):
             self.a = a
             self.b = b''')
+
+    try_statement = [
+        textwrap.dedent('''\
+            try:
+                a()
+                h(2)
+            except Exception as e:
+                print(e)'''),
+
+        textwrap.dedent('''\
+            class NeptunError(Exception):
+                pass
+
+            try:
+                a()
+                h(2)
+            except NeptunError as e:
+                print(e)''')
+    ]
+
+    throw_statement = textwrap.dedent('''\
+        class NeptunError(Exception):
+            pass
+
+        throw NeptunError('no tea')''')
+
+

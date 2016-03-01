@@ -159,3 +159,33 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
           @a = a
           @b = b
         end''')
+
+    try_statement = [
+        textwrap.dedent('''\
+            begin
+              a
+              h(2)
+            rescue StandardError => e
+              puts e
+            end'''),
+
+        textwrap.dedent('''\
+            class NeptunError < StandardError
+            end
+
+            begin
+              a
+              h(2)
+            resuce NeptunError => e
+              echo e
+            end''')
+    ]
+
+    throw_statement = textwrap.dedent('''\
+        class NeptunError < StandardError
+        end
+
+        raise NeptunError, \'no tea\'''')
+
+
+
