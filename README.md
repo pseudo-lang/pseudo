@@ -71,6 +71,15 @@ more easy-to-approach for users solution
 
 ## Implementation
 
+The implementation goal is to be really clear and simple. If you dive in, you'll find out
+almost all the code/api transformations are defined using a declarative dsl with rare ocassions 
+of edge case handling helpers. That has a lot of advantages:
+* Less bugs: the core transformation code is really generalized, it's reused as a dsl and its results are well tested
+* Easy to comprehend: it almost looks like a config file
+* Easy to add support for other languages: I was planning to support just python and c# in the initial version but it is so easy to add support for a language similar to the current supported ones, that I
+added support for 5 more.
+* Easy to test: there is a simple test dsl too which helps all language tests to share input examples and I mean [just look](pseudon/tests/test_javascript.py) at it
+
 [progress](progress.md)
 
 ## License
