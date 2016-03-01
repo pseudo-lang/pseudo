@@ -1,7 +1,7 @@
 # base generator with common functionality
 import re
 from pseudon.pseudon_tree import Node
-from pseudon.code_generator_dsl import Placeholder, Newline, Offset, INTERNAL_WHITESPACE
+from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, Offset, INTERNAL_WHITESPACE
 
 class CodeGenerator:
     '''
@@ -10,12 +10,13 @@ class CodeGenerator:
       spaces: use spaces if true, tabs if false
     '''
 
-    def __init__(self, indent=4, use_spaces=True):
-        self.indent = indent
-        self.use_spaces = use_spaces
+    def __init__(self, indent=None, use_spaces=None):
+        if indent: self.indent = indent 
+        if use_spaces: self.use_spaces = use_spaces
+        # always init them in classes
         symbol = ' ' if use_spaces else '\t'
         self._single_indent = symbol * (self.indent)
-        self._parsed_templates = {k: self._parse_template(v, k) for k, v in templates}
+        self._parsed_templates = {k: self._parse_template(v, k) for k, v in self.templates.items()}
 
     def safe_single(self, node, indent):
         if "'" in node.value:
@@ -77,7 +78,7 @@ class CodeGenerator:
 
         return ''.join(expanded)
 
-    def _parse_template(code, label):
+    def _parse_template(self, code, label):
         '''
         Pare smart indented templates
 
@@ -94,6 +95,9 @@ class CodeGenerator:
           Offset(1),'e', INTERNAL_WHITESPACE, '=', NEWLINE,
           Placeholder('code2', 1), NEWLINE]
         '''
+
+        if not isinstance(code, str):
+            return []
         lines = code.split('\n')
         parsed = []
         if len(lines) == 1:
@@ -109,21 +113,25 @@ class CodeGenerator:
                 if i:
                     indent_size = len(i.group())
                     break
+            else:
+                indent_size = 0
             actual = rebased[1:]
 
         for line in actual:
             j = re.match(r'^( +)', line)
-            indent = len(j.group()) / indent_size if j else 0
+            indent = len(j.group()) // indent_size if j else 0
             if indent:
                 parsed.append(Offset(indent))
             in_placeholder = False
             in_action = False
-            in_args = Fals
+            in_args = False
             in_string_arg = False
-            c = indent * indent_size
+            in_double_arg = False
+            c = int(indent * indent_size)
             m = c
             placeholder = ''
             while m < len(line):
+                # print(m, line[m], 'place:', in_placeholder, 'act:', in_action, 'a:', in_args, 's:', in_string_arg, yaml.dump(parsed))
                 f = line[m]
                 next_f = line[m + 1] if m < len(line) - 1 else None
                 if f == '%' and not in_placeholder and next_f == '<':
@@ -146,6 +154,10 @@ class CodeGenerator:
                     in_args = True
                     args = ['']
                     continue
+                elif f == ' ' and (in_string_arg or in_double_arg):
+                    args[-1] += f
+                    m += 1
+                    continue
                 elif f == ' ' and in_args:
                     m += 1
                     args.append('')
@@ -154,29 +166,46 @@ class CodeGenerator:
                     m += 1
                     if in_string_arg:
                         in_string_arg = False
+                        args[-1] += f
+                    elif in_double_arg:
+                        args[-1] += f
                     else:
                         in_string_arg = True
-                    args[-1] += f
+                    
                     continue
-                elif f == '>' and in_args and not in_string_arg:
+                elif f == '"' and in_args:
+                    m += 1
+                    if in_double_arg:
+                        in_double_arg = False
+                        args[-1] += f
+                    elif in_string_arg:
+                        args[-1] += f
+                    else:
+                        in_string_arg = True
+
+                    continue
+                elif f == '>' and in_args and not in_string_arg and not in_double_arg:
                     m += 1
                     if args[-1] == '':
                         args = args[:-1]
                     args = [arg[:-1] if arg[-1] == '\'' else int(arg) for arg in args]
+                    in_args = False
                     parsed.append(Action(placeholder, action, args))
                     continue
                 elif f == '>' and in_action:
                     m += 1
+                    in_action = False
                     parsed.append(Action(placeholder, action, []))
                 elif f == '>' and in_placeholder:
                     m += 1
                     q = None
                     if placeholder[0] == '#':
-                        q = Method(placeholder[1:])
-                    elif placeholder[1] == '.':
+                        q = Function(placeholder[1:])
+                    elif placeholder[0] == '.':
                         q = SubTemplate(label, placeholder[1:])
                     else:
                         q = Placeholder(placeholder)
+                    in_placeholder = False
                     parsed.append(q)
                 elif f == ' ':
                     m += 1
@@ -192,11 +221,11 @@ class CodeGenerator:
                     args[-1] += f
                 else:
                     m += 1
-                    if isinstance(parsed[-1], str):
+                    if parsed and isinstance(parsed[-1], str):
                         parsed[-1] += f
                     else: 
                         parsed.append(f)
-            return parsed
+        return parsed
 
     def _offset(self, depth):
-        return (' ' if self.spaces else '\t') * (self.indent * depth)
+        return self._single_indent * (self.indent * depth)
