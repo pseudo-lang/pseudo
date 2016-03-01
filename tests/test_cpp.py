@@ -27,15 +27,11 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
 
     # expected c++ translation for each example in suite:
 
-    module = ''
-
     int_ = '42'
 
     float_ = '42.42'
 
     string = '"la"'
-
-    boolean = 'true'
 
     null = 'NULL'
 
@@ -92,7 +88,7 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
                 l.sublist(l.begin(), l.begin() + 2);
             } 
             else if (egg == ham) {
-                cout << 4.2;
+                cout << 4.2 << "\n";
             } 
             else {
                 z;
@@ -167,7 +163,7 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
 
         textwrap.dedent('''\
             [](auto source) {
-                cout << source;
+                cout << source << "\n";
                 return ves(source);
             }''')
     ]
@@ -195,3 +191,34 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
                 this.a = a;
                 this.b = b;
             }'''))
+
+    try_statement = [
+        (['stdexcept', 'exception'], 
+         textwrap.dedent('''\
+            try {
+              a();
+              h(2);
+            } catch (exception& e) {
+              cout << e.what() << "\n";
+            }''')),
+
+        (['stdexcept', 'exception'], 
+         textwrap.dedent('''\
+            class NeptunError : runtime_error {
+            }
+
+            try {
+              a();
+              h(2);
+            } catch (NeptunError& e) {
+              cout << e.what() << "\n";
+            }'''))
+    ]
+
+    throw_statement = (['stdexcept', 'exception'], 
+        textwrap.dedent('''\
+        class NeptunError extends runtime_error {
+        }
+
+        throw NeptunError("no tea");'''))
+
