@@ -11,7 +11,7 @@ class ApiTranslator(TreeTransformer):
         self.tree = tree
 
     def api_translate(self):
-        return self.transform(tree)
+        return self.transform(self.tree)
 
     # def tranform_class(self, node):
     #     self.env[node.name] = node.pseudon_type
@@ -32,7 +32,7 @@ class ApiTranslator(TreeTransformer):
     #     return node
 
     def transform_method_call(self, node):
-        l = node.receiver.pseudon_type.label
+        l = node.receiver.pseudon_type
         if l in self.api and node.message.name in self.api[l]:
             node = self._expand_api(self.api[l][node.message.name], node.receiver, node.args, self.api[l]['@equivalent']) or node
         return node

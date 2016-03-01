@@ -25,6 +25,15 @@ def call(callee, args):
     return Node('call', callee=to_node(callee), args=args)
 
 
+def if_statement(test, block, otherwise):
+    return Node('if', test=test, block=block, otherwise=otherwise)
+
+def item_assignment(sequence, index, value):
+    return Node('_item_assignment', sequence=sequence, index=index, value=value)
+
+def for_each_with_index_statement(iterators, sequence, block):
+    return Node('for_each_with_index', iterators=iterators, sequence=sequence, block=block)
+
 def to_node(name):
     '''Expand to a literal node if a basic type otherwise just returns the node'''
 

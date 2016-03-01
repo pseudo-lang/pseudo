@@ -9,7 +9,8 @@ COMMANDS = {
     'js': lambda filename: ['pseudon-javascript', filename],
     'swift': lambda filename: ['pseudon-swift', filename],
     'java': lambda filename: ['pseudon-java', filename],
-    'cs': lambda filename: ['pseudon-csharp', filename]
+    'cs': lambda filename: ['pseudon-csharp', filename],
+    'go': lambda filename: ['pseudon-golang', filename]
 }
 
 

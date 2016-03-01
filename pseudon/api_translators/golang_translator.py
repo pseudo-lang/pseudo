@@ -1,9 +1,9 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator
-from pseudon.pseudon_tree import Node, method_call, call, if_statement, foreach, item_assignment, item_assignment
+from pseudon.pseudon_tree import Node, method_call, call, if_statement, for_each_with_index_statement, item_assignment
 
 
-class GoTranslator(ApiTranslator):
+class GolangTranslator(ApiTranslator):
     '''Go translator'''
 
     @staticmethod
@@ -27,19 +27,41 @@ class GoTranslator(ApiTranslator):
             iter = function.args[0]
         else:
             iter = 'element'
-        return [Node('_go_assignment',
+        return Node('block', block=[Node('_go_assignment',
             name=local('result'),
             value=Node('_make_slice',
                 type=receiver.pseudon_type,
                 length=call('len', receiver))),
-            foreach(
+            for_each_with_index_statement(
                 [iter, 'j'],
                 receiver, [
-                    item_assignment(result,
-                        'j',
+                    item_assignment(local('result'),
+                        local('j'),
                         call(function, [iter]))]),
-            'result']
+            local('result')])
 
+    @staticmethod
+    def expand_filter(receiver, test, assignment):
+        if function.type == 'lambda':
+            iter = function.args[0]
+        else:
+            iter = 'element'
+        return Node('block', block=[
+            Node('_go_assignment',
+                name=local('result'),
+                value=Node('_make_slice',
+                    type=receiver.pseudon_type,
+                    length=call('len', receiver))),
+                for_each_with_index_statement(
+                    [iter, 'j'],
+                    receiver, [
+                        if_statement(
+                            call(test, [iter]), [
+                                local_assignment(
+                                    local('result'),
+                                    call('append', [local('result'), local(iter)]))], None)
+                ]),
+            local('result')])
     api = {
         'List': {
             '@equivalent':  'slice',

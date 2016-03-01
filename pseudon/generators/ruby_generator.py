@@ -4,6 +4,9 @@ from pseudon.code_generator import CodeGenerator
 class RubyGenerator(CodeGenerator):
     '''Ruby code generator'''
 
+    indent = 2
+    use_spaces = True
+
     def lquote(self, node, indent):
         return '(' if node.args else ''
 
@@ -27,7 +30,7 @@ class RubyGenerator(CodeGenerator):
         'local': '%<name>',
         'int': '%<value>',
         'float': '%<value>',
-        'string': safe_single,
+        'string': '%<#safe_single>',
         'boolean': '%<value>',
         'null': 'nil'
     }

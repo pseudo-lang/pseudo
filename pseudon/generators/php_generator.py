@@ -4,6 +4,9 @@ from pseudon.code_generator import CodeGenerator
 class PHPGenerator(CodeGenerator):
     '''PHP code generator'''
 
+    indent = 4
+    use_spaces = True
+
     def body(self, node, indent):
         if node.body:
             return self.render_nodes(node.body, indent)

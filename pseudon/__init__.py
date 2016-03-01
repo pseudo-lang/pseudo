@@ -3,25 +3,25 @@ import pseudon.api_translators
 import pseudon.api_translators.ruby_translator
 import pseudon.api_translators.python_translator
 import pseudon.api_translators.js_translator
-import pseudon.api_translators.java_translator
 import pseudon.api_translators.csharp_translator
 import pseudon.api_translators.cpp_translator
-# import pseudon.api_translators.go_translator
+import pseudon.api_translators.golang_translator
+import pseudon.api_translators.php_translator
 
 import pseudon.generators
 import pseudon.generators.ruby_generator
 import pseudon.generators.python_generator
 import pseudon.generators.js_generator
-import pseudon.generators.java_generator
 import pseudon.generators.csharp_generator
 import pseudon.generators.cpp_generator
-# import pseudon.generators.go_generator
+import pseudon.generators.golang_generator
+import pseudon.generators.php_generator
 
 
-SUPPORTED_FORMATS = {'js', 'javascript', 'py', 'python', 'rb', 'ruby', 'php', 'java'}
-FILE_EXTENSIONS = {'js': 'js', 'javascript': 'js', 'py': 'py', 'python': 'py', 'rb': 'rb', 'ruby': 'rb', 'php': 'php', 'java': 'java'}
-FULL_NAMES = {'js': 'javascript', 'javascript': 'javascript', 'py': 'python', 'python': 'python', 'rb': 'ruby', 'ruby': 'ruby', 'csharp': 'c#', 'cs': 'c#', 'java': 'java', 'cpp': 'c++'}
-NAMES = {'js': 'JS', 'javascript': 'JS', 'py': 'Python', 'python': 'Python', 'rb': 'Ruby', 'ruby': 'Ruby', 'c#': 'CSharp', 'cpp': 'Cpp'}
+SUPPORTED_FORMATS = {'js', 'javascript', 'py', 'python', 'rb', 'ruby', 'php', 'go', 'golang'}
+FILE_EXTENSIONS = {'js': 'js', 'javascript': 'js', 'py': 'py', 'python': 'py', 'rb': 'rb', 'ruby': 'rb', 'php': 'php', 'go': 'golang', 'golang': 'golang'}
+FULL_NAMES = {'js': 'javascript', 'javascript': 'javascript', 'py': 'python', 'python': 'python', 'rb': 'ruby', 'ruby': 'ruby', 'csharp': 'c#', 'cs': 'c#', 'go': 'golang', 'golang': 'golang', 'cpp': 'c++', 'php': 'php'}
+NAMES = {'js': 'JS', 'javascript': 'JS', 'py': 'Python', 'python': 'Python', 'rb': 'Ruby', 'ruby': 'Ruby', 'c#': 'CSharp', 'golang': 'Golang', 'go': 'Golang', 'cpp': 'Cpp', 'php': 'PHP'}
 
 print(pseudon.api_translators)
 API_TRANSLATORS = {
@@ -46,4 +46,4 @@ GENERATORS = {
 def generate(pseudon_ast, language):
     '''generate output code in the given language'''
     translated_ast = API_TRANSLATORS[language](pseudon_ast).api_translate()
-    return GENERATORS[language].generate(translated_ast)
+    return GENERATORS[language]().generate(translated_ast)

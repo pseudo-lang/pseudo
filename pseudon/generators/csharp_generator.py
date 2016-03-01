@@ -4,6 +4,9 @@ from pseudon.code_generator import CodeGenerator
 class CSharpGenerator(CodeGenerator):
     '''CSharp code generator'''
 
+    indent = 4
+    use_spaces = True
+
     def namespace(self, node, indent):
         return self.name.capitalize()
 
