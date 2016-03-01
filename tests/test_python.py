@@ -5,7 +5,7 @@ from pseudon.pseudon_tree import Node
 import pseudon.tests.suite as suite
 
 #v
-class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
+class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
     def gen(ast):
         return generate(ast, 'python')[:-1] #without last \n
 
@@ -125,8 +125,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
             return [source]''')
 
     anonymous_function = [
-        textwrap.dedent('''\
-            lambda source: ves(len(source))'''),
+        'lambda source: ves(len(source))',
 
         textwrap.dedent('''\
             def print_and_ves(source):
@@ -146,7 +145,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     this = 'self'
 
-    consturctor = textwrap.dedent('''\
+    constructor = textwrap.dedent('''\
         def __init__(self, a, b):
             self.a = a
             self.b = b''')

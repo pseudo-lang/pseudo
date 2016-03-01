@@ -1,140 +1,161 @@
+import unittest
+import textwrap
 from pseudon import generate
 from pseudon.pseudon_tree import Node
+import pseudon.tests.suite as suite
 
 #v
-def gen(ast):
-    return generate(ast, 'ruby')[:-1] #without last \n
+class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
+    def gen(ast):
+        return generate(ast, 'ruby')[:-1] #without last \n
 
-def test_module():
-    source = gen(Node('module', code=[]))
-    assert source == ''
+    def gen_with_imports(ast):
+        result = generate(Node('module', main=[ast]))[:-1]
+        ls = result.split('\n')
+        l = 0
+        imports = []
+        while ls[l].startswith('require'):
+            imports.append(ls[l][9:-1])
+            l += 1
+        if not ls[l].strip():
+            l += 1
+        source = '\n'.join(ls[l:])
+        return imports, source
 
-def test_int():
-    source = gen(Node('int', value=42))
-    assert source == '42'
+    # make declarative style great again
 
-def test_float():
-    source = gen(Node('float', value=42.420))
-    assert source == '42.42'
+    # expected ruby translation for each example in suite:
 
-def test_str():
-    source = gen(Node('string', value='la'))
-    assert source == "'la'"
+    module = ''
 
-def test_boolean():
-    source = gen(Node('boolean', value=True))
-    assert source == 'True'
+    int_ = '42'
 
-def test_null():
-    source = gen(Node('null'))
-    assert source == 'nil'
+    float_ = '42.42'
 
-def test_dictionary():
-    source = gen(Node('dictionary', pairs=[
-        [Node('string', value='la'), Node('int', 0)]]))
-    assert source == '{la: 0}'
+    string = "'la'"
 
-def test_list():
-    source = gen(Node('list', elements=[Node('string', value='la')]))
-    assert source == "['la']"
+    boolean = 'true'
 
-def test_local():
-    source = gen(Node('local', name='egg'))
-    assert source == 'egg'
+    null = 'nil'
 
-def test_typename():
-    source = gen(Node('typename', name='Egg'))
-    assert source == 'Egg'
+    dictionary = "{la: 0}"
 
-def test_instance_variable():
-    source = gen(Node('instance_variable', name='egg'))
-    assert source == '@egg'
+    list_ = "['la']"
 
-def test_attr():
-    source = gen(Node('attr', receiver=Node('local', name='e'), attr='egg'))
-    assert source == 'e.egg'
+    local = 'egg'
 
-def test_local_assignment():
-    source = gen(Node('local_assignment', local='egg', value=Node('local', name='ham')))
-    assert source == 'egg = ham'
+    typename = 'Egg'
 
-def test_instance_assignment():
-    source = gen(Node('instance_assignment', name='egg', value=Node('local', name='ham')))
-    assert source == '@egg = ham'
+    instance_variable = '@egg'
 
-def test_attr_assignment():
-    source = gen(Node('attr_assignment', 
-        attr=Node('attr', receiver=Node('typename', name='T'), attr='egg'), 
-         value=Node('local', name='ham')))
-    assert source == 'T.egg = ham'
+    attr = 'e.egg'
 
-def test_call():
-    source = gen(Node('call', function=Node('local', name='map'), args=[Node('local', name='x')]))
-    assert source == 'map(x)'
+    local_assignment = 'egg = ham'
 
-def test_method_call():
-    source = gen(Node('method_call', receiver=Node('local', name='e'), message='filter', args=[Node('int', value=42)])
-    assert source == 'e.filter(42)'
+    instance_assignment = '@egg = ham'
 
-def test_standard_call():
-    source = gen(Node('standard_call', function=Node('local', name='display'), args=[Node('int', value=42)]))
-    assert source == 'puts 42'
+    attr_assignment = 'T.egg = ham'
 
-    source = gen(Node('standard_call', function=Node('local', name='read'), args=[]))
-    assert source == 'gets'
+    call = 'map(x)'
 
-def test_standard_method_call():
-    source = gen(Node('standard_method_call', receiver=Node('local', name='l', type='List[Int]'), message='length', args=[]))
-    assert source == 'l.length'
+    method_call = 'e.filter(42)'
 
-    source = gen(Node('standard_method_call', receiver=Node('str', value='l'), message='substr', args=[Node('int', value=0), Node('int', value=2)]))
-    assert source == 'l[0...2]'
+    standard_call = [
+        'puts 42',
+        'gets',
+        'Math.log(ham)',
+        "File.read('f.py')"
+    ]
 
-def test_binary_op():
-    source = gen(Node('binary_op', op='+', left=Node('local', name='ham'), right=Node('local', name='egg')))
-    assert source == 'ham + egg'
+    standard_method_call = [
+        'l.length',
+        'l[0...2]'
+    ]
 
-def test_unary_op():
-    source = gen(Node('unary_op', op='-', value=Node('local', name='a')))
-    assert source == '-a'
+    binary_op = 'ham + egg'
 
-def test_standard_math():
-    source = gen(Node('module', code=[
-        Node('standard_math', op='sin', args=[Node('local', name='ham')])]))
-    assert source == 'Math.sin(ham)'
+    unary_op = '-a'
 
-def test_comparison():
-    source = gen(Node('comparison', op='>', left=Node('local', name='egg'), right=Node('local', name='ham')))
-    assert source == 'egg > ham'
+    comparison = 'egg > ham'
 
+    if_statement = textwrap.dedent('''\
+        if egg == ham
+          l[0...2]
+        elif egg == ham
+          4.2
+        else
+          z
+        end''')
 
-def test_if():
-    source = gen(Node('if', 
-        test=Node('comparison',
-            op='==',
-            left=Node('local', name='egg'), 
-            right=Node('local', name='ham')),
-        block=[
-            Node('standard_method_call',
-                receiver=Node('local', name='l', type='List[String]'),
-                message='sublist',
-                args=[Node('int', value=0), Node('int', value=2)])],
-        otherwise=Node('if', 
-            test=Node('comparison',
-                op='==',
-                left=Node('local', name='egg'), 
-                right=Node('local', name='ham')),
-            block=[
-                Node('standard_call', function=Node('local', name='display'), args=[Node('float', '4.2')])
-            ],
-            otherwise=[
-                Node('local', 'z', type='List[String]')
-            ])))
+    for_each_statement = textwrap.dedent('''\
+        sequence.each do |a|
+          a.sub
+        end''')
 
-    assert source == \
-'''if egg == ham
-  l[0...2]
-elsif egg == ham
-  puts 4.2
-else
-  z'''
+    for_range = textwrap.dedent('''\
+        (0...42).step(2).each do |j|
+          analyze(j)
+        end''')
+
+    for_each_with_index = [
+        textwrap.dedent('''\
+          z.each_with_index do |k, j|
+            analyze(j, k)
+          end'''),
+
+        textwrap.dedent('''\
+          z.each do |j, k|
+            analyze(j, k)
+          end''')
+    ]
+
+    for_each_in_zip = textwrap.dedent('''\
+        z.zip(zz).each do |k, l|
+          a(k, l)
+        end''')
+
+    while_statement = textwrap.dedent('''\
+        while f() >= 42
+          b = g
+        end''')
+
+    function_definition = textwrap.dedent('''\
+        def weird(z)
+          fixed = fix(z)
+          fixed
+        end''')
+
+    method_definition = textwrap.dedent('''\
+        def parse(source):
+          @ast = None
+          [source]
+        end''')
+
+    anonymous_function = [
+        '-> source { ves(source.length) }',
+
+        textwrap.dedent('''\
+            -> source do
+              puts source
+              ves(source)
+            end''')
+    ]
+
+    class_statement = [textwrap.dedent('''\
+        class A < B
+          def initialize(a)
+            @a = a
+          end
+
+          def parse
+            42
+          end
+        end''')]
+
+    this = 'self'
+
+    constructor = textwrap.dedent('''\
+        def initialize(a, b):
+          @a = a
+          @b = b
+        end''')
