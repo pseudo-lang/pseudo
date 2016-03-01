@@ -84,7 +84,7 @@ class CodeGenerator:
             base = len(re.match(r'^( *)', lines[1]).group())
             rebased = [line[base:] for line in lines]
             for line in rebased:
-                i = re.match(r'^( +)', line):
+                i = re.match(r'^( +)', line)
                 if i:
                     indent_size = len(i.group())
                     break
@@ -99,7 +99,7 @@ class CodeGenerator:
             in_action = False
             in_args = Fals
             in_string_arg = False
-            c = indent * indent_size:
+            c = indent * indent_size
             m = c
             placeholder = ''
             while m < len(line):

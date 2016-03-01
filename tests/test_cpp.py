@@ -66,7 +66,7 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
     standard_call = [
         'Console.WriteLine(42)',
         (['iostream'], 'string _result;cin << _result'),
-        (['math', 'log(ham)'),
+        (['math'], 'log(ham)'),
         (['fstream', 'string'], 'ifstream ifs("f.py");\nstring _result((istreambuf_iterator<char>(ifs)), (istreambuf_iterator<char>()));')
     ]
 

@@ -26,7 +26,7 @@ class Action(FragmentGenerator):
             expanded = [generator._single_indent * depth + generator._generate_node(node, depth) for node in content]
         else:
             expanded = generator._generate_node(content, node)
-        return getattr(generator, 'action_%s' % self.action)(node, *args, depth)
+        return getattr(generator, 'action_%s' % self.action)(node, *(args + [depth]))
 
 class Function(FragmentGenerator):
     def __init__(self, name):

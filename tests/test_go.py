@@ -68,8 +68,8 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         (['fmt'], 'fmt.Println(42)'),
         (['bufio', 'os'], dedent_with_tabs('''\
             reader := bufio.NewReader(os.Stdin)
-            reader.ReadString('\n')'''),
-        (['math', 'Math.Log(ham)'),
+            reader.ReadString('\n')''')),
+        (['math'], 'Math.Log(ham)'),
         (['io/ioutil'], 'ioutil.ReadFile("f.py")')
     ]
 
@@ -94,15 +94,15 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
             } 
             else {
                 z
-            }'''))
+            }''')
     )
+    
 
 
     for_each_statement = dedent_with_tabs('''\
         for _, a := range sequence {
           a.sub()
         }''')
-    )
 
     for_range = textwrap.dedent('''\
         for(int j = 0;j < 42; j += 2) {

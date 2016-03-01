@@ -55,8 +55,5 @@ class GoTranslator(ApiTranslator):
         'Enumerable': {
             'map':          expand_map,
             'filter':       expand_filter
-        },
-
-        'Int': {
         }
     }

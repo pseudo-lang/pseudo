@@ -1,4 +1,4 @@
-from pseudon.code_generator import CodeGenerator, indented
+from pseudon.code_generator import CodeGenerator
 
 
 class RubyGenerator(CodeGenerator):

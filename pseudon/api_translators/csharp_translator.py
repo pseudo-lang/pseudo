@@ -52,7 +52,7 @@ class CSharpTranslator(ApiTranslator):
         'List': {
             '@equivalent':  'List',
 
-            'push':         '#Insert'
+            'push':         '#Insert',
 
             'insert':       '#Insert',
 

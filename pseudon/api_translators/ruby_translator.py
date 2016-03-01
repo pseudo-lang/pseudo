@@ -62,11 +62,5 @@ class RubyTranslator(ApiTranslator):
             'map':          '#map',
             'filter':       '#select',
             'reduce':       '#reduce'
-        },
-
-        'Int': {
-            '+':            '#+',
-            '-':            '#-',
-            '/':            '#/'
         }
     }

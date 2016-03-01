@@ -27,10 +27,6 @@ class JSTranslator(ApiTranslator):
             'map':          '_.map',
             'filter':       '_.select',
             'reduce':       '_.reduce'
-        },
-
-        'Int': {
-            '+':            '#+',
         }
     }
 

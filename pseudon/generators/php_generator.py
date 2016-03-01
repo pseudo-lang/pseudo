@@ -1,8 +1,8 @@
 from pseudon.code_generator import CodeGenerator
 
 
-class PythonGenerator(CodeGenerator):
-    '''Python code generator'''
+class PHPGenerator(CodeGenerator):
+    '''PHP code generator'''
 
     def body(self, node, indent):
         if node.body:
@@ -16,24 +16,14 @@ class PythonGenerator(CodeGenerator):
         else:
             return '%spass\n' % self.offset(indent)
 
-    def safe_single(self, node, indent):
-        if "'" in node.value:
-            if '"' in node.value:
-                s = "'%s'" % node.value.replace("'", "\'")
-            else:
-                s = '"%s"' % node.value
-        else:
-            s = "'%s'" % node.value
-        return '%s%s' % (self.offset(indent), s)
-
-    def to_boolean(self, node, indent):
-        if 
+    '''similar to dynamic ones'''
     templates = {
-        'module': "%<code>",
+        'module': "<?php\n%<code>",
 
         'function': '''
-                    def %<name>(%<args:join ','>):
+                    function %<name>(%<args:join ','>) {
                         %<#body>
+                    }
                     ''',
 
         'class':  '''
@@ -42,9 +32,5 @@ class PythonGenerator(CodeGenerator):
                   ''',
 
         'name': '%<label>',
-        'int': '%<value>',
-        'float': '%<value>',
-        'string': safe_single,
-        'boolean': to_boolean,
-        'null':   'None'
+        'int': '%<value>'
     }

@@ -1,4 +1,5 @@
 '''pseudon is translating asts'''
+import pseudon.api_translators
 import pseudon.api_translators.ruby_translator
 import pseudon.api_translators.python_translator
 import pseudon.api_translators.js_translator
@@ -7,6 +8,7 @@ import pseudon.api_translators.csharp_translator
 import pseudon.api_translators.cpp_translator
 # import pseudon.api_translators.go_translator
 
+import pseudon.generators
 import pseudon.generators.ruby_generator
 import pseudon.generators.python_generator
 import pseudon.generators.js_generator
@@ -21,6 +23,7 @@ FILE_EXTENSIONS = {'js': 'js', 'javascript': 'js', 'py': 'py', 'python': 'py', '
 FULL_NAMES = {'js': 'javascript', 'javascript': 'javascript', 'py': 'python', 'python': 'python', 'rb': 'ruby', 'ruby': 'ruby', 'csharp': 'c#', 'cs': 'c#', 'java': 'java', 'cpp': 'c++'}
 NAMES = {'js': 'JS', 'javascript': 'JS', 'py': 'Python', 'python': 'Python', 'rb': 'Ruby', 'ruby': 'Ruby', 'c#': 'CSharp', 'cpp': 'Cpp'}
 
+print(pseudon.api_translators)
 API_TRANSLATORS = {
     format: getattr(
                 getattr(
