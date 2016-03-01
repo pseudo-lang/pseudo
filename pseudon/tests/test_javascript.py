@@ -77,10 +77,10 @@ def test_method_call():
     assert source == 'e.filter(42)'
 
 def test_standard_call():
-    source = gen(Node('standard_call', function=Node('local', name='display'), args=[Node('int', value=42)]))
+    source = gen(Node('standard_call', function='display', args=[Node('int', value=42)]))
     assert source == 'console.log(42)'
 
-    source = gen(Node('standard_call', function=Node('local', name='read'), args=[]))
+    source = gen(Node('standard_call', function='read', args=[]))
     assert source == 'console.read()'
 
 def test_standard_method_call():
@@ -125,19 +125,19 @@ def test_if():
                 left=Node('local', name='egg'), 
                 right=Node('local', name='ham')),
             block=[
-                Node('standard_call', function=Node('local', name='display'), args=[Node('float', '4.2')])
+                Node('standard_call', function='display', args=[Node('float', '4.2')])
             ],
             otherwise=[
                 Node('local', 'z', type='List[String]')
             ])))
 
-    assert source == \
-'''if (egg == ham) {
-    l.slice(0, 2);
-} else if (egg == ham) {
-    console.log(4.2)
-} else {
-    z
-}'''
+    assert source == textwrap.dedent('''\
+                if (egg == ham) {
+                    l.slice(0, 2);
+                } else if (egg == ham) {
+                    console.log(4.2);
+                } else {
+                    z;
+                }''')
 
 
