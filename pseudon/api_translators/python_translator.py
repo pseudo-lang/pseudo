@@ -67,6 +67,18 @@ class PythonTranslator(ApiTranslator):
         else:
             return call('filter', [func, receiver])
 
+    @staticmethod
+    def expand_slice(receiver, from_=None, to=None):
+        if from_:
+            if to:
+                return Node('_slice', receiver=receiver, from_=from_, to=to_)
+            else:
+                return Node('_slice_from', receiver=receiver, from_=from_)
+        elif to:
+            return Node('_slice_to', receiver=receiver, to=to)
+        else:
+            return Node('_slice_', receiver=receiver)
+
     api = {
         'List': {
             'push':         '#append',
@@ -74,10 +86,12 @@ class PythonTranslator(ApiTranslator):
             'length':       'len',
             'insert':       '#insert',
             'remove_at':    lambda receiver, index: Node('_del', node=Node('index', z=receiver, index=index)),
-            'remove':       'remove'
+            'remove':       'remove',
+            'slice':        expand_slice,
+            'slice_from':   expand_slice
         },
         'Dictionary': {
-            'length':       'Global.len',
+            'length':       'len',
             'keys':         '#keys',
             'values':       '#values'
         },
