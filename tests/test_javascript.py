@@ -11,7 +11,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     # make declarative style great again
 
-    # expected javascript source for each example in suite:
+    # expected javascript translation for each example in suite:
 
     module = ''
 

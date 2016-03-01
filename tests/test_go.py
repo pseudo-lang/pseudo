@@ -9,8 +9,6 @@ def gen(ast):
 def gen_with_imports(ast):
     result = generate(Node('module', main=[ast]))[:-1]
     ls = result.split('\n')
-    imports, out = [], []
-    current = 'import'
     if ls[0].startswith('import'):
         imports = [l.strip()[1:-1] for l in ls[1:ls.index(')')]]
     else:

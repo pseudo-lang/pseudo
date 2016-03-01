@@ -24,7 +24,6 @@
 - [operations](#operations)
   - [binary_op](#binary_op)
   - [unary_op](#unary_op)
-  - [standard_math](#standard_math)
   - [comparison](#comparison)
 - [control flow](#control flow)
   - [if](#if_statement)
@@ -355,3 +354,121 @@ attribute:
 value:
   type: none
 ```
+
+# calls
+
+## call
+
+a function call
+
+```python
+Call
+  function: Expression
+  args: [Expression]
+```
+
+```python
+analyze(e, 2)
+```
+
+```yaml
+type: call
+function:
+  type: local
+  name: analyze
+args:
+  - type: local
+    name: e
+  - type: int
+    value: 2
+```
+
+## method_call
+
+a call to an object's method
+
+```python
+MethodCall
+  receiver: Expression
+  message: str
+  args: [Expression]
+```
+
+```python
+h.analyze()
+```
+```yaml
+type: method_call
+receiver:
+  type: local
+  name: h
+message: analyze
+args: []
+```
+
+## standard_call
+
+a call to a standard pseudon function
+pseudon standard functions are divided in namespaces, they in a combination with standard methods (below) represent the pseudon standard library
+the standard library corresponds to the only pseudon-translateable native functions and methods(builtin in the input/target language or its standard library)
+if you want support for other functions/methods, please follow the [extend pseudon guide](docs/extend_pseudon_guide.md)
+
+the namespaces currently are `global`(no namespace/top namespace) `math`, `io`, `system`
+you can read more in [standard library reference](docs/library_reference.md)
+
+
+```python
+StandardCall
+  namespace: None / str
+  function: str
+  args: [Expression]
+```
+
+```python
+print(2)
+```
+
+```yaml
+type: standard_call
+namespace: io
+function: display
+args:
+  - type: int
+    value: 2
+```
+
+## standard_method_call
+
+a pseudon standard library method call
+the standard library corresponds to the only pseudon-translateable native functions and methods(builtin in the input/target language or its standard library)
+if you want support for other functions/methods, please follow the [extend pseudon guide](docs/extend_pseudon_guide.md)
+
+you can read more in [standard library reference](docs/library_reference.md)
+
+```
+python
+StandardMethodCall
+  receiver: Expression
+  message: str
+  args: [Expression]
+```
+
+```python
+f()[1:] # f returns a list of int
+```
+```yaml
+type: standard_method_call
+receiver:
+  type: call
+    function:
+      type: local
+      name: f
+    args: []
+    pseudon_type: List[Int]
+message: slice_from
+args:
+  - type: int
+    value: 1
+pseudon_type: List[Int]
+```
+
