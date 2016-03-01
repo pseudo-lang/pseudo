@@ -88,7 +88,8 @@ class PythonTranslator(ApiTranslator):
             'remove_at':    lambda receiver, index: Node('_del', node=Node('index', z=receiver, index=index)),
             'remove':       'remove',
             'slice':        expand_slice,
-            'slice_from':   expand_slice
+            'slice_from':   expand_slice,
+            'slice_to':     lambda receiver, to: expand_slice(receiver, None, to)
         },
         'Dictionary': {
             'length':       'len',
