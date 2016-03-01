@@ -69,7 +69,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     standard_method_call = [
         'l.length',
-        'l[0...2]'
+        "'l'[0...2]"
     ]
 
     binary_op = 'ham + egg'
@@ -81,7 +81,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     if_statement = textwrap.dedent('''\
         if egg == ham
           l[0...2]
-        elif egg == ham
+        elsif egg == ham
           4.2
         else
           z

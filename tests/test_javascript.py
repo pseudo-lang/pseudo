@@ -54,7 +54,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     standard_method_call = [
         'l.length',
-        'l.slice(0, 2)'
+        "'l'.slice(0, 2)"
     ]
 
     binary_op = 'ham + egg'

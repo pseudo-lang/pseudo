@@ -77,7 +77,7 @@ IfStatement = [
         block=[
             Node('standard_method_call',
                 receiver=Node('local', name='l', pseudon_type='List[String]'),
-                message='sublist',
+                message='slice',
                 args=[Node('int', value=0), Node('int', value=2)])],
         otherwise=Node('if', 
             test=Node('comparison',

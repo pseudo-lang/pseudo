@@ -71,7 +71,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     standard_method_call = [
         'len(l)',
-        'l[:2]'
+        "'l'[:2]"
     ]
 
     binary_op = 'ham + egg'

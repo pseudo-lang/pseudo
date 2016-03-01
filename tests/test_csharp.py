@@ -72,7 +72,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     standard_method_call = [
         'l.Count',
-        'l.Take(2)'
+        '"l".Substring(0, 2)'
     ]
 
     binary_op = 'ham + egg'
