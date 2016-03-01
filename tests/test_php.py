@@ -163,3 +163,30 @@ class TestPHP(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
           $this->a = $a;
           $this->$b = $b;
         }''')
+
+    try_statement = [
+        textwrap.dedent('''\
+            try {
+              a();
+              h(2);
+            } catch (Exception $e) {
+              echo $e;
+            }'''),
+
+        textwrap.dedent('''\
+            class NeptunError extends Exception {
+            }
+
+            try {
+              a();
+              h(2);
+            } catch (NeptunError $e) {
+              echo $e;
+            }''')
+    ]
+
+    throw_statement = textwrap.dedent('''\
+        class NeptunError extends Exception {
+        }
+
+        throw new NeptunError('no tea');''')
