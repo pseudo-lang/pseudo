@@ -140,7 +140,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     method_definition = textwrap.dedent('''\
         def parse(source)
-          @ast = None
+          @ast = nil
           [source]
         end''')
 

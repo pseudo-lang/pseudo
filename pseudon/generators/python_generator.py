@@ -183,5 +183,11 @@ class PythonGenerator(CodeGenerator):
             with %<call> as %<context>:
                 %<#block>''',
 
+        custom_exception = '''
+            class %<name>(%<.base>):
+                pass''',
+
+        custom_exception_base = ('%<base>', 'Exception'),
+
         constant = '%<constant> = %<init>'
     )

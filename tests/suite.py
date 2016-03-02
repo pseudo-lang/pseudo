@@ -254,6 +254,7 @@ Node('try_statement', block=[
     ], handlers=[
         Node('exception_handler',
             exception='Exception',
+            is_builtin=True,
             instance='e',
             block=[
                 Node('standard_call', namespace='io', function='display', args=[Node('local', name='e')])
@@ -267,18 +268,16 @@ u = Node('try_statement', block=[
     ], handlers=[
         Node('exception_handler',
             exception='NeptunError',
+            is_builtin = False,
             instance='e',
             block=[
                 Node('standard_call', namespace='io', function='display', args=[Node('local', name='e')])
             ])
     ])
 
-u2 = Node('class_definition',
+u2 = Node('custom_exception',
            name='NeptunError',
-           base='Exception',
-           constructor=None,
-           attrs=[],
-           methods=[])
+           base=None)
 
 TryStatement = [
     u0,

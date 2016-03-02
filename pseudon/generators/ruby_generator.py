@@ -140,8 +140,10 @@ class RubyGenerator(CodeGenerator):
             %<handlers:lines>end''',
 
         exception_handler = '''
-            rescue %<exception> => %<instance>
+            rescue %<.is_builtin> => %<instance>
               %<block:line_join>''',
+
+        exception_handler_is_builtin = ('StandardError', '%<exception>'),
 
         for_each_statement = '''
             %<sequence>.%<#each> do |%<iterator>|
@@ -162,6 +164,19 @@ class RubyGenerator(CodeGenerator):
         explicit_return = 'return %<value>',
 
         implicit_return = '%<value>',
+
+        custom_exception = '''
+            class %<name> < %<.base>
+            end''',
+
+        custom_exception_base = ('%<base>', 'StandardError'),
+
+        _slice          = '[%<from_>...%<to>]',
+        _slice_from     = '[%<from_>..-1]',
+
+        anonymous_function = '-> %<.params> %<anon_block>',
+
+        anonymous_function_params = function_params,
 
         block           = '%<block:line_join>'
     )

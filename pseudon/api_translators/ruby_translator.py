@@ -44,23 +44,73 @@ class RubyTranslator(ApiTranslator):
                      which helps with call nodes with normal `local` name callees
     '''
 
-    api = {
+    def expand_slice(receiver, from_=None, to=None):
+        if from_:
+            if to:
+                return Node('_slice', sequence=receiver, from_=from_, to=to)
+            else:
+                return Node('_slice_from', sequence=receiver, from_=from_)
+        elif to:
+            return Node('_slice', sequence=receiver, from_=to_node(0), to=to)
+        else:
+            return None
+
+
+    methods = {
         'List': {
+            '@equivalent':  'Array',
+
             'push':         '#push',
             'pop':          '#pop',
             'length':       '#length',
             'insert':       '#insert',
             'remove_at':    '#delete_at',
-            'remove':       '#delete'
+            'remove':       '#delete',
+            'slice':        expand_slice,
+            'slice_from':   expand_slice,
+            'slice_to':     lambda receiver, to: expand_slice(receiver, to_node(0), to)
         },
         'Dictionary': {
+            '@equivalent':  'Hash',
+
             'length':       '#length',
             'keys':         '#keys',
             'values':       '#values'
         },
         'Enumerable': {
+            '@equivalent':  'Enumerable',
+
             'map':          '#map',
-            'filter':       '#select',
-            'reduce':       '#reduce'
+            'filter':       '#select'
+        },
+        'String': {
+            '@equivalent':  'String',
+            'substr':       expand_slice,
+            'substr_from':  expand_slice,
+            'length':       '#length',
+        }
+    }
+
+    functions = {
+        'global': {
+            'wat':          lambda: Node('block', block=[]),
+            'exit':         lambda status: call('exit', [status])
+        },
+
+        'io': {
+            'display':      'puts',
+            'read':         'gets',
+            'read_file':    'File.read',
+            'write_file':   'File.write'
+        },
+
+        'http': {
+            'get':          'Requests.get',
+            'post':         'Requests.post',
+        },
+
+        'math': {
+            'ln':           'Math.log',
+            'tag':          'Math.tag'
         }
     }

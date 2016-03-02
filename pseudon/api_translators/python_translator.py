@@ -138,7 +138,7 @@ class PythonTranslator(ApiTranslator):
 
         'math': {
             'ln':           'math.log',
-            'tag':          'math.tag'
+            'tan':          'math.tan'
         }
     }
 
