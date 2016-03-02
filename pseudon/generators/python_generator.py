@@ -1,4 +1,4 @@
-from pseudon.code_generator import CodeGenerator
+from pseudon.code_generator import CodeGenerator, switch
 
 
 EXPRESSION_TYPES = ['call', 'implicit_return']
@@ -191,9 +191,35 @@ class PythonGenerator(CodeGenerator):
 
         constant = '%<constant> = %<init>',
 
-        functional = "[%<block:join ''> for %<iterator> in %<sequence>]",
+        standard_iterable_call = switch('function',
+            map = '[%<.block>]',
+            filter_map = '[%<.block> if %<test>]',
+            _otherwise = '%<function>([%<.block>])'
+        ),
 
-        functional_map_filter = '[%<block:join ''> for %<iterator> in %<sequence> if %<test>]',
+        standard_iterable_call_range = "[%<block:join ''> for %<index> in range(%<.first>%<last>%<.step>)]",
+
+        standard_iterable_call_block = ("%<block:join ''> for %<iterators> in %<sequences>", ''),
+
+        standard_iterable_call_first = ('%<first>, ', ''), 
+
+        standard_iterable_call_step = (', %<step>', ''),
+        
+        for_iterator = '%<iterator>',
+
+        for_iterator_zip = "%<iterators:join ', '>",
+
+        for_iterator_with_index = '%<index>, %<iterator>',
+
+        for_iterator_with_items = '%<key>, %<value>',
+
+        for_sequence = '%<sequence>',
+
+        for_sequence_zip = "%<sequences:join ', '>",
+
+        for_sequence_with_index = 'enumerate(%<sequence>)',
+
+        for_sequence_with_items = '%<sequence>.items()',
 
         index    = '%<sequence>[%<index>]',
 

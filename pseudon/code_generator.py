@@ -107,6 +107,11 @@ class CodeGenerator:
             raise NotImplementedError("no action for %s" % node.type)
 
     def _generate_from_template(self, template, node, depth):
+        if isinstance(template, dict):
+            template = template.get(getattr(node, template['_key']))
+            if template is None:
+                template = template['_otherwise']
+
         expanded = []
         # print('T',depth, template)
         normal_depth = depth
@@ -169,8 +174,15 @@ class CodeGenerator:
 
         if isinstance(code, tuple):
             return tuple(self._parse_template(c, label) for c in code)
-        if not isinstance(code, str):
+        elif isinstance(code, dict):
+            return {
+                k: self._parse_template(v, label) if k != '_key' else v
+                for k, v
+                in code.items()
+            }
+        elif not isinstance(code, str):
             return []
+
         lines = code.split('\n')
         parsed = []
         if len(lines) == 1:
@@ -336,4 +348,7 @@ class CodeGenerator:
 
     def offset(self, depth):
         return self._single_indent * depth
+
+def switch(key, **cases):
+    return dict(_key= key, **cases)
 
