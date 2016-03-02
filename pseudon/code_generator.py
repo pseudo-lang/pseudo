@@ -3,6 +3,9 @@ import re
 from pseudon.pseudon_tree import Node
 from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
 
+PASS_REGEX = re.compile(r'\n[ \t]*\n([ \t]*pass)')
+LINE_FIRS = re.compile(r'^( +)')
+
 class CodeGenerator:
     '''
     options:
@@ -17,6 +20,7 @@ class CodeGenerator:
         symbol = ' ' if self.use_spaces else '\t'
         self._single_indent = symbol * (self.indent)
         self._parsed_templates = {k: self._parse_template(v, k) for k, v in self.templates.items()}
+        self.a = [] # additional code, lambdas etc
         # print('[]')
         # for z in self._parsed_templates['function_definition']:
         #     if hasattr(z, 'y'):
@@ -30,13 +34,43 @@ class CodeGenerator:
         generates code based on templates and gen functions
         defined in the <x> lang generator
         '''
-        return self._generate_node(tree, 0)
+        original = self._generate_node(tree)
+        # first n lines n dependencies
+        # after that additional code
+
+        if self.a and tree.type == 'module':
+            p = original.split('\n')
+            r = '\n'.join(p[:len(tree.dependencies)] + (['\n'] if tree.dependencies else []) + self.a + ['\n'] + p[len(tree.dependencies):]) + '\n'
+        else:
+            r = original
+        return re.sub(PASS_REGEX, r'\n\1', r)
 
     def action_join(self, expanded, separator, depth):
         return separator.join(expanded)
 
     def action_each_rpad(self, expanded, value, depth):
-        return value.join(expanded) + value
+        if expanded:
+            return value.join(expanded) + value
+        else:
+            return ''
+
+    def action_each_lpad(self, expanded, value, depth):
+        if expanded:
+            return value + value.join(expanded)
+        else:
+            return ''
+
+    def action_last(self, expanded, depth):
+        if expanded:
+            return expanded[-1]
+        else:
+            return ''
+
+    def action_lines(self, expanded, depth):
+        if expanded:
+            return '\n'.join(expanded) + '\n'
+        else:
+            return ''
 
     def _generate_node(self, node, depth=0):
         # if isinstance(node, list):
@@ -53,23 +87,25 @@ class CodeGenerator:
 
     def _generate_from_template(self, template, node, depth):
         expanded = []
-        print('T',depth, template)
+        # print('T',depth, template)
+        normal_depth = depth
         for i, element in enumerate(template):
             if isinstance(element, str):
                 expanded.append(element)
             elif isinstance(element, Whitespace):
                 if element.is_offset:
-                    depth += 1
+                    depth += element.count
                     expanded.append(self.offset(depth))
                 else:
                     expanded.append(' ')
             elif isinstance(element, Newline):
                 expanded.append('\n')
+                depth = normal_depth
             elif hasattr(element, 'expand'):
                 expanded.append(element.expand(self, node, depth))
             elif callable(element):
                 expanded.append(element(self, node, depth))
-            print(depth,node.type, expanded)
+            # print(depth,node.type, expanded)
         return ''.join(expanded)
 
     def _parse_template(self, code, label):
@@ -114,7 +150,7 @@ class CodeGenerator:
             actual = rebased[1:]
 
         for line in actual:
-            j = re.match(r'^( +)', line)
+            j = LINE_FIRS.match(line)
             indent = len(j.group()) // indent_size if j else 0
             if indent:
                 parsed.append(Offset(indent))

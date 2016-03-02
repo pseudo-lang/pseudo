@@ -1,5 +1,6 @@
 import yaml
 from pseudon.pseudon_tree import Node
+Iterable = (list, tuple, set)
 
 class FragmentGenerator:
     @property
@@ -18,7 +19,7 @@ class Placeholder(FragmentGenerator):
 
     def expand(self, generator, node, depth):
         content = getattr(node, self.field)
-        if isinstance(content, list):
+        if isinstance(content, Iterable):
             if not content:
                 return ''
             expanded = [generator._generate_node(content[0], depth)]
@@ -38,7 +39,7 @@ class Action(FragmentGenerator):
 
     def expand(self, generator, node, depth):
         content = getattr(node, self.field)
-        if isinstance(content, list):
+        if isinstance(content, Iterable):
             if content:
                 expanded = [generator._generate_node(content[0], depth)]
                 expanded += [generator.offset(depth) + generator._generate_node(a, depth) for a in content[1:]]

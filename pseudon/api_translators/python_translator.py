@@ -1,6 +1,6 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator
-from pseudon.pseudon_tree import Node, method_call, call
+from pseudon.pseudon_tree import Node, method_call, call, to_node, local
 
 
 class PythonTranslator(ApiTranslator):
@@ -50,7 +50,6 @@ class PythonTranslator(ApiTranslator):
                      which helps with call nodes with normal `local` name callees
     '''
 
-    @staticmethod
     def expand_map(receiver, func):
         if func.type == 'lambda':
             return Node(
@@ -59,7 +58,6 @@ class PythonTranslator(ApiTranslator):
         else:
             return call('map', [func, receiver])
 
-    @staticmethod
     def expand_filter(receiver, func):
         if func.type == 'lambda':
             return Node(
@@ -67,20 +65,24 @@ class PythonTranslator(ApiTranslator):
         else:
             return call('filter', [func, receiver])
 
-    @staticmethod
     def expand_slice(receiver, from_=None, to=None):
         if from_:
             if to:
-                return Node('_slice', receiver=receiver, from_=from_, to=to_)
+                if from_.type == 'int' and from_.value == 0:
+                    return Node('_slice_to', sequence=receiver, to=to)
+                else:
+                    return Node('_slice', sequence=receiver, from_=from_, to=to)
             else:
-                return Node('_slice_from', receiver=receiver, from_=from_)
+                return Node('_slice_from', sequence=receiver, from_=from_)
         elif to:
-            return Node('_slice_to', receiver=receiver, to=to)
+            return Node('_slice_to', sequence=receiver, to=to)
         else:
-            return Node('_slice_', receiver=receiver)
+            return None
 
     methods = {
         'List': {
+            '@equivalent':  'list',
+
             'push':         '#append',
             'pop':          '#pop',
             'length':       'len',
@@ -92,14 +94,25 @@ class PythonTranslator(ApiTranslator):
             'slice_to':     lambda receiver, to: expand_slice(receiver, None, to)
         },
         'Dictionary': {
+            '@equivalent':  'dict',
+
             'length':       'len',
             'keys':         '#keys',
             'values':       '#values'
         },
         'Enumerable': {
+            '@equivalent':  'list',
+
             'map':          expand_map,
             'filter':       expand_filter,
             'reduce':       'functools.reduce'
+        },
+        'String': {
+            '@equivalent':  'str',
+            'substr':       expand_slice,
+            'substr_from':  expand_slice,
+            'length':       'len',
+            'substr_to':    lambda receiver, to: expand_slice(receiver, None, to),
         }
     }
 
@@ -111,12 +124,34 @@ class PythonTranslator(ApiTranslator):
 
         'io': {
             'display':      'print',
-            'read':         'input'
+            'read':         'input',
+            'read_file':    lambda filename: Node('_with', 
+                                call=call('open', [filename, to_node("'r'")]), 
+                                context='f', 
+                                block=[method_call(local('f'), 'read', [])])
+        },
+
+        'http': {
+            'get':          'requests.get',
+            'post':         'requests.post',
+        },
+
+        'math': {
+            'ln':           'math.log',
+            'tag':          'math.tag'
         }
     }
 
     dependencies = {
         'Enumerable': {
             'map':  'functools'
+        },
+
+        'http': {
+            '@all': 'requests'
+        },
+
+        'math': {
+            '@all': 'math'
         }
     }

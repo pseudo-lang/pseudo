@@ -2,15 +2,30 @@ import unittest
 import textwrap
 from pseudon import generate
 from pseudon.pseudon_tree import Node
-import pseudon.tests.suite as suite
+import suite
 
 #v
 class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    def gen(ast):
-        return generate(ast, 'python')[:-1] #without last \n
+    def gen(self, ast):
+        return generate(ast, 'python').rstrip()
 
-    def gen_with_imports(ast):
-        result = generate(Node('module', main=[ast]))[:-1]
+
+    def gen_with_imports(self, ast):
+        if isinstance(ast, Node):
+            if ast.type == 'block':
+                e = ast.block
+            else:
+                e = [ast]
+        else:
+            e = ast
+        definitions, main = [], []
+        for node in e:
+            if node.type.endswith('_definition'):
+                definitions.append(node)
+            else:
+                main.append(node)
+
+        result = generate(Node('module', definitions=definitions, main=main), 'python')
         ls = result.split('\n')
         l = 0
         imports = []
@@ -26,8 +41,6 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     # expected python translation for each example in suite:
 
-    module = ''
-
     int_ = '42'
 
     float_ = '42.42'
@@ -41,8 +54,6 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     dictionary = "{'la': 0}"
 
     list_ = "['la']"
-
-    local = 'egg'
 
     typename = 'Egg'
 
@@ -63,7 +74,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     standard_call = [
         'print(42)',
         'input()',
-        (['math'], 'math.log(ham)'),
+        (['math'], 'math.log(ham)\n'),
         textwrap.dedent('''\
             with open('f.py', 'r') as f:
                 f.read()''')
@@ -84,7 +95,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         if egg == ham:
             l[:2]
         elif egg == ham:
-            4.2
+            print(4.2)
         else:
             z''')
 
@@ -92,11 +103,11 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         for a in sequence:
             a.sub()''')
 
-    for_range = textwrap.dedent('''\
+    for_range_statement = textwrap.dedent('''\
         for j in range(0, 42, 2):
             analyze(j)''')
 
-    for_each_with_index = [
+    for_each_with_index_statement = [
         textwrap.dedent('''\
             for j, k in enumerate(z):
                 analyze(j, k)'''),
@@ -106,7 +117,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                 analyze(j, k)''')
     ]
 
-    for_each_in_zip = textwrap.dedent('''\
+    for_each_in_zip_statement = textwrap.dedent('''\
         for k, l in zip(z, zz):
             a(k, l)''')
 
@@ -127,15 +138,19 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     anonymous_function = [
         'lambda source: ves(len(source))',
 
-        textwrap.dedent('''\
-            def print_and_ves(source):
+        ([], textwrap.dedent('''\
+            def a_0(source):
                 print(source)
-                return ves(source)
+                return ves(len(source))
 
-            print_and_ves''')
+            
+
+            a_0
+
+            '''))
     ]
 
-    class_statement = [textwrap.dedent('''\
+    class_definition = [textwrap.dedent('''\
         class A(B):
             def __init__(self, a):
                 self.a = a
@@ -154,7 +169,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         textwrap.dedent('''\
             try:
                 a()
-                h(2)
+                h(-4)
             except Exception as e:
                 print(e)'''),
 
@@ -164,7 +179,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
             try:
                 a()
-                h(2)
+                h(-4)
             except NeptunError as e:
                 print(e)''')
     ]

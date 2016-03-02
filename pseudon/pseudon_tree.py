@@ -33,6 +33,8 @@ def call(function, args):
 
     return Node('call', function=to_node(function), args=args)
 
+def local(name):
+    return Node('local', name=name)
 
 def if_statement(test, block, otherwise):
     return Node('if', test=test, block=block, otherwise=otherwise)
@@ -49,8 +51,18 @@ def to_node(name):
     if isinstance(name, Node):
         return name
     elif isinstance(name, str):
-        return Node('local', name=name) if name[0].islower() else Node('typename', name=name)
+        if name[0] == '"':
+            return Node('string', value=name[1:-1])
+        elif name[0].islower():
+            return Node('local', name=name)
+        else:
+            return Node('typename', name=name)
+
     elif isinstance(name, int):
         return Node('int', value=name)
     elif isinstance(name, bool):
         return Node('boolean', value=name)
+    elif isinstance(name, float):
+        return Node('float', value=name)
+    else:
+        1/0

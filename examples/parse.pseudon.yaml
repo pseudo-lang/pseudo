@@ -25,4 +25,9 @@ main:
         args:
           - type: string
             value: 'z'
-
+  - type: standard_call
+    namespace: math
+    function: ln
+    args:
+      - type: int
+        value: 42
