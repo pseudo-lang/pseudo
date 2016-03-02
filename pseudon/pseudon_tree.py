@@ -61,7 +61,7 @@ def to_node(name):
     elif isinstance(name, int):
         return Node('int', value=name)
     elif isinstance(name, bool):
-        return Node('boolean', value=name)
+        return Node('boolean', value=str(name).lower())
     elif isinstance(name, float):
         return Node('float', value=name)
     else:

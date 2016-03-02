@@ -60,26 +60,26 @@ class PythonGenerator(CodeGenerator):
             return '%s.items()' % self._generate_node(node.sequence)
 
     templates = dict(
-        module     = "%<dependencies:each_rpad '\\n'>%<definitions:each_rpad '\\n'>%<main:each_rpad '\\n'>",
+        module     = "%<dependencies:lines>%<definitions:lines>%<main:lines>",
 
         function_definition   = '''
              def %<name>(%<params:join ','>):
                  %<#block>''',
 
-        function_definition_block = ("%<block:join '\\n'>", 'pass'),
+        function_definition_block = ("%<block:line_join>", 'pass'),
 
         method_definition =     '''
             def %<name>(self%<params:each_lpad ', '>):
                 %<#block>''',
 
-        method_definition_block = ("%<block:join '\\n'>", 'pass'),
+        method_definition_block = ('%<block:line_join>', 'pass'),
 
         class_definition = '''
               class %<name>%<.parent>:
                   %<.constructor>
                   %<.methods>''',
 
-        class_definition_methods = ("%<methods:join '\\n'>", 'pass'),
+        class_definition_methods = ("%<methods:line_join>", 'pass'),
 
         class_definition_parent = ('(%<parent>)', ''),
 
@@ -127,7 +127,7 @@ class PythonGenerator(CodeGenerator):
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
 
-        block       = "%<block:each_rpad '\\n'>",
+        block       = '%<block:lines>',
 
         this        = 'self',
 
@@ -171,10 +171,10 @@ class PythonGenerator(CodeGenerator):
                 %<#block>''',
     
         for_range_statement = '''
-            for %<index> in range(%<first>%<.last>%<.step>):
+            for %<index> in range(%<.first>%<last>%<.step>):
                 %<#block>''',
 
-        for_range_statement_last = (', %<last>', ''), 
+        for_range_statement_last = ('%<first>, ', ''), 
 
         for_range_statement_step = (', %<step>', ''),
 

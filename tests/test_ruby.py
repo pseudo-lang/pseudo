@@ -2,15 +2,30 @@ import unittest
 import textwrap
 from pseudon import generate
 from pseudon.pseudon_tree import Node
-import pseudon.tests.suite as suite
+import suite
 
 #v
 class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    def gen(ast):
-        return generate(ast, 'ruby')[:-1] #without last \n
 
-    def gen_with_imports(ast):
-        result = generate(Node('module', main=[ast]))[:-1]
+    def gen(self, ast):
+        return generate(ast, 'ruby')
+
+    def gen_with_imports(self, ast):
+        if isinstance(ast, Node):
+            if ast.type == 'block':
+                e = ast.block
+            else:
+                e = [ast]
+        else:
+            e = ast
+        definitions, main = [], []
+        for node in e:
+            if node.type.endswith('_definition'):
+                definitions.append(node)
+            else:
+                main.append(node)
+
+        result = generate(Node('module', definitions=definitions, main=main), 'ruby')
         ls = result.split('\n')
         l = 0
         imports = []
@@ -25,8 +40,6 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     # make declarative style great again
 
     # expected ruby translation for each example in suite:
-
-    module = ''
 
     int_ = '42'
 
@@ -126,7 +139,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         end''')
 
     method_definition = textwrap.dedent('''\
-        def parse(source):
+        def parse(source)
           @ast = None
           [source]
         end''')
@@ -155,7 +168,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     this = 'self'
 
     constructor = textwrap.dedent('''\
-        def initialize(a, b):
+        def initialize(a, b)
           @a = a
           @b = b
         end''')
@@ -164,7 +177,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         textwrap.dedent('''\
             begin
               a
-              h(2)
+              h(-4)
             rescue StandardError => e
               puts e
             end'''),
@@ -175,7 +188,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
             begin
               a
-              h(2)
+              h(-4)
             resuce NeptunError => e
               echo e
             end''')

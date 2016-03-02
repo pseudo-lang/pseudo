@@ -156,7 +156,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
                 h(2);
             } catch(e) {
                 console.log(e);
-            }''')
+            }'''),
 
         textwrap.dedent('''\
             function NeptunError(message) {

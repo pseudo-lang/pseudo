@@ -6,9 +6,9 @@ import suite
 
 #v
 class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
+
     def gen(self, ast):
         return generate(ast, 'python').rstrip()
-
 
     def gen_with_imports(self, ast):
         if isinstance(ast, Node):

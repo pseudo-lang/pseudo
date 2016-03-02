@@ -72,6 +72,15 @@ class CodeGenerator:
         else:
             return ''
 
+    def action_line_join(self, expanded, depth):
+        return '\n'.join(expanded)
+
+    def action_lines_before(self, expanded, depth):
+        if expanded:
+            return '\n' + '\n'.join(expanded)
+        else:
+            return ''
+
     def _generate_node(self, node, depth=0):
         # if isinstance(node, list):
         #     return self._generate_node(Node('block', block=node), depth)

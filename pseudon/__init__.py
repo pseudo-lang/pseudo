@@ -43,7 +43,5 @@ GENERATORS = {
 
 def generate(pseudon_ast, language):
     '''generate output code in the given language'''
-    # print('PARSE', pseudon_ast.y)
     translated_ast = API_TRANSLATORS[language](pseudon_ast).api_translate()
-    # print('AFTER', translated_ast.y)
     return GENERATORS[language]().generate(translated_ast)
