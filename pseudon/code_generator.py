@@ -72,6 +72,12 @@ class CodeGenerator:
         else:
             return ''
 
+    def action_semi(self, expanded, depth):
+        if expanded:
+            return ';\n'.join(expanded) + ';\n'
+        else:
+            return ''
+
     def action_line_join(self, expanded, depth):
         return '\n'.join(expanded)
 

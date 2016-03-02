@@ -9,18 +9,6 @@ class PythonGenerator(CodeGenerator):
     indent = 4
     use_spaces = True
 
-    # def body(self, node, indent):
-    #     if node.body:
-    #         return self.render_nodes(node.body, indent)
-    #     else:
-    #         return '%spass\n' % self.offset(indent)
-
-    # def methods(self, node, indent):
-    #     if node.methods:
-    #         return self.render_nodes(node.methods, indent)
-    #     else:
-    #         return '%spass\n' % self.offset(indent)
-
     def to_boolean(self, node, indent):
         if node.value == 'true':
             return 'True'
