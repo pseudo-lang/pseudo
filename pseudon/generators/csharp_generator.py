@@ -106,47 +106,60 @@ class CSharpGenerator(CodeGenerator):
         throw_statement = 'throw %<exception>(%<value>)',
 
         if_statement    = '''
-            if %<test>:
-                %<#block>
+            if (%<test>)
+            {
+                %<block:semi>
+            }
             %<.otherwise>''',
 
         if_statement_otherwise = ('%<otherwise>', ''),
 
         elseif_statement = '''
-            elif %<test>:
-                %<#block>
+            else if (%<test>)
+            {
+                %<block:semi>
+            }
             %<.otherwise>''',
 
         elseif_statement_otherwise = ('%<otherwise>', ''),
 
         else_statement = '''
-            else:
-                %<#block>''',
+            else 
+            {
+                %<block:semi>
+            }''',
 
         while_statement = '''
-            while %<test>:
-                %<#block>''',
+            while (%<test>)
+            {
+                %<block:semi>
+            }''',
 
         try_statement = '''
-            try:
-                %<#block>
+            try
+            {
+                %<block:semi>
+            }
             %<handlers:lines>''',
 
         exception_handler = '''
-            except %<exception> as %<instance>:
-                %<#block>''',
+            except %<exception> as %<instance>
+            {
+                %<block:semi>''',
 
         for_each_statement = '''
             for %<iterator> in %<sequence>:
                 %<#block>''',
     
         for_range_statement = '''
-            for %<index> in range(%<.first>%<last>%<.step>):
-                %<#block>''',
+            for (var %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>)
+            {
+                %<block:lines>
+            }''',
 
-        for_range_statement_first = ('%<first>, ', ''), 
+        for_range_statement_first = ('%<first>, ', '0'),
 
-        for_range_statement_step = (', %<step>', ''),
+        for_range_statement_step = ('%<step>', '1'),
 
         for_each_with_index_statement = '''
             for %<index>, %<iterator> in %<.sequence>:
@@ -160,10 +173,6 @@ class CSharpGenerator(CodeGenerator):
 
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
-
-        _with = '''
-            with %<call> as %<context>:
-                %<#block>''',
 
         constant = '%<constant> = %<init>',
 

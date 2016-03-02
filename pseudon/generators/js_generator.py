@@ -122,9 +122,9 @@ class JSGenerator(CodeGenerator):
                 %<block:semi>
             }''',
 
-        for_range_statement_first = ('%<first>, ', ''), 
+        for_range_statement_first = ('%<first>, ', '0'),
 
-        for_range_statement_step = ('%<step>', ''),
+        for_range_statement_step = ('%<step>', '1'),
 
         for_each_with_index_statement = '''
             _.each(%<sequence>, function(%<iterator, %<index>) {
