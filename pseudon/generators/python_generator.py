@@ -191,6 +191,10 @@ class PythonGenerator(CodeGenerator):
 
         constant = '%<constant> = %<init>',
 
+        functional = "[%<block:join ''> for %<iterator> in %<sequence>]",
+
+        functional_map_filter = '[%<block:join ''> for %<iterator> in %<sequence> if %<test>]',
+
         index    = '%<sequence>[%<index>]',
 
         index_assignment = '%<sequence>[%<index>] = %<value>'
