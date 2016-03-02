@@ -1,7 +1,7 @@
 # base generator with common functionality
 import re
 from pseudon.pseudon_tree import Node
-from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, Offset, INTERNAL_WHITESPACE
+from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
 
 class CodeGenerator:
     '''
@@ -14,30 +14,16 @@ class CodeGenerator:
         if indent: self.indent = indent 
         if use_spaces: self.use_spaces = use_spaces
         # always init them in classes
-        symbol = ' ' if use_spaces else '\t'
+        symbol = ' ' if self.use_spaces else '\t'
         self._single_indent = symbol * (self.indent)
         self._parsed_templates = {k: self._parse_template(v, k) for k, v in self.templates.items()}
-
-    def safe_single(self, node, indent):
-        if "'" in node.value:
-            if '"' in node.value:
-                s = "'%s'" % node.value.replace("'", "\\'")
-            else:
-                s = '"%s"' % node.value
-        else:
-            s = "'%s'" % node.value
-        return '%s%s' % (self.offset(indent), s)
-
-    def safe_double(self, node, indent):
-        if '"' in node.value:
-            if "'" in node.value:
-                s = '"%s"' % node.value.replace('"', '\\"')
-            else:
-                s = "'%s'" % node.value
-        else:
-            s = '"%s"' % node.value
-        return '%s%s' % (self.offset(indent), s)
-
+        # print('[]')
+        # for z in self._parsed_templates['function_definition']:
+        #     if hasattr(z, 'y'):
+        #         print(z.y)
+        #     else:
+        #         print(z)
+        # input()
 
     def generate(self, tree):
         '''
@@ -49,7 +35,12 @@ class CodeGenerator:
     def action_join(self, expanded, separator, depth):
         return separator.join(expanded)
 
+    def action_each_rpad(self, expanded, value, depth):
+        return value.join(expanded) + value
+
     def _generate_node(self, node, depth=0):
+        # if isinstance(node, list):
+        #     return self._generate_node(Node('block', block=node), depth)
         if not isinstance(node, Node):
             return node
         elif node.type in self._parsed_templates:
@@ -57,16 +48,19 @@ class CodeGenerator:
         elif hasattr(self, 'generate_%s' % node.type):
             return getattr(self, 'generate_%s' % node.type)(node, depth)
         else:
+            print(node.y, node.__dict__)
             raise NotImplementedError("no action for %s" % node.type)
 
     def _generate_from_template(self, template, node, depth):
         expanded = []
+        print('T',depth, template)
         for i, element in enumerate(template):
             if isinstance(element, str):
                 expanded.append(element)
             elif isinstance(element, Whitespace):
-                if expanded.is_offset:
-                    expanded.append(self._single_indent * depth)
+                if element.is_offset:
+                    depth += 1
+                    expanded.append(self.offset(depth))
                 else:
                     expanded.append(' ')
             elif isinstance(element, Newline):
@@ -75,7 +69,7 @@ class CodeGenerator:
                 expanded.append(element.expand(self, node, depth))
             elif callable(element):
                 expanded.append(element(self, node, depth))
-
+            print(depth,node.type, expanded)
         return ''.join(expanded)
 
     def _parse_template(self, code, label):
@@ -96,6 +90,8 @@ class CodeGenerator:
           Placeholder('code2', 1), NEWLINE]
         '''
 
+        if isinstance(code, tuple):
+            return tuple(self._parse_template(c, label) for c in code)
         if not isinstance(code, str):
             return []
         lines = code.split('\n')
@@ -166,7 +162,10 @@ class CodeGenerator:
                     m += 1
                     if in_string_arg:
                         in_string_arg = False
+                        if args[-1] == '\\n':
+                            args[-1] = '\n'
                         args[-1] += f
+
                     elif in_double_arg:
                         args[-1] += f
                     else:
@@ -177,6 +176,8 @@ class CodeGenerator:
                     m += 1
                     if in_double_arg:
                         in_double_arg = False
+                        if args[-1] == '\\n':
+                            args[-1] = '\n'
                         args[-1] += f
                     elif in_string_arg:
                         args[-1] += f
@@ -225,7 +226,31 @@ class CodeGenerator:
                         parsed[-1] += f
                     else: 
                         parsed.append(f)
+            if len(actual) > 1:
+                parsed.append(NEWLINE)
         return parsed
 
-    def _offset(self, depth):
-        return self._single_indent * (self.indent * depth)
+
+    def safe_single(self, node, indent):
+            if "'" in node.value:
+                if '"' in node.value:
+                    s = "'%s'" % node.value.replace("'", "\\'")
+                else:
+                    s = '"%s"' % node.value
+            else:
+                s = "'%s'" % node.value
+            return s
+
+    def safe_double(self, node, indent):
+        if '"' in node.value:
+            if "'" in node.value:
+                s = '"%s"' % node.value.replace('"', '\\"')
+            else:
+                s = "'%s'" % node.value
+        else:
+            s = '"%s"' % node.value
+        return s
+
+    def offset(self, depth):
+        return self._single_indent * depth
+

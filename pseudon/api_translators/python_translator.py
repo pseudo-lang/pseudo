@@ -79,7 +79,7 @@ class PythonTranslator(ApiTranslator):
         else:
             return Node('_slice_', receiver=receiver)
 
-    api = {
+    methods = {
         'List': {
             'push':         '#append',
             'pop':          '#pop',
@@ -100,6 +100,18 @@ class PythonTranslator(ApiTranslator):
             'map':          expand_map,
             'filter':       expand_filter,
             'reduce':       'functools.reduce'
+        }
+    }
+
+    functions = {
+        'global': {
+            'wat':          lambda: Node('block', block=[]),
+            'exit':         lambda status: call('exit', [status])
+        },
+
+        'io': {
+            'display':      'print',
+            'read':         'input'
         }
     }
 

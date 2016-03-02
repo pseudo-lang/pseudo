@@ -1,11 +1,10 @@
 from pseudon.tree_transformer import TreeTransformer
 from pseudon.types import *
 from pseudon.env import Env
-from pseudon.pseudon_tree import Node, to_node
-
+from pseudon.pseudon_tree import Node, to_node, method_call, call
+from pseudon.errors import PseudonStandardLibraryError, PseudonDSLError
 
 class ApiTranslator(TreeTransformer):
-    '''Api translator'''
 
     def __init__(self, tree):
         self.tree = tree
@@ -13,55 +12,56 @@ class ApiTranslator(TreeTransformer):
     def api_translate(self):
         return self.transform(self.tree)
 
-    # def tranform_class(self, node):
-    #     self.env[node.name] = node.pseudon_type
-    #     self.env[node.name].methods = {}
-    #     self.current_class = self.env[node.name]
-    #     node.methods = self.transform(node.methods)
-    #     self.current_class = None  # currently one level of classes allowed
-    #     return node
-
-    # def transform_function(self, node):
-    #     if self.current_class:
-    #         self.current_class[node.name] = node.pseudon_type
-    #     else:
-    #         self.env[node.name] = node.pseudon_type
-    #     self.env = self.env.child_env()
-    #     node.body = self.transform(node.body)
-    #     self.env = self.env.parent
-    #     return node
-
-    def transform_method_call(self, node):
+    def transform_standard_method_call(self, node):
+        print('TRANSLATE METHOD', node)
         l = node.receiver.pseudon_type
-        if l in self.api and node.message.name in self.api[l]:
-            node = self._expand_api(self.api[l][node.message.name], node.receiver, node.args, self.api[l]['@equivalent']) or node
-        return node
+        if l not in self.api:
+            raise PseudonStandardLibraryError('pseudon doesn\'t recognize %s as a standard type' % l)
+        if node.message.name not in self.api[l]:
+            raise PseudonStandardLibraryError('pseudon doesn\'t have a %s#%s method' % (l, node.message.name))            
+        return self._expand_api(self.api[l][node.message.name], node.receiver, node.args, self.api[l]['@equivalent'])
 
+    def transform_standard_call(self, node):
+        print('TRANSLATE CALL', node)
+        namespace = node.namespace or 'global'
+        if namespace not in self.functions:
+            raise PseudonStandardLibraryError('pseudon doesn\'t have a %s namespace' % namespace)
+        if node.function not in self.functions[namespace]:
+            raise PseudonStandardLibraryError('pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
+
+        return self._expand_api(self.functions[namespace][node.function], None, node.args, node.namespace)
+        
     def _expand_api(self, api, receiver, args, equivalent):
+        '''
+        the heart of api translation dsl
+
+        function or <z>(<arg>, ..) can be expanded, <z> can be just a name for a global function, or #name for method, <arg> can be %{self} for self or %{n} for nth arg
+        '''
+
         if callable(api):
-            return api(receiver, *args)
+            return api(*([receiver] + args))
         elif isinstance(api, str):
             if '(' in api:
-                call, arg_code = api[:-1].split('(')
+                call_api, arg_code = api[:-1].split('(')
                 args = [self._parse_part(a.strip(), receiver, args, equivalent) for a in arg_code.split(',')]
+                is_call = True
             else:
-                call, arg_code = api, ''
-            
-            if '#' in call:
-                a, b = call.split('#')
+                call_api, arg_code, is_call = api, '', False
+            if '#' in call_api:
+                a, b = call_api.split('#')
                 method_receiver = self._parse_part(a, receiver, args, equivalent) if a else receiver
-                return Node('method_call', receiver=method_receiver, message=b, args=args)
-            elif '.' in call:
-                a, b = call.split('.')
+                return method_call(method_receiver, b, args)
+            elif '.' in call_api:
+                a, b = call_api.split('.')
                 static_receiver = self._parse_part(a, receiver, args, equivalent) if a else receiver
-                if arg_code:
+                if is_call:
                     return Node('static_call', receiver=static_receiver, message=b, args=args)
                 else:
-                    return Node('attr', object=static_receiver)
+                    return Node('attr', object=static_receiver, attr=b)
             else:
-                return Node('call', message=call, args=[])
+                return call(call_api, args)
         else:
-            return
+            raise PseudonDSLError('%s not supported by api dsl' % str(api))
 
     def _parse_part(self, part, receiver, args, equivalent):
         if part[0] == '%': #%{v}
@@ -70,7 +70,10 @@ class ApiTranslator(TreeTransformer):
                 inside = int(inside)
                 return args[inside]
             elif inside == 'self':
-                return receiver
+                if receiver:
+                    return receiver
+                else:
+                    raise PseudonDSLError('%{self} not working for functions with api dsl')
             elif inside == 'equivalent':
                 return to_node(equivalent)
             else:

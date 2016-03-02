@@ -252,13 +252,13 @@ an attribute of an object
 
 ```python
 Attr
-  receiver: Expression
+  object: Expression
   attr: str
 ```
 
 ```yaml
 type: attr
-receiver:
+object:
   type: int
   value: 2
 attr: size

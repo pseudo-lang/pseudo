@@ -5,18 +5,8 @@ import os
 import types
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 import pseudon
-# import pseudon.type_engine
 import pseudon.loader
-# import pseudon.generators.python_generator as python_generator
-# import pseudon.generators.ruby_generator as ruby_generator
-# import pseudon.generators.swift_generator as swift_generator
-# import pseudon.generators.js_generator as js_generator
-# import pseudon.api_translators.python_translator as python_translator
-# import pseudon.api_translators.ruby_translator as ruby_translator
-# import pseudon.api_translators.swift_translator as swift_translator
-# import pseudon.api_translators.js_translator as js_translator
-# import pseudon.api_translators.java_translator as java_translator
-# import pseudon.api_translators.csharp_translator as csharp_translator
+import yaml
 
 from subprocess import call
 
@@ -71,6 +61,8 @@ if __name__ == '__main__':
 
     intermediate_code = pseudon.loader.load_input(input_filename, call)
     base, _, ext = input_filename.rpartition('.')
+    if ext == 'yaml':
+      base = base.partition('.')[0]
     if output_formats[0] == 'intermediate' or output_formats[0] == 'in':
         with open('%s.pseudon.yaml' % base, 'f') as f:
             f.write(intermediate_code)
@@ -96,7 +88,7 @@ if __name__ == '__main__':
     # else:
     for format in output_formats:
       if format in pseudon.SUPPORTED_FORMATS:
-        output_source = pseudon.generate(intermediate_code, format)
+        output_source = pseudon.generate(pseudon.loader.as_tree(intermediate_code), format)
         with open('%s.%s' % (base, pseudon.FILE_EXTENSIONS[format]), 'w') as f:
             f.write(output_source)
       else:

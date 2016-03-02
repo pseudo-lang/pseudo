@@ -1,3 +1,5 @@
+import yaml
+
 class Node:
     '''
     A pseudon tree node
@@ -5,11 +7,18 @@ class Node:
     Example: Node('local', name='l')
     '''
 
-    def __init__(self, type, fields):
+    def __init__(self, type, **fields):
         self.type = type
         self.__dict__.update(fields)
 
+    # and no, __dict__ is not good enough
+    @property
+    def y(self):
+        result = yaml.dump(self)
+        return result.replace('!python/object:pseudon.pseudon_tree.', '')
 
+def node_representer(dumper, data):
+    return dumper.represent_scalar('!%s' % type(data).__name__, )
 # helpers
 
 
@@ -19,10 +28,10 @@ def method_call(receiver, message, args):
     return Node('method_call', receiver=to_node(receiver), message=message, args=args)
 
 
-def call(callee, args):
+def call(function, args):
     '''A shortcut for a call with an identifier callee'''
 
-    return Node('call', callee=to_node(callee), args=args)
+    return Node('call', function=to_node(function), args=args)
 
 
 def if_statement(test, block, otherwise):
@@ -40,6 +49,8 @@ def to_node(name):
     if isinstance(name, Node):
         return name
     elif isinstance(name, str):
-        return Node('local', name) if name[0].islower() else Node('typename', name)
+        return Node('local', name=name) if name[0].islower() else Node('typename', name=name)
     elif isinstance(name, int):
-        return Node('int', name)
+        return Node('int', value=name)
+    elif isinstance(name, bool):
+        return Node('boolean', value=name)

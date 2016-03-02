@@ -1,0 +1,28 @@
+type: module
+definitions:
+  - type: function_definition
+    name: parse
+    params: [z]
+    pseudon_type: Int
+    block:
+      - type: local_assignment
+        local: ast
+        value: 
+          type: 'null'
+      - type: implicit_return
+        value:
+          type: local
+          name: z
+main:
+  - type: standard_call
+    namespace: io
+    function: display
+    args:
+      - type: call
+        function: 
+          type: local
+          name: parse
+        args:
+          - type: string
+            value: 'z'
+

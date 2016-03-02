@@ -1,5 +1,16 @@
+import yaml
+from pseudon.pseudon_tree import Node
+
 class FragmentGenerator:
-    pass
+    @property
+    def y(self):
+        result = yaml.dump(self)
+        return result.replace('!python/object:pseudon.code_generator_dsl.', '')
+
+    # we can't set __str__ and __repr__ because this makes yaml.dump insane :(
+    # and i like yaml.dump, I don't want it to be insane, even if that's cute
+
+
 
 class Placeholder(FragmentGenerator):
     def __init__(self, field):
@@ -8,11 +19,16 @@ class Placeholder(FragmentGenerator):
     def expand(self, generator, node, depth):
         content = getattr(node, self.field)
         if isinstance(content, list):
+            if not content:
+                return ''
             expanded = [generator._generate_node(content[0], depth)]
-            expanded += [generator._single_indent * depth + generator._generate_node(node, depth) for node in content[1:]]
+            expanded += [generator.offset(depth) + generator._generate_node(node, depth) for node in content[1:]]
             return '\n'.join(expanded) + '\n'
+        elif isinstance(content, Node):
+            return generator._generate_node(content, depth)
         else:
-            return generator._generate_node(content, node)
+            return str(content)
+
 
 class Action(FragmentGenerator):
     def __init__(self, field, action, args):
@@ -23,10 +39,14 @@ class Action(FragmentGenerator):
     def expand(self, generator, node, depth):
         content = getattr(node, self.field)
         if isinstance(content, list):
-            expanded = [generator._single_indent * depth + generator._generate_node(node, depth) for node in content]
+            if content:
+                expanded = [generator._generate_node(content[0], depth)]
+                expanded += [generator.offset(depth) + generator._generate_node(a, depth) for a in content[1:]]
+            else:
+                expanded = []
         else:
             expanded = generator._generate_node(content, node)
-        return getattr(generator, 'action_%s' % self.action)(node, *(args + [depth]))
+        return getattr(generator, 'action_%s' % self.action)(expanded, *(self.args + [depth]))
 
 class Function(FragmentGenerator):
     def __init__(self, name):
@@ -42,13 +62,13 @@ class SubTemplate(FragmentGenerator):
 
     def expand(self, generator, node, depth):
         f = getattr(node, self.field)
-        if f is None:
-            return ''
+        layout, default = generator._parsed_templates['%s_%s' % (self.a, self.field)]
+        if not f:
+            return generator._generate_from_template(
+                default,node, depth)
         else:
             return generator._generate_from_template(
-                generator._parsed_templates['%s.%s' % (self.a, self.field)],
-                f,
-                depth)
+                layout,node, depth)
 
 class Whitespace:
     def __init__(self, count=1, is_offset=True):
@@ -58,9 +78,30 @@ class Whitespace:
     def expand(self, size, single):
         return single * size
 
+    def __repr__(self):
+        if self.count == 1 and not self.is_offset:
+            return 'INTERNAL_WHITESPACE'
+        else:
+            return 'OFFSET'
+
+    __str__ = __repr__
+
+    @property
+    def y(self):
+        return repr(self)
+
 class Newline:
     def expand(self, depth):
-        return '\n' * repeat
+        return '\n'
+
+    def __repr__(self):
+        return 'NEWLINE'
+
+    __str__ = __repr__
+
+    @property
+    def y(self):
+        return repr(self)
 
 def internal_whitespace(count):
     return Whitespace(count, False)

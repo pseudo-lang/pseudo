@@ -35,7 +35,7 @@ def as_tree(intermediate_code):
 
 def convert_to_syntax_tree(tree):
     if isinstance(tree, dict) and 'type' in tree:
-        return Node(tree['type'], {(k if k != '_type' else 'pseudon_type'): convert_to_syntax_tree(v) for k, v in tree.items() if k != 'type'})
+        return Node(tree['type'], **{k: convert_to_syntax_tree(v) for k, v in tree.items() if k != 'type'})
     elif isinstance(tree, dict):
         return {k: convert_to_syntax_tree(v) for k, v in tree.items()}
     elif isinstance(tree, list):
