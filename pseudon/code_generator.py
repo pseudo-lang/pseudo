@@ -104,17 +104,24 @@ class CodeGenerator:
         expanded = []
         # print('T',depth, template)
         normal_depth = depth
+        after_newline = False
         for i, element in enumerate(template):
             if isinstance(element, str):
+                if after_newline:
+                    expanded.append(self.offset(depth))
+                    after_newline = False
                 expanded.append(element)
             elif isinstance(element, Whitespace):
                 if element.is_offset:
                     depth += element.count
                     expanded.append(self.offset(depth))
+                    after_newline = False
                 else:
                     expanded.append(' ')
             elif isinstance(element, Newline):
                 expanded.append('\n')
+                print(depth, normal_depth, expanded)
+                after_newline = True
                 depth = normal_depth
             elif hasattr(element, 'expand'):
                 expanded.append(element.expand(self, node, depth))

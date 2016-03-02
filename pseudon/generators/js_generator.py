@@ -52,88 +52,92 @@ class JSGenerator(CodeGenerator):
         attr        = "%<object>.%<attr>",
 
         local_assignment    = '%<local> = %<value>',
-        instance_assignment = 'self.%<name> = %<value>',
+        instance_assignment = 'this.%<name> = %<value>',
         attr_assignment     = '%<attr> = %<value>',
 
         binary_op   = '%<left> %<op> %<right>',
         unary_op    = '%<op>%<value>',
         comparison  = '%<left> %<op> %<right>',
 
-        _del        = 'del %<value>',
         _setitem    = '%<sequence>[%<key>] = %<value>',
-        _slice      = '%<sequence>[%<from_>:%<to>]',
-        _slice_from = '%<sequence>[%<from_>:]',
-        _slice_to   = '%<sequence>[:%<to>]',
 
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
 
-        this        = 'self',
+        this        = 'this',
 
-        instance_variable = 'self.%<name>',
+        instance_variable = 'this.%<name>',
 
         throw_statement = 'throw %<exception>(%<value>)',
 
         if_statement    = '''
-            if %<test>:
-                %<#block>
+            if (%<test>) {
+                %<block:semi>
+            }
             %<.otherwise>''',
 
         if_statement_otherwise = ('%<otherwise>', ''),
 
         elseif_statement = '''
-            elif %<test>:
-                %<#block>
+            else if (%<test>) {:
+                %<block:semi>
+            }
             %<.otherwise>''',
 
         elseif_statement_otherwise = ('%<otherwise>', ''),
 
         else_statement = '''
-            else:
-                %<#block>''',
+            else {
+                %<block:semi>
+            }''',
+            
 
         while_statement = '''
-            while %<test>:
-                %<#block>''',
+            while %<test> {
+                %<block:semi>
+            }''',
 
         try_statement = '''
-            try:
-                %<#block>
-            %<handlers:lines>''',
+            try {
+                %<block:semi>
+            }
+            except(_e) {
+              %<handlers:semi>
+              raise e;
+            }''',
 
         exception_handler = '''
-            except %<exception> as %<instance>:
-                %<#block>''',
+            if (%<instance> isinstanceof %<exception>) {
+                %<block:semi>
+            }''',
 
         for_each_statement = '''
-            for %<iterator> in %<sequence>:
-                %<#block>''',
-    
+            _.each(%<sequence>, function(%<iterator>) {
+                %<block:semi>
+            })''',
+
         for_range_statement = '''
-            for %<index> in range(%<.first>%<last>%<.step>):
-                %<#block>''',
+            for(var %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>) {
+                %<block:semi>
+            }''',
 
         for_range_statement_first = ('%<first>, ', ''), 
 
-        for_range_statement_step = (', %<step>', ''),
+        for_range_statement_step = ('%<step>', ''),
 
         for_each_with_index_statement = '''
-            for %<index>, %<iterator> in %<.sequence>:
-                %<#block>''',
-
-        for_each_with_index_statement_sequence = ('%<#index_sequence>', ''),
+            _.each(%<sequence>, function(%<iterator, %<index>) {
+                %<block:semi>
+            })''',
 
         for_each_in_zip_statement = '''
-            for %<iterators:join ', '> in zip(%<sequences:join ', '>):
-                %<#block>''',
+            _.zip(%<sequences:join ', '>).each(function(%<iterators:join ', '>) {
+                %<#block>
+            })''',
 
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
-
-        _with = '''
-            with %<call> as %<context>:
-                %<#block>''',
 
         constant = '%<constant> = %<init>',
 

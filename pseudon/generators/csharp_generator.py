@@ -13,6 +13,14 @@ class CSharpGenerator(CodeGenerator):
               self.render_type(node.pseudo_type[:-1].partition('[')[2].split(', ')[j]), 
               k) for j, k in enumerate(node.params) )
 
+    def anon_block(self, node, indent):
+        if len(node.block) == 1:
+            b = self._generate_node(node)
+            return b
+        else:
+            b = ';\n'.join(self._generate_node(node, indent + 1)) + ';\n'
+            return '{%s\n%s}' % (b, self.offset(indent))
+
     types = {
       'Int': 'int',
       'Float': 'float',
@@ -56,49 +64,42 @@ class CSharpGenerator(CodeGenerator):
 
         class_definiton_constructor = ('%<constructor>', ''),
 
-        anonymous_function = '''
-            function (%<params:join ', '>) {
-                %<block:semi>}''',
+        anonymous_function = '(%<#params>) => <#anon_block>',
 
         constructor = '''
-            function %<this>(%<params:join ', '>):
+            %<this>(%<#params>)
+            {
                 %<block:semi>}''',
 
-        dependency  = "%<name> = require('%<name>');",
+        dependency  = 'using %<name>;',
 
 
         local       = '%<name>',
         typename    = '%<name>',
         int         = '%<value>',
         float       = '%<value>',
-        string      = '%<#safe_single>',
+        string      = '%<#safe_double>',
         boolean     = '%<value>',
         null        = 'null',
 
-        list        = "[%<elements:join ', '>]",
-        dictionary  = "{%<pairs:join ', '>}",
+        list        = "new %<@pseudo_type>({%<elements:join ', '>})",
+        dictionary  = "new %<@pseudo_type>({%<pairs:join ', '>})",
         pair        = "%<first>: %<second>",
         attr        = "%<object>.%<attr>",
 
         local_assignment    = '%<local> = %<value>',
-        instance_assignment = 'self.%<name> = %<value>',
+        instance_assignment = 'this.%<name> = %<value>',
         attr_assignment     = '%<attr> = %<value>',
 
         binary_op   = '%<left> %<op> %<right>',
         unary_op    = '%<op>%<value>',
         comparison  = '%<left> %<op> %<right>',
 
-        _del        = 'del %<value>',
-        _setitem    = '%<sequence>[%<key>] = %<value>',
-        _slice      = '%<sequence>[%<from_>:%<to>]',
-        _slice_from = '%<sequence>[%<from_>:]',
-        _slice_to   = '%<sequence>[:%<to>]',
-
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
 
-        this        = 'self',
+        this        = 'this',
 
         instance_variable = 'self.%<name>',
 
