@@ -25,7 +25,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             else:
                 main.append(node)
 
-        result = generate(Node('module', definitions=definitions, main=main), 'python')
+        result = generate(Node('module', definitions=definitions, constants=[], main=main), 'python')
         ls = result.split('\n')
         l = 0
         imports = []

@@ -25,7 +25,7 @@ where <output-format> can be:
   -typed
   api
 
-<input-filename> can be either a .pseudon.yaml intemediate file or
+<input-filename> can be either a .pseudo.yaml intemediate file or
 a python / ruby / js / swift file using pseudon-translateable subset of the 
 language
 however, if it's a source file(not an intermediate one) pseudon expects
@@ -64,7 +64,7 @@ if __name__ == '__main__':
     if ext == 'yaml':
       base = base.partition('.')[0]
     if output_formats[0] == 'intermediate' or output_formats[0] == 'in':
-        with open('%s.pseudon.yaml' % base, 'f') as f:
+        with open('%s.pseudo.yaml' % base, 'f') as f:
             f.write(intermediate_code)
         exit()
 

@@ -51,30 +51,34 @@ class RubyGenerator(CodeGenerator):
             return 'each'
 
     call_args = ("(%<args:join ', '>)", '')
+    function_params = ("(%<params:join ', '>)", '')
 
     templates = dict(
         module         = '%<dependencies:lines>%<definitions:lines>%<main:lines>',
 
         function_definition = '''
-            def %<name>%<.args>
-              %<body:lines>
-            end''',
+            def %<name>%<.params>
+              %<block:lines>end''',
 
-        function_definition_args = ("(%<args:join ', '>)", ''),
+        function_definition_params = function_params,
 
         method_definition =     '''
-            def %<name>%<.args>
-              %<body:lines>
-            end''',
+            def %<name>%<.params>
+              %<block:lines>end''',
 
-        method_definition_args = ("(%<args:join ', '>", ''),
+        method_definition_params = function_params,
+
+        constructor = '''
+            def initialize%<.params>
+              %<block:lines>end''',
+
+        constructor_params = function_params,
 
         class_definition     = '''
-            class %<name>%<.parent>
-              %<methods:lines>
-            end''',
+            class %<name>%<.base>
+              %<methods:lines>end''',
 
-        class_definition_parent = ('< %<parent>', ''),
+        class_definition_base = ('< %<base>', ''),
 
         local           = '%<name>',
         typename        = '%<name>',
@@ -147,13 +151,17 @@ class RubyGenerator(CodeGenerator):
             (%<.first>...%<last>)%<.step>.each do |%<index>|
                 %<block:lines>end''',
 
-        for_range_statement_first = ('%<first>, ', '0'), 
+        for_range_statement_first = ('%<first>, ', '0'),
 
         for_range_statement_step = ('.step(%<step>)', ''),
 
         for_each_with_index_statement = '''
             %<#index_sequence> do |%<#index_iterator>|
               %<block:line_join>end''',
+
+        explicit_return = 'return %<value>',
+
+        implicit_return = '%<value>',
 
         block           = '%<block:line_join>'
     )

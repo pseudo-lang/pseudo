@@ -19,7 +19,7 @@ class ApiTranslator(TreeTransformer):
 
     def transform_standard_method_call(self, node):
         # print('TRANSLATE METHOD', node)
-        l = node.receiver.pseudon_type
+        l = node.receiver.pseudo_type
         if '[' in l:
             l = l[:l.find('[')]
         if l not in self.methods:

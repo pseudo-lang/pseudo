@@ -1,0 +1,19 @@
+constants: []
+definitions:
+- block:
+  - pseudo_type: Int
+    type: implicit_return
+    value: {pseudo_type: Int, type: int, value: 2}
+  name: s
+  params: [e]
+  pseudo_type: Function[Int, Int]
+  return_type: Int
+  type: function_definition
+dependencies: []
+main:
+- args:
+  - {pseudo_type: Int, type: int, value: 2}
+  function: {name: s, type: local}
+  pseudo_type: Int
+  type: call
+type: module

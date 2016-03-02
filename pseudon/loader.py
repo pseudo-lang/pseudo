@@ -4,8 +4,8 @@ from pseudon.pseudon_tree import Node
 
 
 COMMANDS = {
-    'py': lambda filename: ['pseudon-python', filename],
-    'rb': lambda filename: ['pseudon-ruby', filename],
+    'py': lambda filename: ['pseudo-python', filename],
+    'rb': lambda filename: ['pseudo-ruby', filename],
     'js': lambda filename: ['pseudon-javascript', filename],
     'swift': lambda filename: ['pseudon-swift', filename],
     'java': lambda filename: ['pseudon-java', filename],
@@ -22,9 +22,9 @@ def load_input(filename, call_command):
         intermediate_code = source
     else:
         call_command(COMMANDS[extension](filename))
-        with open('%s.pseudon.yaml' % base, 'r') as f:
+        with open('%s.pseudo.yaml' % base, 'r') as f:
             intermediate_code = f.read()
-        call_command(['rm', '%s.pseudon.yaml' % base])
+        call_command(['rm', '%s.pseudo.yaml' % base])
     return intermediate_code
 
 

@@ -54,13 +54,13 @@ class PythonGenerator(CodeGenerator):
             return name
 
     def index_sequence(self, node, indent):
-        if node.sequence.pseudon_type.startswith('List'):
+        if node.sequence.pseudo_type.startswith('List'):
             return 'enumerate(%s)' % self._generate_node(node.sequence)
         else:
             return '%s.items()' % self._generate_node(node.sequence)
 
     templates = dict(
-        module     = "%<dependencies:lines>%<definitions:lines>%<main:lines>",
+        module     = "%<dependencies:lines>%<constants:lines>%<definitions:lines>%<main:lines>",
 
         function_definition   = '''
              def %<name>(%<params:join ','>):
@@ -75,13 +75,13 @@ class PythonGenerator(CodeGenerator):
         method_definition_block = ('%<block:line_join>', 'pass'),
 
         class_definition = '''
-              class %<name>%<.parent>:
+              class %<name>%<.base>:
                   %<.constructor>
                   %<.methods>''',
 
         class_definition_methods = ("%<methods:line_join>", 'pass'),
 
-        class_definition_parent = ('(%<parent>)', ''),
+        class_definition_base = ('(%<base>)', ''),
 
         class_definition_constructor = ('%<constructor>', ''),
 
@@ -174,7 +174,7 @@ class PythonGenerator(CodeGenerator):
             for %<index> in range(%<.first>%<last>%<.step>):
                 %<#block>''',
 
-        for_range_statement_last = ('%<first>, ', ''), 
+        for_range_statement_first = ('%<first>, ', ''), 
 
         for_range_statement_step = (', %<step>', ''),
 
@@ -193,6 +193,7 @@ class PythonGenerator(CodeGenerator):
 
         _with = '''
             with %<call> as %<context>:
-                %<#block>'''
+                %<#block>''',
 
+        constant = '%<constant> = %<init>'
     )

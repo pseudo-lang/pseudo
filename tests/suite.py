@@ -40,7 +40,7 @@ class TestLanguage(type):
 
         return super().__new__(cls, name, bases, namespace)
 
-Module      = [Node('module', code=[])]
+Module      = [Node('module', constants=[], code=[])]
 Int         = [to_node(42)]
 Float       = [to_node(42.420)]
 String      = [to_node("'la'")]
@@ -63,13 +63,13 @@ MethodCall  = [method_call(local('e'), 'filter', [to_node(42)])]
 StandardCall = [
     Node('standard_call', namespace='io', function='display', args=[to_node(42)]),
     Node('standard_call', namespace='io', function='read', args=[]),
-    Node('standard_call', namespace='math', function='ln', args=[Node('local', name='ham', pseudon_type='Int')]),
+    Node('standard_call', namespace='math', function='ln', args=[Node('local', name='ham', pseudo_type='Int')]),
     Node('standard_call', namespace='io', function='read_file', args=[to_node("'f.py'")])
 ]
 
 StandardMethodCall = [
-    Node('standard_method_call', receiver=Node('local', name='l', pseudon_type='List[Int]'), message='length', args=[]),
-    Node('standard_method_call', receiver=Node('string', value='l', pseudon_type='String'), message='substr', args=[Node('int', value=0), Node('int', value=2)])
+    Node('standard_method_call', receiver=Node('local', name='l', pseudo_type='List[Int]'), message='length', args=[]),
+    Node('standard_method_call', receiver=Node('string', value='l', pseudo_type='String'), message='substr', args=[Node('int', value=0), Node('int', value=2)])
 ]
 
 BinaryOp = [Node('binary_op', op='+', left=Node('local', name='ham'), right=Node('local', name='egg'))]
@@ -84,7 +84,7 @@ IfStatement = [
             right=local('ham')),
         block=[
             Node('standard_method_call',
-                receiver=Node('local', name='l', pseudon_type='List[String]'),
+                receiver=Node('local', name='l', pseudo_type='List[String]'),
                 message='slice',
                 args=[to_node(0), to_node(2)])],
         otherwise=Node('elseif_statement', 
@@ -96,14 +96,14 @@ IfStatement = [
                 Node('standard_call', namespace='io', function='display', args=[to_node(4.2)])
             ],
             otherwise=Node('else_statement', block=[
-                Node('local', name='z', pseudon_type='List[String]')
+                Node('local', name='z', pseudo_type='List[String]')
             ])))
 ]
 
 
 ForEachStatement = [Node('for_each_statement', 
         iterator='a',
-        sequence=Node('local', name='sequence', pseudon_type='List[String]'),
+        sequence=Node('local', name='sequence', pseudo_type='List[String]'),
         block=[
             Node('method_call',
                 receiver=Node('local', name='a'),
@@ -116,38 +116,38 @@ ForRangeStatement = [Node('for_range_statement',
         step=Node('int', value=2),
         block=[
             Node('call',
-                function=Node('local', name='analyze', pseudon_type='Function[Int, Int]'),
-                args=[Node('local', name='j', pseudon_type='Int')])])]
+                function=Node('local', name='analyze', pseudo_type='Function[Int, Int]'),
+                args=[Node('local', name='j', pseudo_type='Int')])])]
 ForEachWithIndexStatement = [
     Node('for_each_with_index_statement', 
         index='j',
         iterator='k',
-        sequence=Node('local', name='z', pseudon_type='List[String]'),
+        sequence=Node('local', name='z', pseudo_type='List[String]'),
         block=[
             Node('call',
-                function=Node('local', name='analyze', pseudon_type='Function[Int, String, Int]'),
-                args=[Node('local', name='j', pseudon_type='Int'), Node('local', name='k', pseudon_type='String')])]),
+                function=Node('local', name='analyze', pseudo_type='Function[Int, String, Int]'),
+                args=[Node('local', name='j', pseudo_type='Int'), Node('local', name='k', pseudo_type='String')])]),
  
     Node('for_each_with_index_statement', 
         index='j',
         iterator='k',
-        sequence=Node('local', name='z', pseudon_type='Dictionary[String, Int]'),
+        sequence=Node('local', name='z', pseudo_type='Dictionary[String, Int]'),
         block=[
             Node('call',
-                function=Node('local', name='analyze', pseudon_type='Function[String, Int, Int]'),
-                args=[Node('local', name='j', pseudon_type='String'), Node('local', name='k', pseudon_type='Int')])])
+                function=Node('local', name='analyze', pseudo_type='Function[String, Int, Int]'),
+                args=[Node('local', name='j', pseudo_type='String'), Node('local', name='k', pseudo_type='Int')])])
 ]
 
 ForEachInZipStatement = [Node('for_each_in_zip_statement', 
         iterators=['k', 'l'],
         sequences=[
-            Node('local', name='z', pseudon_type='List[String]'),
-            Node('local', name='zz', pseudon_type='List[Int]')
+            Node('local', name='z', pseudo_type='List[String]'),
+            Node('local', name='zz', pseudo_type='List[Int]')
         ],
         block=[
             Node('call',
-                function=Node('local', name='a', pseudon_type='Function[String, Int, Int]'),
-                args=[Node('local', name='k', pseudon_type='String'), Node('local', name='l', pseudon_type='Int')])])]
+                function=Node('local', name='a', pseudo_type='Function[String, Int, Int]'),
+                args=[Node('local', name='k', pseudo_type='String'), Node('local', name='l', pseudo_type='Int')])])]
 WhileStatement = [Node('while_statement', 
         test=Node('comparison',
             op='>=',
@@ -160,8 +160,8 @@ WhileStatement = [Node('while_statement',
 
 FunctionDefinition = [Node('function_definition', 
         name='weird',
-        params=[Node('local', name='z', pseudon_type='Int')],
-        pseudon_type='Function[Int, Int]',
+        params=[Node('local', name='z', pseudo_type='Int')],
+        pseudo_type='Function[Int, Int]',
         return_type='Int',
         block=[
             Node('local_assignment', local='fixed', value=Node('call', function=Node('local', name='fix'), args=[Node('local', name='z')])),
@@ -170,10 +170,11 @@ FunctionDefinition = [Node('function_definition',
 
 MethodDefinition = [Node('method_definition', 
         name='parse',
-        params=[Node('local', name='source', pseudon_type='String')],
+        params=[Node('local', name='source', pseudo_type='String')],
         this=Node('typename', name='A'),
-        pseudon_type='Function[String, List[String]]',
+        pseudo_type='Function[String, List[String]]',
         return_type='List[String]',
+        is_public=True,
         block=[
             Node('instance_assignment', name='ast', value=Node('null')),
             Node('implicit_return', value=Node('list', elements=[Node('local', name='source')]))
@@ -181,69 +182,69 @@ MethodDefinition = [Node('method_definition',
 
 AnonymousFunction = [
     Node('anonymous_function', 
-        params=[Node('local', name='source', pseudon_type='String')],
-        pseudon_type='Function[String, List[String]]',
+        params=[Node('local', name='source', pseudo_type='String')],
+        pseudo_type='Function[String, List[String]]',
         return_type='List[String]',
         block=[
             Node('implicit_return', value=call(local('ves'), [
                 Node('standard_method_call', 
-                    receiver=Node('local', name='source', pseudon_type='String'),
+                    receiver=Node('local', name='source', pseudo_type='String'),
                     message='length',
                     args=[])]))
         ]),
 
     Node('anonymous_function', 
-        params=[Node('local', name='source', pseudon_type='String')],
-        pseudon_type='Function[String, List[String]]',
+        params=[Node('local', name='source', pseudo_type='String')],
+        pseudo_type='Function[String, List[String]]',
         return_type='List[String]',
         block=[
-            Node('standard_call', namespace='io', function='display', args=[Node('local', name='source', pseudon_type='String')]),
+            Node('standard_call', namespace='io', function='display', args=[Node('local', name='source', pseudo_type='String')]),
             Node('implicit_return', value=call(local('ves'), [
                 Node('standard_method_call', 
-                    receiver=Node('local', name='source', pseudon_type='String'),
+                    receiver=Node('local', name='source', pseudo_type='String'),
                     message='length',
                     args=[])]))])
 ]
 
 ClassDefinition = [Node('class_definition', 
         name='A',
-        parent='B',
+        base='B',
         constructor=Node('constructor',
-            params=[Node('local', name='a', pseudon_type='Int')],
+            params=[Node('local', name='a', pseudo_type='Int')],
             this=to_node('A'),
-            pseudon_type='Function[Int, A]',
+            pseudo_type='Function[Int, A]',
             return_type='A',
             block=[
-                Node('instance_assignment', name='a', value=Node('local', name='a', pseudon_type='Int'))
+                Node('instance_assignment', name='a', value=Node('local', name='a', pseudo_type='Int'))
             ]),
         attrs=[
-            Node('instance_variable', name='a', pseudon_type='Int')
+            Node('class_attr', name='a', is_public=True, pseudo_type='Int')
         ],
         methods=[
             Node('method_definition',
                 name='parse',
                 params=[],
                 this=to_node('A'),
-                pseudon_type='Function[Int]',
+                pseudo_type='Function[Int]',
                 return_type='Int',
                 block=[
                     Node('implicit_return', value=to_node(42))
                 ])
         ])]
 
-This = [Node('this', pseudon_type='A')]
+This = [Node('this', pseudo_type='A')]
 
 Constructor = [Node('constructor',
             params=[
-                Node('local', name='a', pseudon_type='Int'),
-                Node('local', name='b', pseudon_type='String')
+                Node('local', name='a', pseudo_type='Int'),
+                Node('local', name='b', pseudo_type='String')
             ],
             this=to_node('A'),
-            pseudon_type='Function[Int, String, A]',
+            pseudo_type='Function[Int, String, A]',
             return_type='A',
             block=[
-                Node('instance_assignment', name='a', value=Node('local', name='a', pseudon_type='Int')),
-                Node('instance_assignment', name='b', value=Node('local', name='b', pseudon_type='String'))
+                Node('instance_assignment', name='a', value=Node('local', name='a', pseudo_type='Int')),
+                Node('instance_assignment', name='b', value=Node('local', name='b', pseudo_type='String'))
             ])]
 
 u0 = \
@@ -274,7 +275,7 @@ u = Node('try_statement', block=[
 
 u2 = Node('class_definition',
            name='NeptunError',
-           parent='Exception',
+           base='Exception',
            constructor=None,
            attrs=[],
            methods=[])
