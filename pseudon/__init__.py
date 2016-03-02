@@ -17,8 +17,8 @@ import pseudon.generators.cpp_generator
 import pseudon.generators.golang_generator
 import pseudon.generators.php_generator
 
-SUPPORTED_FORMATS = {'js', 'javascript', 'py', 'python', 'rb', 'ruby', 'php', 'go', 'golang', 'cs', 'csharp'}
-FILE_EXTENSIONS = {'js': 'js', 'javascript': 'js', 'py': 'py', 'python': 'py', 'rb': 'rb', 'ruby': 'rb', 'php': 'php', 'go': 'golang', 'golang': 'golang', 'cs': 'cs', 'csharp': 'cs'}
+SUPPORTED_FORMATS = {'js', 'javascript', 'py', 'python', 'rb', 'ruby', 'php', 'go', 'golang', 'cs', 'csharp', 'cpp'}
+FILE_EXTENSIONS = {'js': 'js', 'javascript': 'js', 'py': 'py', 'python': 'py', 'rb': 'rb', 'ruby': 'rb', 'php': 'php', 'go': 'golang', 'golang': 'golang', 'cs': 'cs', 'csharp': 'cs', 'cpp': 'cpp'}
 FULL_NAMES = {'js': 'javascript', 'javascript': 'javascript', 'py': 'python', 'python': 'python', 'rb': 'ruby', 'ruby': 'ruby', 'csharp': 'c#', 'cs': 'c#', 'go': 'golang', 'golang': 'golang', 'cpp': 'c++', 'php': 'php'}
 NAMES = {'js': 'JS', 'javascript': 'JS', 'py': 'Python', 'python': 'Python', 'rb': 'Ruby', 'ruby': 'Ruby', 'c#': 'CSharp', 'cs': 'CSharp', 'csharp': 'CSharp', 'golang': 'Golang', 'go': 'Golang', 'cpp': 'Cpp', 'php': 'PHP'}
 

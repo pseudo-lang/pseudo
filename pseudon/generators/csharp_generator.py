@@ -101,7 +101,7 @@ class CSharpGenerator(CodeGenerator):
 
         this        = 'this',
 
-        instance_variable = 'self.%<name>',
+        instance_variable = 'this.%<name>',
 
         throw_statement = 'throw %<exception>(%<value>)',
 
