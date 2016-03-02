@@ -58,13 +58,18 @@ next version:
 - [ ] swift ?
 - [ ] c ?
 
+## Language support
+
+Using pseudon's DSL it's really easy to add support for a new language, so soon we'll try to support
+all most popular languages and even different versions of them (e.g. EcmaScript 6/7, Perl 5/6 Java 7 / 8)
+
 ## How to translate back?
 
 Each language is supposed to have its own pseudon generator. 
 
-* [pseudon-ruby](https://github.com/alehander42/pseudon-ruby)
 * [pseudon-python](https://github.com/alehander42/pseudon-python)
-* [pseudon-js](https://github.com/alehander42/pseudon-js)
+* [pseudon-ruby](https://github.com/alehander42/pseudon-ruby)
+* [pseudon-js](https://github.com/alehander42/pseudon-js) (ecmascript 6)
 
 ## Intermediate AST format
 
