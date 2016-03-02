@@ -43,11 +43,20 @@ or in pseudon AST format and we can translate to any of the supported target lan
 
 - [x] python
 - [x] ruby
-- [x] javascript
-- [ ] java
+
+- [ ] javascript
 - [ ] c#
 - [ ] c++
 - [ ] go
+- [ ] php
+
+next version:
+
+- [ ] java
+- [ ] perl
+
+- [ ] swift ?
+- [ ] c ?
 
 ## How to translate back?
 
