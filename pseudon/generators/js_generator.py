@@ -7,16 +7,24 @@ class JSGenerator(CodeGenerator):
     indent = 4
     use_spaces = True
 
+    def index(self, node, depth):
+        if node.index.type == 'String':
+            return '.%s' % node.value
+        else:
+            return '[%s]' % self._generate_node(node.index)
+
     templates = dict(
         module     = "%<dependencies:lines>%<constants:lines>%<definitions:lines>%<main:semi>",
 
         function_definition   = '''
-             function %<name>(%<params:join ','>) {
-                 %<block:semi>}''',
+            function %<name>(%<params:join ','>) {
+                %<block:semi>
+            }''',
 
         method_definition =     '''
             %<this>.prototype.%<name> = function(%<params:join ', '>) {
-                %<block:semi>}''',
+               %<block:semi>
+            }''',
 
         class_definition = '''
               %<.constructor>
@@ -29,11 +37,13 @@ class JSGenerator(CodeGenerator):
 
         anonymous_function = '''
             function (%<params:join ', '>) {
-                %<block:semi>}''',
+                %<block:semi>
+            }''',
 
         constructor = '''
             function %<this>(%<params:join ', '>):
-                %<block:semi>}''',
+                %<block:semi>
+            }''',
 
         dependency  = "%<name> = require('%<name>');",
 
@@ -48,7 +58,7 @@ class JSGenerator(CodeGenerator):
 
         list        = "[%<elements:join ', '>]",
         dictionary  = "{%<pairs:join ', '>}",
-        pair        = "%<first>: %<second>",
+        pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
 
         local_assignment    = '%<local> = %<value>',
@@ -138,6 +148,10 @@ class JSGenerator(CodeGenerator):
 
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
+
+        index = '%<sequence>%<#index>',
+
+        index_assignment = '%<sequence>%<#index> = %<value>',
 
         constant = '%<constant> = %<init>',
 

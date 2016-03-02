@@ -165,6 +165,10 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             self.a = a
             self.b = b''')
 
+    index = "'la'[2]"
+
+    index_assignment ="x[4] = 'String'"
+
     try_statement = [
         textwrap.dedent('''\
             try:

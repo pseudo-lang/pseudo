@@ -74,6 +74,13 @@ class CSharpTranslator(ApiTranslator):
 
     dependencies = {
         'Enumerable': {
-            '@all':     'Linq'
+            '@all':     'System.Linq'
+        },
+        'List': {
+            '@all':     'System.Collections.Generic'
+        },
+
+        'Dictionary': {
+            '@all':     'System.Collections.Generic'
         }
     }

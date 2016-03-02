@@ -247,6 +247,12 @@ Constructor = [Node('constructor',
                 Node('instance_assignment', name='b', value=Node('local', name='b', pseudo_type='String'))
             ])]
 
+Index = [Node('index', sequence=to_node("'la'"), pseudo_type='String'), index=to_node(2))]
+IndexAssignment = [Node('index_assignment', 
+    sequence=local('x', pseudo_type=['List', 'String']),
+    index=to_node(4),
+    value=to_node('"String"'))]
+
 u0 = \
 Node('try_statement', block=[
         call(local('a'), []),

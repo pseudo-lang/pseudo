@@ -94,7 +94,7 @@ class PythonGenerator(CodeGenerator):
 
         list        = "[%<elements:join ', '>]",
         dictionary  = "{%<pairs:join ', '>}",
-        pair        = "%<first>: %<second>",
+        pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
 
         local_assignment    = '%<local> = %<value>',
@@ -189,5 +189,9 @@ class PythonGenerator(CodeGenerator):
 
         custom_exception_base = ('%<base>', 'Exception'),
 
-        constant = '%<constant> = %<init>'
+        constant = '%<constant> = %<init>',
+
+        index    = '%<sequence>[%<index>]',
+
+        index_assignment = '%<sequence>[%<index>] = %<value>'
     )

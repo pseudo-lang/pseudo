@@ -40,10 +40,8 @@ class PseudonType(FragmentGenerator):
         return self.expand_type(t, generator)
 
     def expand_type(self, t, generator):
-        if '[' in t:
-            base, _, right = t[:-1].partition('[')
-            args = right.split(', ')
-            return generator.types[base].format(*args)
+        if isinstance(t, list):
+            return generator.types[t[0]].format(*[self.expand_type(base, generator) for base in t[1:]])
         elif t in generator.types:
             return generator.types[t]
         else:

@@ -87,7 +87,7 @@ class CppGenerator(CodeGenerator):
 
         list        = "new %<@pseudo_type>({%<elements:join ', '>})",
         dictionary  = "new %<@pseudo_type>({%<pairs:join ', '>})",
-        pair        = "%<first>: %<second>",
+        pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
 
         local_assignment    = '%<local> = %<value>',

@@ -10,7 +10,7 @@ class CSharpGenerator(CodeGenerator):
     def params(self, node, indent):
         return ', '.join(
             '%s %s' % (
-              self.render_type(node.pseudo_type[:-1].partition('[')[2].split(', ')[j]), 
+              self.render_type(node.pseudo_type[j + 1]), 
               k) for j, k in enumerate(node.params) )
 
     def anon_block(self, node, indent):
@@ -33,7 +33,8 @@ class CSharpGenerator(CodeGenerator):
 
     templates = dict(
         module     = '''
-          %<dependencies:lines>public class Program
+          %<dependencies:lines>
+          public class Program
           {
               %<constants:lines>
               %<definitions:lines>
@@ -82,9 +83,9 @@ class CSharpGenerator(CodeGenerator):
         boolean     = '%<value>',
         null        = 'null',
 
-        list        = "new %<@pseudo_type>({%<elements:join ', '>})",
-        dictionary  = "new %<@pseudo_type>({%<pairs:join ', '>})",
-        pair        = "%<first>: %<second>",
+        list        = "new %<@pseudo_type> {%<elements:join ', '>}",
+        dictionary  = "new %<@pseudo_type> { %<pairs:join ', '> }",
+        pair        = "{%<key>, %<value>}",
         attr        = "%<object>.%<attr>",
 
         local_assignment    = '%<local> = %<value>',
@@ -173,6 +174,10 @@ class CSharpGenerator(CodeGenerator):
 
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
+
+        index            = '%<sequence>[%<index>]',
+
+        index_assignment = '%<sequence>[%<index>] = %<value>',
 
         constant = '%<constant> = %<init>',
 

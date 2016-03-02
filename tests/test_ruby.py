@@ -173,6 +173,10 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
           @b = b
         end''')
 
+    index = "'la'[2]"
+
+    index_assignment = "x[4] = 'String'"
+
     try_statement = [
         textwrap.dedent('''\
             begin

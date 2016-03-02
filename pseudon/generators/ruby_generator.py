@@ -12,12 +12,12 @@ class RubyGenerator(CodeGenerator):
     def ruby_dict(self, node, indent):
         short_syntax = True
         result = []
-        for pair in node.pairts:
-            if short_syntax and pair.first.type == 'String' and re.match(SHORT_SYNTAX, pair):
-                result.append('%s: %s' % (pair.first.value, self._generate_node(pair.second, 0)))
+        for pair in node.pairs:
+            if short_syntax and pair.key.type == 'String' and re.match(SHORT_SYNTAX, pair):
+                result.append('%s: %s' % (pair.key.value, self._generate_node(pair.value)))
             else:
                 short_syntax = False
-                result.append('%s => %s' % (self._generate_node(pair.first, 0), self._generate_node(pair.second, 0)))
+                result.append('%s => %s' % (self._generate_node(pair.key), self._generate_node(pair.value)))
         return ', '.join(result)
 
     def index_sequence(self, node, indent):
@@ -58,25 +58,29 @@ class RubyGenerator(CodeGenerator):
 
         function_definition = '''
             def %<name>%<.params>
-              %<block:lines>end''',
+              %<block:lines>
+            end''',
 
         function_definition_params = function_params,
 
         method_definition =     '''
             def %<name>%<.params>
-              %<block:lines>end''',
+              %<block:lines>
+            end''',
 
         method_definition_params = function_params,
 
         constructor = '''
             def initialize%<.params>
-              %<block:lines>end''',
+              %<block:lines>
+            end''',
 
         constructor_params = function_params,
 
         class_definition     = '''
             class %<name>%<.base>
-              %<methods:lines>end''',
+              %<methods:lines>
+            end''',
 
         class_definition_base = ('< %<base>', ''),
 
@@ -89,7 +93,7 @@ class RubyGenerator(CodeGenerator):
         null            = 'nil',
 
         list            = "[%<elements:join ', '>]",
-        dict            = '{%<#ruby_dict>}',
+        dictionary      = '{%<#ruby_dict>}',
         attr            = '%<object>.%<attr>',
         attr_assignment = '%<attr> = %<value>',
         local_assignment = '%<local> = %<value>',
@@ -115,7 +119,8 @@ class RubyGenerator(CodeGenerator):
         if_statement    = '''
             if %<test>
               %<block:line_join>
-            %<.otherwise>end''',
+            %<.otherwise>
+            end''',
 
         if_statement_otherwise = ('%<otherwise>', ''),
 
@@ -132,12 +137,14 @@ class RubyGenerator(CodeGenerator):
 
         while_statement = '''
             while %<test>
-              %<block:line_join>''',
+              %<block:line_join>
+            end''',
 
         try_statement = '''
             begin
               %<block:line_join>
-            %<handlers:lines>end''',
+            %<handlers:lines>
+            end''',
 
         exception_handler = '''
             rescue %<.is_builtin> => %<instance>
@@ -147,11 +154,13 @@ class RubyGenerator(CodeGenerator):
 
         for_each_statement = '''
             %<sequence>.%<#each> do |%<iterator>|
-              %<block:line_join>end''',
+              %<block:line_join>
+            end''',
 
         for_range_statement = '''
             (%<.first>...%<last>)%<.step>.each do |%<index>|
-                %<block:lines>end''',
+              %<block:lines>
+            end''',
 
         for_range_statement_first = ('%<first>, ', '0'),
 
@@ -159,7 +168,8 @@ class RubyGenerator(CodeGenerator):
 
         for_each_with_index_statement = '''
             %<#index_sequence> do |%<#index_iterator>|
-              %<block:line_join>end''',
+              %<block:line_join>
+            end''',
 
         explicit_return = 'return %<value>',
 
@@ -177,6 +187,10 @@ class RubyGenerator(CodeGenerator):
         anonymous_function = '-> %<.params> %<anon_block>',
 
         anonymous_function_params = function_params,
+
+        index           = '%<sequence>[%<index>]',
+
+        index_assignment = '%<sequence>[%<index>] = %<value>',
 
         block           = '%<block:line_join>'
     )

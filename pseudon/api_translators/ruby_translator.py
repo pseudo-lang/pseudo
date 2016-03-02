@@ -114,3 +114,9 @@ class RubyTranslator(ApiTranslator):
             'tag':          'Math.tag'
         }
     }
+
+    dependencies = {
+        'http':     {
+            '@all':     'Requests'
+        }
+    }

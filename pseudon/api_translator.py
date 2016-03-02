@@ -12,16 +12,26 @@ class ApiTranslator(TreeTransformer):
 
     def api_translate(self):
         self.standard_dependencies = set()
+        self.used_list = False
+        self.used_dictionary = False
         transformed = self.transform(self.tree)
+
+        l = self.dependencies.get('List', {}).get('@all')
+        if self.used_list and l:
+            self.standard_dependencies.add(l)
+        m = self.dependencies.get('Dictionary', {}).get('@all')
+        if self.used_dictionary and m:
+            self.standard_dependencies.add(m)
         transformed.dependencies = [
             Node('dependency', name=name) for name in self.standard_dependencies]
+
         return transformed
 
     def transform_standard_method_call(self, node):
         # print('TRANSLATE METHOD', node)
         l = node.receiver.pseudo_type
-        if '[' in l:
-            l = l[:l.find('[')]
+        if isinstance(l, list):
+            l = l[0]
         if l not in self.methods:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t recognize %s as a standard type' % l)
@@ -29,9 +39,17 @@ class ApiTranslator(TreeTransformer):
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s#%s method' % (l, node.message))
 
-        self.update_dependencies(l, node.message)
+        self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
         return self._expand_api(self.methods[l][node.message], node.receiver, node.args, self.methods[l]['@equivalent'])
+    
+    def transform_list(self, node):
+        self.used_list = True
+        return node
 
+    def transform_dictionary(self, node):
+        self.used_dictionary = True
+        return node
+    
     def transform_standard_call(self, node):
         # print('TRANSLATE CALL', node)
         namespace = node.namespace or 'global'
@@ -42,10 +60,22 @@ class ApiTranslator(TreeTransformer):
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
 
-        self.update_dependencies(namespace, node.function)
+        self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
         return self._expand_api(self.functions[namespace][node.function], None, node.args, node.namespace)
 
-    def update_dependencies(self, namespace, function):
+    def update_dependencies(self, namespace, function, arg_types):
+        if namespace == 'List':
+            self.used_list = True
+        elif namespace == 'Dictionary':
+            self.used_dictionary = True
+
+        for a in arg_types:
+            if isinstance(a, list):
+                if a[0] == 'List':
+                    self.used_list = True
+                elif a[0] == 'Dictionary':
+                    self.used_dictionary = True
+
         if namespace not in self.dependencies:
             return
 
@@ -57,6 +87,7 @@ class ApiTranslator(TreeTransformer):
                         self.standard_dependencies.add(f)
                 else:
                     self.standard_dependencies.add(e1)
+
 
     def _expand_api(self, api, receiver, args, equivalent):
         '''

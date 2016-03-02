@@ -1,0 +1,34 @@
+constants: []
+definitions:
+- block:
+  - pseudo_type: Int
+    type: implicit_return
+    value:
+      index: {pseudo_type: Int, type: int, value: 2}
+      pseudo_type: Int
+      sequence:
+        name: h
+        pseudo_type: [Dictionary, Int, Int]
+        type: local
+      type: index
+  name: f
+  params: [h]
+  pseudo_type:
+  - Function
+  - [Dictionary, Int, Int]
+  - Int
+  return_type: Int
+  type: function_definition
+dependencies: []
+main:
+- args:
+  - pairs:
+    - key: {pseudo_type: Int, type: int, value: 2}
+      type: pair
+      value: {pseudo_type: Int, type: int, value: 2}
+    pseudo_type: [Dictionary, Int, Int]
+    type: dictionary
+  function: {name: f, type: local}
+  pseudo_type: Int
+  type: call
+type: module

@@ -22,19 +22,19 @@ def node_representer(dumper, data):
 # helpers
 
 
-def method_call(receiver, message, args):
+def method_call(receiver, message, args, pseudo_type=None):
     '''A shortcut for a method call, expands a str receiver to a identifier'''
 
-    return Node('method_call', receiver=to_node(receiver), message=message, args=args)
+    return Node('method_call', receiver=to_node(receiver), message=message, args=args, pseudo_type=pseudo_type)
 
 
-def call(function, args):
+def call(function, args, pseudo_type=None):
     '''A shortcut for a call with an identifier callee'''
 
-    return Node('call', function=to_node(function), args=args)
+    return Node('call', function=to_node(function), args=args, pseudo_type=pseudo_type)
 
-def local(name):
-    return Node('local', name=name)
+def local(name, pseudo_type=None):
+    return Node('local', name=name, pseudo_type=pseudo_type)
 
 def if_statement(test, block, otherwise):
     return Node('if', test=test, block=block, otherwise=otherwise)
@@ -52,17 +52,17 @@ def to_node(name):
         return name
     elif isinstance(name, str):
         if name[0] == '"':
-            return Node('string', value=name[1:-1])
+            return Node('string', value=name[1:-1], pseudo_type='String')
         elif name[0].islower():
             return Node('local', name=name)
         else:
             return Node('typename', name=name)
 
     elif isinstance(name, int):
-        return Node('int', value=name)
+        return Node('int', value=name, pseudo_type='Int')
     elif isinstance(name, bool):
-        return Node('boolean', value=str(name).lower())
+        return Node('boolean', value=str(name).lower(), pseudo_type='Boolean')
     elif isinstance(name, float):
-        return Node('float', value=name)
+        return Node('float', value=name, pseudo_type='Float')
     else:
         1/0

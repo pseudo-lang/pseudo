@@ -14,7 +14,7 @@ class CodeGenerator:
     '''
 
     def __init__(self, indent=None, use_spaces=None):
-        if indent: self.indent = indent 
+        if indent: self.indent = indent
         if use_spaces: self.use_spaces = use_spaces
         # always init them in classes
         symbol = ' ' if self.use_spaces else '\t'
@@ -72,9 +72,15 @@ class CodeGenerator:
         else:
             return ''
 
-    def action_semi(self, expanded, depth):
+    def action_semi_lines(self, expanded, depth):
         if expanded:
             return ';\n'.join(expanded) + ';\n'
+        else:
+            return ''
+
+    def action_semi(self, expanded, depth):
+        if expanded:
+            return ';\n'.join(expanded) + ';'
         else:
             return ''
 
@@ -108,21 +114,34 @@ class CodeGenerator:
         for i, element in enumerate(template):
             if isinstance(element, str):
                 if after_newline:
-                    expanded.append(self.offset(depth))
+                    if depth:
+                        expanded.append(self.offset(depth))
                     after_newline = False
                 expanded.append(element)
             elif isinstance(element, Whitespace):
                 if element.is_offset:
                     depth += element.count
-                    expanded.append(self.offset(depth))
+                    if depth:
+                        expanded.append(self.offset(depth))
                     after_newline = False
                 else:
                     expanded.append(' ')
             elif isinstance(element, Newline):
-                expanded.append('\n')
-                print(depth, normal_depth, expanded)
+                print(' ',template[i-2] if i >= 2 else '', expanded[-3:])
+                if expanded == ['', '\n'] or expanded == ['']:
+                    expanded = []
+                elif len(expanded) >= 2 and not expanded[-1] and (i >= 2 and isinstance(template[i - 2], Whitespace) and template[i - 2].is_offset):
+                    # unrealised fragment, we should swallow that line
+                    # sorry sov
+                    expanded.pop()
+                    expanded.pop()
+                    print(expanded[-3:])
+                elif expanded:
+                    expanded.append('\n')
+                    print('l ', expanded[-3:])
                 after_newline = True
                 depth = normal_depth
+
             elif hasattr(element, 'expand'):
                 expanded.append(element.expand(self, node, depth))
             elif callable(element):
@@ -137,12 +156,12 @@ class CodeGenerator:
         Takes a template a returns a list of sub-templates, taking in account
         the indentation of the original code based on the first line indentation(0)
         Special treatment of whitespace: returns special Offset and INTERNAL_WHITESPACE, so the generation can be configurable
-        It auto detects the indentation width used, as the indent of the first indented line 
+        It auto detects the indentation width used, as the indent of the first indented line
         >>> indented("""
           def %<code>
-            e = 
+            e =
             %<code2>
-          """) 
+          """)
         ['def', INTERNAL_WHITESPACE, Placeholder('code', 0), NEWLINE,
           Offset(1),'e', INTERNAL_WHITESPACE, '=', NEWLINE,
           Placeholder('code2', 1), NEWLINE]
@@ -229,7 +248,7 @@ class CodeGenerator:
                         args[-1] += f
                     else:
                         in_string_arg = True
-                    
+
                     continue
                 elif f == '"' and in_args:
                     m += 1
@@ -285,7 +304,7 @@ class CodeGenerator:
                     m += 1
                     if parsed and isinstance(parsed[-1], str):
                         parsed[-1] += f
-                    else: 
+                    else:
                         parsed.append(f)
             if len(actual) > 1:
                 parsed.append(NEWLINE)
