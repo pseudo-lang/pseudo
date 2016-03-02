@@ -1,7 +1,7 @@
 # base generator with common functionality
 import re
 from pseudon.pseudon_tree import Node
-from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
+from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, PseudonType, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
 
 PASS_REGEX = re.compile(r'\n[ \t]*\n([ \t]*pass)')
 LINE_FIRS = re.compile(r'^( +)')
@@ -174,6 +174,7 @@ class CodeGenerator:
             in_args = False
             in_string_arg = False
             in_double_arg = False
+            in_type = False
             c = int(indent * indent_size)
             m = c
             placeholder = ''
@@ -253,6 +254,8 @@ class CodeGenerator:
                     q = None
                     if placeholder[0] == '#':
                         q = Function(placeholder[1:])
+                    elif placeholder[0] == '@':
+                        q = PseudonType(placeholder[1:])
                     elif placeholder[0] == '.':
                         q = SubTemplate(label, placeholder[1:])
                     else:
@@ -301,6 +304,9 @@ class CodeGenerator:
         else:
             s = '"%s"' % node.value
         return s
+
+    def render_type(self, type):
+        return PseudonType(type).expand_type(type, self)
 
     def offset(self, depth):
         return self._single_indent * depth

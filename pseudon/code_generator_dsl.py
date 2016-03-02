@@ -31,6 +31,24 @@ class Placeholder(FragmentGenerator):
             return str(content)
 
 
+class PseudonType(FragmentGenerator):
+    def __init__(self, type):
+        self.type = type
+    
+    def expand(self, generator, node, depth):
+        t = getattr(node, self.type)
+        return self.expand_type(t, generator)
+
+    def expand_type(self, t, generator):
+        if '[' in t:
+            base, _, right = t[:-1].partition('[')
+            args = right.split(', ')
+            return generator.types[base].format(*args)
+        elif t in generator.types:
+            return generator.types[t]
+        else:
+            return t
+
 class Action(FragmentGenerator):
     def __init__(self, field, action, args):
         self.field = field
