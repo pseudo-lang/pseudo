@@ -1,12 +1,10 @@
-def fib(n):
-    if n < 2:
-    return 1
-else:
-    return fib(n - 1) * fib(n - 2)
+class Shape:
+    def __init__(self, a):
+        self.a = a
+
+    def area(self):
+        return self.a * self.a
 
 
-
-f = 4
-while f == 2:
-    fib(4)
-
+s = Shape(0)
+s.area()

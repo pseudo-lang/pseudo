@@ -1,78 +1,65 @@
 constants: []
 definitions:
-- block:
+- attrs: []
+  base: null
+  constructor:
+    block:
+    - attr:
+        attr: a
+        object: {name: self, pseudo_type: Shape, type: local}
+        pseudo_type: Int
+        type: attr
+      pseudo_type: Void
+      type: attr_assignment
+      value: {name: a, pseudo_type: Int, type: local}
+    name: __init__
+    params: [a]
+    pseudo_type: [Function, Int, Shape]
+    return_type: null
+    this: {name: Shape, type: typename}
+    type: constructor
+  methods:
   - block:
     - pseudo_type: Int
       type: implicit_return
-      value: {pseudo_type: Int, type: int, value: 1}
-    otherwise:
-      block:
-      - pseudo_type: Int
-        type: implicit_return
-        value:
-          left:
-            args:
-            - left: {name: n, pseudo_type: Int, type: local}
-              op: '-'
-              pseudo_type: Int
-              right: {pseudo_type: Int, type: int, value: 1}
-              type: binary_op
-            function:
-              name: fib
-              pseudo_type: [Function, Int, Int]
-              type: local
-            pseudo_type: Int
-            type: call
-          op: '*'
+      value:
+        left:
+          attr: a
+          object: {name: self, pseudo_type: Shape, type: local}
           pseudo_type: Int
-          right:
-            args:
-            - left: {name: n, pseudo_type: Int, type: local}
-              op: '-'
-              pseudo_type: Int
-              right: {pseudo_type: Int, type: int, value: 2}
-              type: binary_op
-            function:
-              name: fib
-              pseudo_type: [Function, Int, Int]
-              type: local
-            pseudo_type: Int
-            type: call
-          type: binary_op
-      pseudo_type: Void
-      type: else_statement
-    pseudo_type: Void
-    test:
-      left: {name: n, pseudo_type: Int, type: local}
-      op: <
-      pseudo_type: Boolean
-      right: {pseudo_type: Int, type: int, value: 2}
-      type: binary_op
-    type: if_statement
-  name: fib
-  params: [n]
-  pseudo_type: [Function, Int, Int]
-  return_type: Int
-  type: function_definition
+          type: attr
+        op: '*'
+        pseudo_type: Int
+        right:
+          attr: a
+          object: {name: self, pseudo_type: Shape, type: local}
+          pseudo_type: Int
+          type: attr
+        type: binary_op
+    is_public: true
+    name: area
+    params: []
+    pseudo_type: [Function, Int]
+    return_type: Int
+    this: {name: Shape, type: typename}
+    type: method_definition
+  name: Shape
+  type: class_definition
 dependencies: []
 main:
-- local: f
+- local: s
   pseudo_type: Void
   type: local_assignment
-  value: {pseudo_type: Int, type: int, value: 4}
-  value_type: Int
-- block:
-  - args:
-    - {pseudo_type: Int, type: int, value: 4}
-    function: {name: fib, type: local}
-    pseudo_type: Int
-    type: call
-  pseudo_type: Void
-  test:
-    left: {name: f, pseudo_type: Int, type: local}
-    op: ==
-    pseudo_type: Boolean
-    right: {pseudo_type: Int, type: int, value: 2}
-    type: binary_op
-  type: while_statement
+  value:
+    class: {name: Shape, type: typename}
+    params:
+    - {pseudo_type: Int, type: int, value: 0}
+    pseudo_type: Shape
+    type: new_instance
+  value_type: Shape
+- args: []
+  message: area
+  pseudo_type: Int
+  receiver: {name: s, pseudo_type: Shape, type: local}
+  type: method_call
 type: module
