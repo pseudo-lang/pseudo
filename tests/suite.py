@@ -47,7 +47,7 @@ String      = [to_node("'la'")]
 Boolean     = [to_node(True)]
 Null        = [Node('null')]
 Dictionary  = [Node('dictionary', pairs=[
-                Node('pair', first=to_node("'la'"), second=to_node(0))])]
+                Node('pair', key=to_node("'la'"), value=to_node(0))])]
 List        = [Node('list', elements=[to_node("'la'")])]
 Local       = [local('egg')]
 Typename    = [to_node('Egg')]

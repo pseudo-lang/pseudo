@@ -33,7 +33,7 @@ class PythonGenerator(CodeGenerator):
 
     def block(self, node, indent):
         if node.block:
-            e = self._generate_node(node.block[0], indent)
+            e = self._generate_node(node.block[0])
             other = [self.offset(indent) + self._generate_node(n, indent) for n in node.block[1:]]
             return '\n'.join([e] + other)
         else:

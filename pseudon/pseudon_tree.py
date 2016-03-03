@@ -66,3 +66,9 @@ def to_node(name):
         return Node('float', value=name, pseudo_type='Float')
     else:
         1/0
+
+def assignment_updated(assignment, **kwargs):
+    ass = Node(assignment.type)
+    ass.__dict__.update(assignment.__dict__)
+    ass.__dict__.update(kwargs)
+    return ass

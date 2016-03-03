@@ -12,67 +12,91 @@ class ApiTranslator(TreeTransformer):
 
     def api_translate(self):
         self.standard_dependencies = set()
-        self.used_list = False
-        self.used_dictionary = False
+        self.used = set()
+        self.weird_assignments = []
         transformed = self.transform(self.tree)
 
-        l = self.dependencies.get('List', {}).get('@all')
-        if self.used_list and l:
-            self.standard_dependencies.add(l)
-        m = self.dependencies.get('Dictionary', {}).get('@all')
-        if self.used_dictionary and m:
-            self.standard_dependencies.add(m)
+        for l in self.used:
+            m = self.dependencies.get(l, {}).get('@all')
+            if self.used[l] and m:
+                self.standard_dependencies.add(m)
+        
         transformed.dependencies = [
             Node('dependency', name=name) for name in self.standard_dependencies]
 
         return transformed
 
-    def transform_standard_method_call(self, node):
+    def after(self, node, in_block, assignment):
+        if node and node.type in {'list', 'dictionary', 'set', 'tuple', 'regexp', 'array'}:
+            self.used.add(node.type.title())
+        elif node and node.type[-10:] == 'assignment' and node.value_type in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
+           self.used.add(node.value_type)
+
+        if in_block:            
+            
+            results = [ass for ass in self.weird_assignments]
+            if node.type[-10:] != 'assignment' or node.value:
+                results.append(node)
+            self.weird_assignments = []
+            
+            return results
+        else:
+            return node
+
+
+    def transform_standard_method_call(self, node, in_block=False, assignment=None):
         # print('TRANSLATE METHOD', node)
         l = node.receiver.pseudo_type
         if isinstance(l, list):
             l = l[0]
-        if l not in self.methods:
+
+        node.args = [self.transform(arg) for arg in node.args]
+        node.receiver = self.transform(node.receiver)
+        
+        if 'standard_method_call' in self.weird and l in self.weird['standard_method_call'] and node.message in self.weird['standard_method_call'][l]:
+            return self.weird_call('standard_method_call', l, node.message, node, assignment)
+
+        elif l not in self.methods:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t recognize %s as a standard type' % l)
-        if node.message not in self.methods[l]:
+        elif node.message not in self.methods[l]:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s#%s method' % (l, node.message))
 
-        # for a in node.args:
-        #     print(a.__dict__);input()
-        node.args = [self.transform(arg) for arg in node.args]
-        # for a in node.args:
-        #     print(a.__dict__);input()
-        # print('fu', node.receiver.__dict__);input()        
-        node.receiver = self.transform(node.receiver)
-        # print('fu', node.receiver.__dict__);input()        
         self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
         return self._expand_api(self.methods[l][node.message], node.receiver, node.args, self.methods[l]['@equivalent'])
-    
-    def transform_list(self, node):
-        self.used_list = True
-        return node
 
-    def transform_dictionary(self, node):
-        self.used_dictionary = True
-        return node
-    
-    def transform_standard_call(self, node):
+    def weird_call(self, node_type, namespace, function, node, assignment):
+        w = self.weird[node_type][namespace][function]
+        if assignment:
+            ass = assignment
+        else:
+            ass = Node('local_assignment', 
+                pseudo_type='Void', value_type=node.pseudo_type[-1], local=w['_temp_name'])
+        if node_type == 'standad_method_call':
+            ass = w['_translate'](ass, namespace, function, node.receiver, node.args)
+        else:
+            ass = w['_translate'](ass, namespace, function, node.args)
+        if assignment is None:
+            self.weird_assignments.append(ass)
+            return local(w['_temp_name'])
+        else:
+            self.weird_assignments.append(ass)
+            return []
+
+    def transform_standard_call(self, node, in_block=False, assignment=None):
         # print('TRANSLATE CALL', node)
         namespace = node.namespace or 'global'
-        if namespace not in self.functions:
+        node.args = [self.transform(arg) for arg in node.args]
+        if 'standard_call' in self.weird and namespace in self.weird['standard_call'] and node.function in self.weird['standard_call'][namespace]:
+            return self.weird_call('standard_call', node.namespace, node.function, node, assignment)
+        elif namespace not in self.functions:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s namespace' % namespace)
-        if node.function not in self.functions[namespace]:
+        elif node.function not in self.functions[namespace]:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
 
-        # for a in node.args:
-        #     print(a.__dict__);input()
-        node.args = [self.transform(arg) for arg in node.args]
-        # for a in node.args:
-        #     print(a.__dict__);input()
         self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
         return self._expand_api(self.functions[namespace][node.function], None, node.args, node.namespace)
 

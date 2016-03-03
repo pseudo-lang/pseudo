@@ -1,6 +1,6 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator
-from pseudon.pseudon_tree import Node, method_call, call, to_node, local
+from pseudon.pseudon_tree import Node, method_call, call, to_node, local, assignment_updated
 
 
 class PythonTranslator(ApiTranslator):
@@ -79,6 +79,20 @@ class PythonTranslator(ApiTranslator):
         else:
             return None
 
+    def read_file(assignment, namespace, function, args):
+        return Node('_with', call=call('open', [args[0], to_node("'r'")], pseudo_type='File'), 
+                        context='_f', 
+                        block=[
+                            assignment_updated(
+                                assignment, 
+                                value=method_call(
+                                    local('_f'), 
+                                    'read', 
+                                    [], 
+                                    pseudo_type='String'))],
+                        pseudo_type='Void',
+                        value_type='String')
+
     methods = {
         'List': {
             '@equivalent':  'list',
@@ -88,11 +102,14 @@ class PythonTranslator(ApiTranslator):
             'length':       'len',
             'insert':       '#insert',
             'remove_at':    lambda receiver, index: Node('_del', node=Node('index', z=receiver, index=index)),
-            'remove':       'remove',
+            'remove':       '#remove',
             'slice':        expand_slice,
             'slice_from':   expand_slice,
             'slice_to':     lambda receiver, to: expand_slice(receiver, None, to),
-            'repeat':       lambda receiver, count: Node('binary_op', op='*', left=receiver, right=count)
+            'repeat':       lambda receiver, count: Node('binary_op', op='*', left=receiver, right=count),
+            'find':         '#find',
+            'join':         lambda receiver, delimiter: method_call(delimiter, 'join', [receiver])
+
         },
         'Dictionary': {
             '@equivalent':  'dict',
@@ -114,7 +131,11 @@ class PythonTranslator(ApiTranslator):
             'substr_from':  expand_slice,
             'length':       'len',
             'substr_to':    lambda receiver, to: expand_slice(receiver, None, to),
-            'find':         'find'            
+            'find':         '#find',
+            'count':        '#count',
+            'partition':    '#partition',
+            'split':        '#split',
+            'trim':         '#strip'
         },
         'Set': {
             '@equivalent':  'set',
@@ -128,11 +149,11 @@ class PythonTranslator(ApiTranslator):
         },
         'Regexp': {
             '@equivalent':  '_sre.SRE_Pattern',
-            'match':        'match'
+            'match':        '#match'
         },
         'RegexpMatch': {
             '@equivalent':  '_sre.SRE_Match',
-            'group':        'group'
+            'group':        '#group'
         }
     }
 
@@ -145,10 +166,11 @@ class PythonTranslator(ApiTranslator):
         'io': {
             'display':      'print',
             'read':         'input',
-            'read_file':    lambda filename: Node('_with', 
-                                call=call('open', [filename, to_node("'r'")]), 
-                                context='f', 
-                                block=[method_call(local('f'), 'read', [])])
+            'read_file':    'open',
+            'write_file':    lambda filename, content: _Node('_with', 
+                                call=call('open', [filename, to_node("'w'")]), 
+                                context='_f', 
+                                block=[method_call(local('_f'), 'write', [content])])
         },
 
         'http': {
@@ -163,6 +185,22 @@ class PythonTranslator(ApiTranslator):
 
         'regexp': {
             'compile':      're.compile'
+        }
+    }
+
+    '''
+    weird has tree matches with handlers 
+    that can expand into the nearest block, not only in-place
+    '''
+
+    weird = {
+        'standard_call': {
+            'io': {
+                'read_file': {
+                    '_translate':   read_file,
+                    '_temp_name':   '_file_contents'
+                }
+            }
         }
     }
 
