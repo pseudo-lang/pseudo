@@ -1,8 +1,24 @@
 from pseudon.code_generator import CodeGenerator, switch
 
 
-EXPRESSION_TYPES = ['call', 'implicit_return']
+EXPRESSION_TYPES = ['call', 'implicit_return', 'method_call', 'explicit_return']
 
+PRIORITIES = {
+    '**':   11,
+    '/':    10,
+    '*':    10,
+    '+':    9,
+    '-':    9,
+    '>':    8,
+    '<':    8,
+    '>=':   8,
+    '<=':   8,
+    '==':   8,
+    'and':  7,
+    'or':   6,
+}
+
+    
 class PythonGenerator(CodeGenerator):
     '''Python code generator'''
 
@@ -52,6 +68,21 @@ class PythonGenerator(CodeGenerator):
             return 'enumerate(%s)' % self._generate_node(node.sequence)
         else:
             return '%s.items()' % self._generate_node(node.sequence)
+
+    def binary_left(self, node, indent):
+        return self.binary_side(node.left, node.op)
+
+    def binary_right(self, node, indent):
+        return self.binary_side(node.right, node.op)
+
+    def binary_side(self, field, op):
+        base = self._generate_node(field)
+        print(field.pseudo_type)
+        if (field.type == 'binary_op' or field.pseudo_type == 'comparison') and\
+           PRIORITIES[field.op] < PRIORITIES[op]:
+            return '(%s)' % base
+        else:
+            return base
 
     templates = dict(
         module     = "%<dependencies:lines>%<constants:lines>%<definitions:lines>%<main:lines>",
@@ -108,9 +139,11 @@ class PythonGenerator(CodeGenerator):
         instance_assignment = 'self.%<name> = %<value>',
         attr_assignment     = '%<attr> = %<value>',
 
-        binary_op   = '%<left> %<op> %<right>',
+        binary_op   = '%<#binary_left> %<op> %<#binary_right>',
+        
         unary_op    = '%<op>%<value>',
-        comparison  = '%<left> %<op> %<right>',
+
+        comparison  = '%<#binary_left> %<op> %<#binary_right>',
 
         _del        = 'del %<value>',
         _setitem    = '%<sequence>[%<key>] = %<value>',
@@ -127,6 +160,8 @@ class PythonGenerator(CodeGenerator):
         this        = 'self',
 
         instance_variable = 'self.%<name>',
+
+        this_method_call = "self.%<message>(%<args:join ', '>)",
 
         throw_statement = 'throw %<exception>(%<value>)',
 
