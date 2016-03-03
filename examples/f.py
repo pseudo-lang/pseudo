@@ -1,6 +1,12 @@
-import re
-e = {2}
-f = (2)
-g = (8.2, 'a', [4])
-h = re.compile('(x?)')
-print(group(match(h, 'la'), 0))
+def fib(n):
+    if n < 2:
+    return 1
+else:
+    return fib(n - 1) * fib(n - 2)
+
+
+
+f = 4
+while f == 2:
+    fib(4)
+

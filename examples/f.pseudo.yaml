@@ -1,73 +1,78 @@
 constants: []
-definitions: []
+definitions:
+- block:
+  - block:
+    - pseudo_type: Int
+      type: implicit_return
+      value: {pseudo_type: Int, type: int, value: 1}
+    otherwise:
+      block:
+      - pseudo_type: Int
+        type: implicit_return
+        value:
+          left:
+            args:
+            - left: {name: n, pseudo_type: Int, type: local}
+              op: '-'
+              pseudo_type: Int
+              right: {pseudo_type: Int, type: int, value: 1}
+              type: binary_op
+            function:
+              name: fib
+              pseudo_type: [Function, Int, Int]
+              type: local
+            pseudo_type: Int
+            type: call
+          op: '*'
+          pseudo_type: Int
+          right:
+            args:
+            - left: {name: n, pseudo_type: Int, type: local}
+              op: '-'
+              pseudo_type: Int
+              right: {pseudo_type: Int, type: int, value: 2}
+              type: binary_op
+            function:
+              name: fib
+              pseudo_type: [Function, Int, Int]
+              type: local
+            pseudo_type: Int
+            type: call
+          type: binary_op
+      pseudo_type: Void
+      type: else_statement
+    pseudo_type: Void
+    test:
+      left: {name: n, pseudo_type: Int, type: local}
+      op: <
+      pseudo_type: Boolean
+      right: {pseudo_type: Int, type: int, value: 2}
+      type: binary_op
+    type: if_statement
+  name: fib
+  params: [n]
+  pseudo_type: [Function, Int, Int]
+  return_type: Int
+  type: function_definition
 dependencies: []
 main:
-- local: e
-  pseudo_type: Void
-  type: local_assignment
-  value:
-    elements:
-    - {pseudo_type: Int, type: int, value: 2}
-    pseudo_type: [Set, Int]
-    type: set
-  value_type: [Set, Int]
 - local: f
   pseudo_type: Void
   type: local_assignment
-  value:
-    elements:
-    - {pseudo_type: Int, type: int, value: 2}
-    pseudo_type: [Array, Int, 1]
-    type: tuple
-  value_type: [Array, Int, 1]
-- local: g
-  pseudo_type: Void
-  type: local_assignment
-  value:
-    elements:
-    - {pseudo_type: Float, type: float, value: 8.2}
-    - {pseudo_type: String, type: string, value: a}
-    - elements:
-      - {pseudo_type: Int, type: int, value: 4}
-      pseudo_type: [List, Int]
-      type: list
-    pseudo_type:
-    - Tuple
-    - Float
-    - String
-    - [List, Int]
-    type: tuple
-  value_type:
-  - Tuple
-  - Float
-  - String
-  - [List, Int]
-- local: h
-  pseudo_type: Void
-  type: local_assignment
-  value:
-    args:
-    - {pseudo_type: String, type: string, value: '(x?)'}
-    function: compile
-    namespace: regexp
-    pseudo_type: Regexp
-    type: standard_call
-  value_type: Regexp
-- args:
+  value: {pseudo_type: Int, type: int, value: 4}
+  value_type: Int
+- block:
   - args:
-    - {pseudo_type: Int, type: int, value: 0}
-    message: group
-    pseudo_type: String
-    receiver:
-      args:
-      - {pseudo_type: String, type: string, value: la}
-      message: match
-      pseudo_type: RegexpMatch
-      receiver: {name: h, pseudo_type: Regexp, type: local}
-      type: standard_method_call
-    type: standard_method_call
-  function: display
-  namespace: io
+    - {pseudo_type: Int, type: int, value: 4}
+    function: {name: fib, type: local}
+    pseudo_type: Int
+    type: call
   pseudo_type: Void
-  type: standard_call
+  test:
+    left: {name: f, pseudo_type: Int, type: local}
+    op: ==
+    pseudo_type: Boolean
+    right: {pseudo_type: Int, type: int, value: 2}
+    type: binary_op
+  type: while_statement
 type: module
