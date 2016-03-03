@@ -221,6 +221,17 @@ class PythonGenerator(CodeGenerator):
 
         for_sequence_with_items = '%<sequence>.items()',
 
+        tuple    = "(%<elements:join ', '>)",
+
+        set      = '%<.elements>',
+
+        set_elements = (
+            "{%<elements:join ', '>}",
+            'set()'
+        ),
+
+        regex    = "r'%<value>'",
+
         index    = '%<sequence>[%<index>]',
 
         index_assignment = '%<sequence>[%<index>] = %<value>'

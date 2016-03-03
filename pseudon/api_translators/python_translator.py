@@ -113,6 +113,24 @@ class PythonTranslator(ApiTranslator):
             'substr_from':  expand_slice,
             'length':       'len',
             'substr_to':    lambda receiver, to: expand_slice(receiver, None, to),
+        },
+        'Set': {
+            '@equivalent':  'set',
+            'union':        lambda receiver, other: node('binary_op', op='|', left=receiver, right=other)
+        },
+        'Tuple': {
+            '@equivalent':  'tuple'
+        },
+        'Array': {
+            '@equivalent':  'tuple'
+        },
+        'Regexp': {
+            '@equivalent':  '_sre.SRE_Pattern',
+            'match':        'match'
+        },
+        'RegexpMatch': {
+            '@equivalent':  '_sre.SRE_Match',
+            'group':        'group'
         }
     }
 
@@ -139,6 +157,10 @@ class PythonTranslator(ApiTranslator):
         'math': {
             'ln':           'math.log',
             'tan':          'math.tan'
+        },
+
+        'regexp': {
+            'compile':      're.compile'
         }
     }
 
@@ -147,11 +169,19 @@ class PythonTranslator(ApiTranslator):
             'map':  'functools'
         },
 
+        'Regexp': {
+            '@all': 're'
+        },
+
         'http': {
             '@all': 'requests'
         },
 
         'math': {
             '@all': 'math'
+        },
+
+        'regexp': {
+            '@all': 're'
         }
     }
