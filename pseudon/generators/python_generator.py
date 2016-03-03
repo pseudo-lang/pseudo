@@ -193,7 +193,7 @@ class PythonGenerator(CodeGenerator):
 
         standard_iterable_call = switch('function',
             map = '[%<.block>]',
-            filter_map = '[%<.block> if %<test>]',
+            filter_map = "[%<.block> if %<test:join ''>]",
             _otherwise = '%<function>([%<.block>])'
         ),
 
