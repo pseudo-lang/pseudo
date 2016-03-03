@@ -113,9 +113,11 @@ class CodeGenerator:
                 template = template['_otherwise']
 
         expanded = []
-        # print('T',depth, template)
+        print('T',depth, template)
+        # input()
         normal_depth = depth
         after_newline = False
+        
         for i, element in enumerate(template):
             if isinstance(element, str):
                 if after_newline:
@@ -143,7 +145,7 @@ class CodeGenerator:
                     print(expanded[-3:])
                 elif expanded:
                     expanded.append('\n')
-                    print('l ', expanded[-3:])
+                    print('l ', expanded)
                 after_newline = True
                 depth = normal_depth
 
@@ -190,6 +192,7 @@ class CodeGenerator:
             indent_size = len(i.group()) if i else 0
             indent = 1 if i else 0
             actual = lines
+            base = 0
         else:
             base = len(re.match(r'^( *)', lines[1]).group())
             rebased = [line[base:] for line in lines]
@@ -205,7 +208,7 @@ class CodeGenerator:
         for line in actual:
             j = LINE_FIRS.match(line)
             indent = len(j.group()) // indent_size if j else 0
-            if indent:
+            if parsed:
                 parsed.append(Offset(indent))
             in_placeholder = False
             in_action = False

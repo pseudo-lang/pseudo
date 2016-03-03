@@ -17,7 +17,7 @@ class PythonGenerator(CodeGenerator):
 
     def block(self, node, indent):
         if node.block:
-            e = self._generate_node(node.block[0])
+            e = self._generate_node(node.block[0], indent)
             other = [self.offset(indent) + self._generate_node(n, indent) for n in node.block[1:]]
             return '\n'.join([e] + other)
         else:
@@ -154,8 +154,8 @@ class PythonGenerator(CodeGenerator):
             except %<exception> as %<instance>:
                 %<#block>''',
 
-        for_each_statement = '''
-            for %<iterator> in %<sequence>:
+        for_statement = '''
+            for %<iterators> in %<sequences>:
                 %<#block>''',
     
         for_range_statement = '''
@@ -165,16 +165,6 @@ class PythonGenerator(CodeGenerator):
         for_range_statement_first = ('%<first>, ', ''), 
 
         for_range_statement_step = (', %<step>', ''),
-
-        for_each_with_index_statement = '''
-            for %<index>, %<iterator> in %<.sequence>:
-                %<#block>''',
-
-        for_each_with_index_statement_sequence = ('%<#index_sequence>', ''),
-
-        for_each_in_zip_statement = '''
-            for %<iterators:join ', '> in zip(%<sequences:join ', '>):
-                %<#block>''',
 
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
