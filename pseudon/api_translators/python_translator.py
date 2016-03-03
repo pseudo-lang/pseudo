@@ -1,5 +1,5 @@
 from pseudon.types import *
-from pseudon.api_translator import ApiTranslator
+from pseudon.api_translator import ApiTranslator, to_op
 from pseudon.pseudon_tree import Node, method_call, call, to_node, local, assignment_updated
 
 
@@ -65,17 +65,17 @@ class PythonTranslator(ApiTranslator):
         else:
             return call('filter', [func, receiver])
 
-    def expand_slice(receiver, from_=None, to=None):
+    def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
         if from_:
             if to:
                 if from_.type == 'int' and from_.value == 0:
-                    return Node('_slice_to', sequence=receiver, to=to)
+                    return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
                 else:
-                    return Node('_slice', sequence=receiver, from_=from_, to=to)
+                    return Node('_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
             else:
-                return Node('_slice_from', sequence=receiver, from_=from_)
+                return Node('_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
         elif to:
-            return Node('_slice_to', sequence=receiver, to=to)
+            return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
         else:
             return None
 
@@ -101,14 +101,14 @@ class PythonTranslator(ApiTranslator):
             'pop':          '#pop',
             'length':       'len',
             'insert':       '#insert',
-            'remove_at':    lambda receiver, index: Node('_del', node=Node('index', z=receiver, index=index)),
+            'remove_at':    lambda receiver, index, _: Node('_del', node=Node('index', z=receiver, index=index), pseudo_type='Void'),
             'remove':       '#remove',
             'slice':        expand_slice,
             'slice_from':   expand_slice,
-            'slice_to':     lambda receiver, to: expand_slice(receiver, None, to),
-            'repeat':       lambda receiver, count: Node('binary_op', op='*', left=receiver, right=count),
+            'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, None, to, pseudo_type),
+            'repeat':       to_op('*'),
             'find':         '#find',
-            'join':         lambda receiver, delimiter: method_call(delimiter, 'join', [receiver])
+            'join':         lambda receiver, delimiter, _: method_call(delimiter, 'join', [receiver], pseudo_type='String')
 
         },
         'Dictionary': {
@@ -130,16 +130,20 @@ class PythonTranslator(ApiTranslator):
             'substr':       expand_slice,
             'substr_from':  expand_slice,
             'length':       'len',
-            'substr_to':    lambda receiver, to: expand_slice(receiver, None, to),
+            'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, pseudo_type=pseudo_type),
             'find':         '#find',
             'count':        '#count',
             'partition':    '#partition',
             'split':        '#split',
-            'trim':         '#strip'
+            'trim':         '#strip',
+            'format':       '#format',
+            'concat':       to_op('+'),
+            'c_format':     to_op('%')
         },
         'Set': {
             '@equivalent':  'set',
-            'union':        lambda receiver, other: Node('binary_op', op='|', left=receiver, right=other)
+            'union':        to_op('-'),
+            'intersection': to_op('&')
         },
         'Tuple': {
             '@equivalent':  'tuple'
@@ -153,24 +157,25 @@ class PythonTranslator(ApiTranslator):
         },
         'RegexpMatch': {
             '@equivalent':  '_sre.SRE_Match',
-            'group':        '#group'
+            'group':        '#group',
+            'has_match':    lambda receiver, _: receiver
         }
     }
 
     functions = {
         'global': {
-            'wat':          lambda: Node('block', block=[]),
-            'exit':         lambda status: call('exit', [status])
+            'wat':          lambda _: Node('block', block=[]),
+            'exit':         lambda status, _: call('exit', [status])
         },
 
         'io': {
             'display':      'print',
             'read':         'input',
-            'read_file':    'open',
-            'write_file':    lambda filename, content: _Node('_with', 
+            'write_file':    lambda filename, content, _: _Node('_with', 
                                 call=call('open', [filename, to_node("'w'")]), 
                                 context='_f', 
-                                block=[method_call(local('_f'), 'write', [content])])
+                                block=[method_call(local('_f'), 'write', [content])],
+                                pseudo_type='Void')
         },
 
         'http': {
@@ -184,7 +189,8 @@ class PythonTranslator(ApiTranslator):
         },
 
         'regexp': {
-            'compile':      're.compile'
+            'compile':      're.compile',
+            'escape':       're.escape'
         }
     }
 

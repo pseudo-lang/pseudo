@@ -2,63 +2,23 @@ constants: []
 definitions: []
 dependencies: []
 main:
-- {base: null, name: NeptunError, type: custom_exception}
-- {base: NeptunError, name: IntergallacticError, type: custom_exception}
+- local: h
+  pseudo_type: Void
+  type: local_assignment
+  value: {pseudo_type: String, type: string, value: ''}
+  value_type: String
 - local: f
   pseudo_type: Void
   type: local_assignment
-  value: {pseudo_type: Int, type: int, value: 2}
-  value_type: Int
-- block:
-  - local: f
-    pseudo_type: Void
-    type: local_assignment
-    value: {pseudo_type: Int, type: int, value: 2}
-    value_type: Int
-  - block:
-    - exception: NeptunError
-      pseudo_type: Void
-      type: throw_statement
-      value: {pseudo_type: String, type: string, value: why f}
-    otherwise: null
-    pseudo_type: Void
-    test:
-      left: {name: f, pseudo_type: Int, type: local}
-      op: ==
-      pseudo_type: Boolean
-      right: {pseudo_type: Int, type: int, value: 2}
-      type: binary_op
-    type: if_statement
-  - local: h
-    pseudo_type: Void
-    type: local_assignment
-    value: {pseudo_type: Int, type: int, value: 2}
-    value_type: Int
-  handlers:
-  - block:
-    - args:
-      - {name: e, pseudo_type: Exception, type: local}
-      function: display
-      namespace: io
-      pseudo_type: Void
-      type: standard_call
-    exception: IntergallacticError
-    instance: e
-    is_builtin: false
-    pseudo_type: Void
-    type: exception_handler
-  - block:
-    - args:
-      - {name: e, pseudo_type: Exception, type: local}
-      function: display
-      namespace: io
-      pseudo_type: Void
-      type: standard_call
-    exception: NeptunError
-    instance: e
-    is_builtin: false
-    pseudo_type: Void
-    type: exception_handler
-  pseudo_type: Void
-  type: try_statement
+  value:
+    args:
+    - elements:
+      - {name: h, pseudo_type: String, type: local}
+      pseudo_type: [Array, String]
+      type: list
+    message: c_format
+    pseudo_type: String
+    receiver: {pseudo_type: String, type: string, value: n%s}
+    type: standard_method_call
+  value_type: String
 type: module

@@ -23,7 +23,7 @@ class Placeholder(FragmentGenerator):
             if not content:
                 return ''
             expanded = [generator._generate_node(content[0], depth)]
-            expanded += [generator.offset(depth) + generator._generate_node(node, depth) for node in content[1:]]
+            expanded += [generator.offset(depth) + generator._generate_node(node, depth) for node in content[1:]]            
             return '\n'.join(expanded) + '\n'
         elif isinstance(content, Node):
             return generator._generate_node(content, depth)

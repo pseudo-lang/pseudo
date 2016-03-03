@@ -5,6 +5,7 @@ EXPRESSION_TYPES = ['call', 'implicit_return', 'method_call', 'explicit_return']
 
 PRIORITIES = {
     '**':   11,
+    '%':    11,
     '/':    10,
     '*':    10,
     '+':    9,
@@ -138,6 +139,8 @@ class PythonGenerator(CodeGenerator):
         local_assignment    = '%<local> = %<value>',
         instance_assignment = 'self.%<name> = %<value>',
         attr_assignment     = '%<attr> = %<value>',
+
+        operation_assign    = '%<slot> %<op>= %<value>',
 
         binary_op   = '%<#binary_left> %<op> %<#binary_right>',
         

@@ -4,6 +4,21 @@ from pseudon.env import Env
 from pseudon.pseudon_tree import Node, to_node, method_call, call
 from pseudon.errors import PseudonStandardLibraryError, PseudonDSLError
 
+def to_op(op, reversed=False):
+    '''
+    create a function that transforms a method to a binary op
+
+    often we need to convert a pseudon method
+    <receiver>.<message>(<z>) to a binary op
+    <receiver> <op> <message>
+    that's a decorator that helps for that
+    '''
+    def transformer(receiver, param, pseudo_type):
+        if not reversed:
+            return Node('binary_op', op=op, left=receiver, right=param, pseudo_type=pseudo_type)
+        return Node('binary_op', op=op, left=param, right=receiver, pseudo_type=pseudo_type)
+    return transformer
+
 
 class ApiTranslator(TreeTransformer):
 
@@ -18,7 +33,7 @@ class ApiTranslator(TreeTransformer):
 
         for l in self.used:
             m = self.dependencies.get(l, {}).get('@all')
-            if self.used[l] and m:
+            if m:
                 self.standard_dependencies.add(m)
         
         transformed.dependencies = [
@@ -29,17 +44,35 @@ class ApiTranslator(TreeTransformer):
     def after(self, node, in_block, assignment):
         if node and node.type in {'list', 'dictionary', 'set', 'tuple', 'regexp', 'array'}:
             self.used.add(node.type.title())
-        elif node and node.type[-10:] == 'assignment' and node.value_type in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
-           self.used.add(node.value_type)
+        elif node and node.type[-10:] == 'assignment':
+            print(node.y)
+            if node.value_type in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
+                self.used.add(node.value_type)
 
+
+
+        if node.type[-10:] == 'assignment' and node.value and node.value.type == 'binary_op':
+            
+            if node.type == 'instance_assignment':
+                print(node.value.left.type == 'instance_variable')
+                if node.value.left.type == 'instance_variable':
+                    print(node.name == node.value.left.name)
+            
+            if node.type == 'local_assignment' and node.value.left.type == 'local' and node.local == node.value.left.name or\
+               node.type == 'instance_assignment' and node.value.left.type == 'instance_variable' and node.name == node.value.left.name or\
+               node.type == 'index_assignment' and node.value.left.type == 'index' and node.index == node.value.left.index and node.sequence == node.value.left.sequence or\
+               node.type == 'attr_assignment' and node.attr == node.value.left:
+                node = Node('operation_assign', slot=node.value.left, op=node.value.op, value=node.value.right)
+        
         if in_block:            
             
             results = [ass for ass in self.weird_assignments]
             if node.type[-10:] != 'assignment' or node.value:
                 results.append(node)
+
             self.weird_assignments = []
-            
             return results
+            
         else:
             return node
 
@@ -63,8 +96,10 @@ class ApiTranslator(TreeTransformer):
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s#%s method' % (l, node.message))
 
+        for a in node.args:
+            print(a.y)
         self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
-        return self._expand_api(self.methods[l][node.message], node.receiver, node.args, self.methods[l]['@equivalent'])
+        return self._expand_api(self.methods[l][node.message], node.receiver, node.args, node.pseudo_type, self.methods[l]['@equivalent'])
 
     def weird_call(self, node_type, namespace, function, node, assignment):
         w = self.weird[node_type][namespace][function]
@@ -98,7 +133,7 @@ class ApiTranslator(TreeTransformer):
                 'pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
 
         self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
-        return self._expand_api(self.functions[namespace][node.function], None, node.args, node.namespace)
+        return self._expand_api(self.functions[namespace][node.function], None, node.args, node.pseudo_type, node.namespace)
 
     def update_dependencies(self, namespace, function, arg_types):
         if namespace == 'List':
@@ -126,7 +161,7 @@ class ApiTranslator(TreeTransformer):
                     self.standard_dependencies.add(e1)
 
 
-    def _expand_api(self, api, receiver, args, equivalent):
+    def _expand_api(self, api, receiver, args, pseudo_type, equivalent):
         '''
         the heart of api translation dsl
 
@@ -135,9 +170,9 @@ class ApiTranslator(TreeTransformer):
 
         if callable(api):
             if receiver:
-                return api(receiver, *args)
+                return api(receiver, *(args + [pseudo_type]))
             else:
-                return api(*args)
+                return api(*(args + [pseudo_type]))
         elif isinstance(api, str):
             if '(' in api:
                 call_api, arg_code = api[:-1].split('(')
@@ -149,20 +184,20 @@ class ApiTranslator(TreeTransformer):
                 a, b = call_api.split('#')
                 method_receiver = self._parse_part(
                     a, receiver, args, equivalent) if a else receiver
-                return method_call(method_receiver, b, args)
+                return method_call(method_receiver, b, args, pseudo_type=pseudo_type)
             elif '.' in call_api:
                 a, b = call_api.split('.')
                 static_receiver = self._parse_part(
                     a, receiver, args, equivalent) if a else receiver
                 if b[-1] != '!':
-                    return Node('static_call', receiver=static_receiver, message=b, args=args)
+                    return Node('static_call', receiver=static_receiver, message=b, args=args, pseudo_type=pseudo_type)
                 else:
-                    return Node('attr', object=static_receiver, attr=b[:-1])
+                    return Node('attr', object=static_receiver, attr=b[:-1], pseudo_type=pseudo_type)
             else:
                 if receiver:
-                    return call(call_api, [receiver] + args)
+                    return call(call_api, [receiver] + args, pseudo_type=pseudo_type)
                 else:
-                    return call(call_api, args)
+                    return call(call_api, args, pseudo_type=pseudo_type)
         else:
             raise PseudonDSLError('%s not supported by api dsl' % str(api))
 

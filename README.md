@@ -44,10 +44,10 @@ or in pseudon AST format and we can translate to any of the supported target lan
 - [x] python
 - [x] ruby
 
-- [ ] javascript
-- [ ] c#
-- [ ] c++
-- [ ] go
+- [x] javascript
+- [x] c#
+- [x] c++
+- [x] go
 - [ ] php
 
 next version:
@@ -58,6 +58,7 @@ next version:
 - [ ] swift ?
 - [ ] c ?
 
+- [ ] clojure ?
 ## Language support
 
 Using pseudon's DSL it's really easy to add support for a new language, so soon we'll try to support
