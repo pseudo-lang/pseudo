@@ -163,7 +163,7 @@ class PythonGenerator(CodeGenerator):
 
         this_method_call = "self.%<message>(%<args:join ', '>)",
 
-        throw_statement = 'throw %<exception>(%<value>)',
+        throw_statement = 'raise %<exception>(%<value>)',
 
         if_statement    = '''
             if %<test>:

@@ -1,0 +1,211 @@
+constants: []
+definitions:
+- attrs:
+  - {is_public: false, name: a, pseudo_type: Int, type: class_attr}
+  base: null
+  constructor:
+    block:
+    - attr:
+        attr: a
+        object: {name: self, pseudo_type: Shape, type: local}
+        pseudo_type: Int
+        type: attr
+      pseudo_type: Void
+      type: attr_assignment
+      value: {name: a, pseudo_type: Int, type: local}
+    name: __init__
+    params: [a]
+    pseudo_type: [Function, Int, Shape]
+    return_type: null
+    this: {name: Shape, type: typename}
+    type: constructor
+  methods:
+  - block:
+    - pseudo_type: Int
+      type: implicit_return
+      value: {pseudo_type: Int, type: int, value: 0}
+    is_public: true
+    name: area
+    params: []
+    pseudo_type: [Function, Int]
+    return_type: Int
+    this: {name: Shape, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: Int
+      type: implicit_return
+      value: {pseudo_type: Int, type: int, value: 0}
+    is_public: true
+    name: peri
+    params: []
+    pseudo_type: [Function, Int]
+    return_type: Int
+    this: {name: Shape, type: typename}
+    type: method_definition
+  name: Shape
+  type: class_definition
+- attrs:
+  - {is_public: false, name: a, pseudo_type: Int, type: class_attr}
+  - {is_public: false, name: b, pseudo_type: Int, type: class_attr}
+  base: Shape
+  constructor:
+    block:
+    - attr:
+        attr: a
+        object: {name: self, pseudo_type: Rectangle, type: local}
+        pseudo_type: Int
+        type: attr
+      pseudo_type: Void
+      type: attr_assignment
+      value: {name: a, pseudo_type: Int, type: local}
+    - attr:
+        attr: b
+        object: {name: self, pseudo_type: Rectangle, type: local}
+        pseudo_type: Int
+        type: attr
+      pseudo_type: Void
+      type: attr_assignment
+      value: {name: b, pseudo_type: Int, type: local}
+    name: __init__
+    params: [a, b]
+    pseudo_type: [Function, Int, Int, Rectangle]
+    return_type: null
+    this: {name: Rectangle, type: typename}
+    type: constructor
+  methods:
+  - block:
+    - pseudo_type: Int
+      type: implicit_return
+      value:
+        left:
+          attr: a
+          object: {name: self, pseudo_type: Rectangle, type: local}
+          pseudo_type: Int
+          type: attr
+        op: '*'
+        pseudo_type: Int
+        right:
+          attr: b
+          object: {name: self, pseudo_type: Rectangle, type: local}
+          pseudo_type: Int
+          type: attr
+        type: binary_op
+    is_public: true
+    name: area
+    params: []
+    pseudo_type: [Function, Int]
+    return_type: Int
+    this: {name: Rectangle, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: Int
+      type: implicit_return
+      value:
+        left:
+          left: {pseudo_type: Int, type: int, value: 2}
+          op: '*'
+          pseudo_type: Int
+          right:
+            attr: a
+            object: {name: self, pseudo_type: Rectangle, type: local}
+            pseudo_type: Int
+            type: attr
+          type: binary_op
+        op: +
+        pseudo_type: Int
+        right:
+          left: {pseudo_type: Int, type: int, value: 2}
+          op: '*'
+          pseudo_type: Int
+          right:
+            attr: b
+            object: {name: self, pseudo_type: Rectangle, type: local}
+            pseudo_type: Int
+            type: attr
+          type: binary_op
+        type: binary_op
+    is_public: true
+    name: peri
+    params: []
+    pseudo_type: [Function, Int]
+    return_type: Int
+    this: {name: Rectangle, type: typename}
+    type: method_definition
+  name: Rectangle
+  type: class_definition
+- attrs:
+  - {is_public: false, name: a, pseudo_type: Int, type: class_attr}
+  - {is_public: false, name: b, pseudo_type: Int, type: class_attr}
+  base: Rectangle
+  constructor:
+    block:
+    - attr:
+        attr: a
+        object: {name: self, pseudo_type: Square, type: local}
+        pseudo_type: Int
+        type: attr
+      pseudo_type: Void
+      type: attr_assignment
+      value: {name: a, pseudo_type: Int, type: local}
+    - attr:
+        attr: b
+        object: {name: self, pseudo_type: Square, type: local}
+        pseudo_type: Int
+        type: attr
+      pseudo_type: Void
+      type: attr_assignment
+      value: {name: a, pseudo_type: Int, type: local}
+    name: __init__
+    params: [a]
+    pseudo_type: [Function, Int, Square]
+    return_type: null
+    this: {name: Square, type: typename}
+    type: constructor
+  methods: []
+  name: Square
+  type: class_definition
+dependencies: []
+main:
+- local: s
+  pseudo_type: Void
+  type: local_assignment
+  value:
+    class: {name: Shape, type: typename}
+    params:
+    - {pseudo_type: Int, type: int, value: 0}
+    pseudo_type: Shape
+    type: new_instance
+  value_type: Shape
+- local: q
+  pseudo_type: Void
+  type: local_assignment
+  value:
+    class: {name: Rectangle, type: typename}
+    params:
+    - {pseudo_type: Int, type: int, value: 2}
+    - {pseudo_type: Int, type: int, value: 4}
+    pseudo_type: Rectangle
+    type: new_instance
+  value_type: Rectangle
+- local: s2
+  pseudo_type: Void
+  type: local_assignment
+  value:
+    class: {name: Square, type: typename}
+    params:
+    - {pseudo_type: Int, type: int, value: 4}
+    pseudo_type: Square
+    type: new_instance
+  value_type: Square
+- local: z
+  pseudo_type: Void
+  type: local_assignment
+  value:
+    elements:
+    - {name: s2, pseudo_type: Square, type: local}
+    - {name: q, pseudo_type: Rectangle, type: local}
+    - {name: s2, pseudo_type: Square, type: local}
+    pseudo_type: [List, Rectangle]
+    type: list
+  value_type: [List, Rectangle]
+type: module
