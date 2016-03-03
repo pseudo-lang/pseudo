@@ -91,7 +91,8 @@ class PythonTranslator(ApiTranslator):
             'remove':       'remove',
             'slice':        expand_slice,
             'slice_from':   expand_slice,
-            'slice_to':     lambda receiver, to: expand_slice(receiver, None, to)
+            'slice_to':     lambda receiver, to: expand_slice(receiver, None, to),
+            'repeat':       lambda receiver, count: Node('binary_op', op='*', left=receiver, right=count)
         },
         'Dictionary': {
             '@equivalent':  'dict',
@@ -113,10 +114,11 @@ class PythonTranslator(ApiTranslator):
             'substr_from':  expand_slice,
             'length':       'len',
             'substr_to':    lambda receiver, to: expand_slice(receiver, None, to),
+            'find':         'find'            
         },
         'Set': {
             '@equivalent':  'set',
-            'union':        lambda receiver, other: node('binary_op', op='|', left=receiver, right=other)
+            'union':        lambda receiver, other: Node('binary_op', op='|', left=receiver, right=other)
         },
         'Tuple': {
             '@equivalent':  'tuple'

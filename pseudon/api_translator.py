@@ -39,14 +39,14 @@ class ApiTranslator(TreeTransformer):
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s#%s method' % (l, node.message))
 
-        for a in node.args:
-            print(a.__dict__);input()
+        # for a in node.args:
+        #     print(a.__dict__);input()
         node.args = [self.transform(arg) for arg in node.args]
-        for a in node.args:
-            print(a.__dict__);input()
-        print('fu', node.receiver.__dict__);input()        
+        # for a in node.args:
+        #     print(a.__dict__);input()
+        # print('fu', node.receiver.__dict__);input()        
         node.receiver = self.transform(node.receiver)
-        print('fu', node.receiver.__dict__);input()        
+        # print('fu', node.receiver.__dict__);input()        
         self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
         return self._expand_api(self.methods[l][node.message], node.receiver, node.args, self.methods[l]['@equivalent'])
     
@@ -68,11 +68,11 @@ class ApiTranslator(TreeTransformer):
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
 
-        for a in node.args:
-            print(a.__dict__);input()
+        # for a in node.args:
+        #     print(a.__dict__);input()
         node.args = [self.transform(arg) for arg in node.args]
-        for a in node.args:
-            print(a.__dict__);input()
+        # for a in node.args:
+        #     print(a.__dict__);input()
         self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
         return self._expand_api(self.functions[namespace][node.function], None, node.args, node.namespace)
 

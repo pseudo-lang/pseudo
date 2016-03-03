@@ -223,6 +223,8 @@ class PythonGenerator(CodeGenerator):
 
         tuple    = "(%<elements:join ', '>)",
 
+        array    = "(%<elements:join ', '>)",
+
         set      = '%<.elements>',
 
         set_elements = (
