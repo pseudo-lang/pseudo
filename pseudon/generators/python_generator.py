@@ -41,6 +41,12 @@ class PythonGenerator(CodeGenerator):
             self.a.append(code)
             return name
 
+    def class_pass(self, node, indent):
+        if not node.constructor and not node.methods:
+            return 'pass'
+        else:
+            return ''
+
     def index_sequence(self, node, indent):
         if node.sequence.pseudo_type.startswith('List'):
             return 'enumerate(%s)' % self._generate_node(node.sequence)
@@ -65,13 +71,14 @@ class PythonGenerator(CodeGenerator):
         class_definition = '''
               class %<name>%<.base>:
                   %<.constructor>
-                  %<.methods>''',
-
-        class_definition_methods = ("%<methods:line_join>", 'pass'),
+                  %<methods:line_join>
+                  %<#class_pass>''',
 
         class_definition_base = ('(%<base>)', ''),
 
         class_definition_constructor = ('%<constructor>', ''),
+
+        new_instance = "%<class>(%<params:join ', '>)",
 
         anonymous_function = '%<#anonymous_function>',
 
