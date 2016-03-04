@@ -92,6 +92,16 @@ class SubTemplate(FragmentGenerator):
             return generator._generate_from_template(
                 layout,node, depth)
 
+class SubElement(FragmentGenerator):
+    def __init__(self, elements):
+        self.elements = elements
+
+    def expand(self, generator, node, depth):
+        current = node
+        for e in self.elements:
+            current = getattr(current, e)
+        return current
+
 class Whitespace:
     def __init__(self, count=1, is_offset=True):
         self.count = count

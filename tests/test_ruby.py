@@ -31,6 +31,14 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     local = 'egg'
 
+    set_  = 'Set.new([2])'
+
+    tuple_ = '[2, 42.2]'
+
+    array = '[2, 4]'
+
+    regex = '/[a-b]/'
+
     typename = 'Egg'
 
     instance_variable = '@egg'

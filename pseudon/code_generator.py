@@ -1,7 +1,7 @@
 # base generator with common functionality
 import re
 from pseudon.pseudon_tree import Node
-from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, PseudonType, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
+from pseudon.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, SubElement, PseudonType, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
 
 PASS_REGEX = re.compile(r'\n[ \t]*\n([ \t]*pass)')
 LINE_FIRS = re.compile(r'^( +)')
@@ -34,6 +34,8 @@ class CodeGenerator:
         generates code based on templates and gen functions
         defined in the <x> lang generator
         '''
+        for middleware in self.middlewares:
+            tree = middleware.process(tree) # changed in place!!
         original = self._generate_node(tree)
         # first n lines n dependencies
         # after that additional code
@@ -47,6 +49,10 @@ class CodeGenerator:
 
     def action_join(self, expanded, separator, depth):
         return separator.join(expanded)
+
+    def action_join_depth_aware(self, expanded, separator, depth):
+        # a big hack, fix in v0.3..dsl omits depth for non-newline join, but not for join_depth_aware
+        return separator.join(exp.rstrip() for exp in expanded)
 
     def action_join_lws(self, expanded, separator, depth):
         if expanded:
@@ -94,10 +100,9 @@ class CodeGenerator:
             return ''
 
     def action_semi(self, expanded, depth):
-        if expanded:
-            return ';\n'.join(expanded) + ';'
-        else:
-            return ''
+        # input(expanded)
+        semi = [exp.rstrip() + ';' if exp.rstrip() and exp.rstrip()[-1] not in ';}' else exp for exp in expanded]
+        return '\n'.join(semi)
 
     def action_line_join(self, expanded, depth):
         return '\n'.join(expanded)
@@ -122,11 +127,12 @@ class CodeGenerator:
             raise NotImplementedError("no action for %s" % node.type)
 
     def _generate_from_template(self, template, node, depth):
-        if isinstance(template, dict):
+        if isinstance(template, dict): # and type(self).__name__ == 'JsGenerator':
             if isinstance(template['_key'], str):
-                t = template.get(getattr(node, template['_key']))
+                t = template.get(str(getattr(node, template['_key'])).lower())
             else:
                 t = template.get(str(template['_key'](node)).lower())
+
             if t is None:
                 t = template['_otherwise']
             template = t
@@ -312,12 +318,16 @@ class CodeGenerator:
                 elif f == '>' and in_placeholder:
                     m += 1
                     q = None
+                    # if '.' in placeholder[1:]:
+                    #     input(placeholder)
                     if placeholder[0] == '#':
                         q = Function(placeholder[1:])
                     elif placeholder[0] == '@':
                         q = PseudonType(placeholder[1:])
                     elif placeholder[0] == '.':
                         q = SubTemplate(label, placeholder[1:])
+                    elif '.' in placeholder:
+                        q = SubElement(placeholder.split('.'))
                     else:
                         q = Placeholder(placeholder)
                     in_placeholder = False

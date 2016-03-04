@@ -25,6 +25,7 @@ class PythonGenerator(CodeGenerator):
 
     indent = 4
     use_spaces = True
+    middlewares = []
 
     def to_boolean(self, node, indent):
         if node.value == 'true':
@@ -194,8 +195,10 @@ class PythonGenerator(CodeGenerator):
             %<handlers:lines>''',
 
         exception_handler = '''
-            except %<exception> as %<instance>:
+            except %<.is_builtin> as %<instance>:
                 %<#block>''',
+
+        exception_handler_is_builtin = ('Exception', '%<exception>'),
 
         for_statement = '''
             for %<iterators> in %<sequences>:
@@ -265,9 +268,7 @@ class PythonGenerator(CodeGenerator):
             'set()'
         ),
 
-        regex    = "r'%<value>'",
+        regex    = "re.compile(r'%<value>')",
 
         index    = '%<sequence>[%<index>]',
-
-        index_assignment = '%<sequence>[%<index>] = %<value>'
     )

@@ -1,29 +1,33 @@
-from pseudon.code_generator import CodeGenerator
+import re
+from pseudon.code_generator import CodeGenerator, switch
+from pseudon.middlewares import DeclarationMiddleware
 
+JS_NAME = re.compile(r'[a-zA-Z][a-zA-Z_0-9]*')
 
 class JSGenerator(CodeGenerator):
     '''JS generator'''
 
-    indent = 4
+    indent = 2
     use_spaces = True
+    middlewares = [DeclarationMiddleware]
 
-    def index(self, node, depth):
-        if node.index.type == 'String':
-            return '.%s' % node.value
+    def handler_(self, node, indent):
+        if node.handlers:
+            return node.handlers[0].instance
         else:
-            return '[%s]' % self._generate_node(node.index)
+            return '_e'
 
     templates = dict(
         module     = "%<dependencies:lines>%<constants:lines>%<definitions:lines>%<main:semi>",
 
         function_definition   = '''
             function %<name>(%<params:join ','>) {
-                %<block:semi>
+              %<block:semi>
             }''',
 
         method_definition =     '''
-            %<this>.prototype.%<name> = function(%<params:join ', '>) {
-               %<block:semi>
+            %<this>.prototype.%<name> = function (%<params:join ', '>) {
+              %<block:semi>
             }''',
 
         class_definition = '''
@@ -35,18 +39,20 @@ class JSGenerator(CodeGenerator):
 
         class_definiton_constructor = ('%<constructor>', ''),
 
+        dependency = switch('name',
+            lodash = "var _ = require('%<name>');",
+            _otherwise = "var %<name> = require('%<name>');"
+        ),
+
         anonymous_function = '''
             function (%<params:join ', '>) {
-                %<block:semi>
+              %<block:semi>
             }''',
 
         constructor = '''
-            function %<this>(%<params:join ', '>):
-                %<block:semi>
+            function %<this>(%<params:join ', '>) {
+              %<block:semi>
             }''',
-
-        dependency  = "%<name> = require('%<name>');",
-
 
         local       = '%<name>',
         typename    = '%<name>',
@@ -58,18 +64,29 @@ class JSGenerator(CodeGenerator):
 
         list        = "[%<elements:join ', '>]",
         dictionary  = "{%<pairs:join ', '>}",
-        pair        = "%<key>: %<value>",
+        pair        = switch(lambda p: p.key.type == 'string' and JS_NAME.match(p.key.value) is not None,
+                true = '%<key.value>: %<value>',
+                _otherwise = '%<key>: %<value>'
+        ),
         attr        = "%<object>.%<attr>",
 
-        local_assignment    = '%<local> = %<value>',
-        instance_assignment = 'this.%<name> = %<value>',
-        attr_assignment     = '%<attr> = %<value>',
+        custom_exception = '''
+            function %<name>(message) {
+              this.message = message;
+            }
+
+            %<name>.prototype = _.create(%<.base>.prototype, {constructor: %<name>});''',        
+
+        custom_exception_base = ('%<base>', 'Error'),
+
+        assignment    = switch('first_mention',
+            true = 'var %<target> = %<value>',
+            _otherwise = '%<target> = %<value>'
+        ),
 
         binary_op   = '%<left> %<op> %<right>',
         unary_op    = '%<op>%<value>',
         comparison  = '%<left> %<op> %<right>',
-
-        _setitem    = '%<sequence>[%<key>] = %<value>',
 
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
@@ -79,79 +96,97 @@ class JSGenerator(CodeGenerator):
 
         instance_variable = 'this.%<name>',
 
-        throw_statement = 'throw %<exception>(%<value>)',
+        throw_statement = 'throw new %<exception>(%<value>)',
 
         if_statement    = '''
             if (%<test>) {
-                %<block:semi>
-            }
-            %<.otherwise>''',
+              %<block:semi>
+            } %<.otherwise>''',
 
-        if_statement_otherwise = ('%<otherwise>', ''),
+        if_statement_otherwise = (' %<otherwise>', ''),
 
         elseif_statement = '''
-            else if (%<test>) {:
-                %<block:semi>
-            }
-            %<.otherwise>''',
+            else if (%<test>) {
+              %<block:semi>
+            } %<.otherwise>''',
 
-        elseif_statement_otherwise = ('%<otherwise>', ''),
+        elseif_statement_otherwise = (' %<otherwise>', ''),
 
         else_statement = '''
             else {
-                %<block:semi>
+              %<block:semi>
             }''',
             
 
         while_statement = '''
-            while %<test> {
+            while (%<test>) {
                 %<block:semi>
             }''',
 
         try_statement = '''
             try {
-                %<block:semi>
-            }
-            except(_e) {
-              %<handlers:semi>
-              raise e;
+              %<block:semi>
+            } catch(%<#handler_>) {
+              if %<handlers:join_depth_aware ' else if '> else {
+                throw %<#handler_>;
+              }
             }''',
 
         exception_handler = '''
-            if (%<instance> isinstanceof %<exception>) {
-                %<block:semi>
-            }''',
+            (%<instance> isinstanceof %<.is_builtin>) {
+              %<block:semi>
+            }''', # obvsly its an Error, but we'll have other builtin errors in next versions
 
-        for_each_statement = '''
-            _.each(%<sequence>, function(%<iterator>) {
-                %<block:semi>
+        exception_handler_is_builtin = ('Error', '%<exception>'),
+
+        for_statement = '''
+            _.forEach(%<sequences>, function (%<iterators>) {
+              %<block:semi>
             })''',
 
         for_range_statement = '''
-            for(var %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>) {
-                %<block:semi>
+            for(var %<index> = %<.first>;%<index> != %<last>;%<index> += %<.step>) {
+              %<block:semi>
             }''',
 
-        for_range_statement_first = ('%<first>, ', '0'),
+        for_range_statement_first = ('%<first>', '0'),
 
         for_range_statement_step = ('%<step>', '1'),
 
-        for_each_with_index_statement = '''
-            _.each(%<sequence>, function(%<iterator, %<index>) {
-                %<block:semi>
-            })''',
+        for_iterator = '%<iterator>',
 
-        for_each_in_zip_statement = '''
-            _.zip(%<sequences:join ', '>).each(function(%<iterators:join ', '>) {
-                %<#block>
-            })''',
+        for_iterator_zip = "%<iterators:join ', '>",
+
+        for_iterator_with_index = '%<iterator>, %<index>',
+
+        for_iterator_with_items = '%<value>, %<key>',
+
+        for_sequence = '%<sequence>',
+
+        for_sequence_zip = "_.zip(%<sequences:join ', '>)",
+
+        for_sequence_with_index = '%<sequence>',
+
+        for_sequence_with_items = '%<sequence>',
+
+        tuple = "[%<elements:join ', '>]",
+
+        array = "[%<elements:join ', '>]",
+
+        set   = "{%<.elements>}",
+
+        set_elements = ("%<elements:join ': true, '>: true", ''),
+
+        regex = '/%<value>/',
 
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
 
-        index = '%<sequence>%<#index>',
-
-        index_assignment = '%<sequence>%<#index> = %<value>',
+        index = switch(
+            lambda i: i.index.type == 'string' and JS_NAME.match(i.index.value),
+              true       = '%<sequence>.%<index.value>',
+              _otherwise = '%<sequence>[%<index>]'
+        ),
 
         constant = '%<constant> = %<init>',
 

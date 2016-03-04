@@ -6,32 +6,78 @@ from pseudon.pseudon_tree import Node, method_call, call
 class JSTranslator(ApiTranslator):
     '''Javascript api translator'''
 
-    api = {
+    methods = {
         'List': {
             '@equivalent':  'Array',
 
             'push':         '#push',
             'pop':          '#pop',
-            'length':       '.length',
-            'insert':       '.splice(%0, 0, %1)',
-            'remove_at':    lambda receiver, index: method_call(receiver, 'splice', [index, Node('int', index.value + 1)]),
-            'remove':       lambda receiver, index, value: method_call(
-                            receiver, 'splice', [method_call(receiver, 'indexOf', [index]), value])
+            'length':       '.length!',
+            'insert':       '#splice(%{self}, 0, %{0})',
+            'remove_at':    lambda receiver, index, _: 
+                                method_call(
+                                    receiver, 
+                                    'splice', 
+                                    [index, 
+                                      to_node(index.value + 1)
+                                      if node.type == 'int' else
+                                      Node('binary_op', op='+', left=index, right=to_node(1), pseudo_type='Int')],
+                                    pseudo_type='Void'),
+            'remove':       '_.pull(%{self}, %{0})',
+            'slice':        '#slice',
+            'slice_from':   '#slice',
+            'slice_to':     '#slice(0, %{0})'
         },
         'Dictionary': {
-            'length':       '.length',
+            '@equivalent':  'Object',
+
+            'length':       '.length!',
             'keys':         'Object.keys',
             'values':       'Object.values'
         },
         'Enumerable': {
+            '@equivalent':  'Enumerable',
+
             'map':          '_.map',
-            'filter':       '_.select',
-            'reduce':       '_.reduce'
+            'filter':       '_.filter'
+        },
+        'String': {
+            '@equivalent':  'String',
+            'substr':       '#slice',
+            'substr_from':  '#slice',
+            'length':       '.length!',
+            'substr_to':    '#slice(0, %{0})'
         }
     }
 
-    dependencies = {
-        'Enumerable': {
-            '@all':         'lodash'
+    functions = {
+        'global': {
+            'wat':          lambda _: Node('block', block=[]),
+            'exit':         lambda status, _: call('exit', [status])
+        },
+
+        'io': {
+            'display':      'console.log',
+            'read':         'console.read',
+            'read_file':    'fs.readFileSync',
+            'write_file':   'fs.writeFileSync'
+        },
+
+        'http': {
+            'get':          'http.get',
+            'post':         'http.post',
+        },
+
+        'math': {
+            'ln':           'math.log',
+            'tag':          'math.tag'
         }
+    }
+
+    js_dependencies = {
+        '_': 'lodash'
+    }
+
+    dependencies = {
+
     }

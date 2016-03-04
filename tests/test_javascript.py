@@ -2,18 +2,36 @@ import unittest
 import textwrap
 from pseudon import generate
 from pseudon.pseudon_tree import Node
-import pseudon.tests.suite as suite
+import suite
 
 #v
 class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    def gen(ast):
-        return generate(ast, 'javascript')[:-1] #without last \n
+    def gen(self, ast):
+        return self.gen_with_imports(ast)[1]
+
+    def gen_with_imports(self, ast):
+        result = generate(Node('module',
+            definitions=[],
+            dependencies=[],
+            constants=[],
+            main=ast if isinstance(ast, list) else [ast]), self._language).rstrip()
+        if result.startswith("var _ = require('lodash')"):
+            lines = result.split('\n')
+            imports, source = ['lodash'], lines[2:]
+        else:
+            imports, source = [], result.split('\n')
+
+        if len(source) == 1 and source[0][-1] == ';':
+            return imports, source[0][:-1]
+        else:
+            return imports, '\n'.join(source).rstrip()
+
+
+    _language = 'javascript'
 
     # make declarative style great again
 
     # expected javascript translation for each example in suite:
-
-    module = ''
 
     int_ = '42'
 
@@ -68,43 +86,43 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     if_statement = textwrap.dedent('''\
         if (egg == ham) {
-            l.slice(0, 2);
+          l.slice(0, 2);
         } else if (egg == ham) {
-            console.log(4.2);
+          console.log(4.2);
         } else {
-            z;
+          z;
         }''')
 
-    for_each_statement = textwrap.dedent('''\
-        _.forEach(sequence, function(a) {
-            a.sub();
-        })''')
-
-    for_range = textwrap.dedent('''\
-        for(var j = 0;j < 42;j += 2) {
-          analyze(j);
-        }''')
-
-    for_each_with_index = [
+    for_statement = [
         textwrap.dedent('''\
-          _.forEach(z, function(k, j) {
-            analyze(j, k);
-          })'''),
+            _.forEach(sequence, function (a) {
+              log(a);
+            });'''),
 
         textwrap.dedent('''\
-          _.forEach(z, function(j, k) {
-            analyze(j, k);
-          })''')
+            for(var j = 0;j != 42;j += 2) {
+              analyze(j);
+            }'''),
+
+        textwrap.dedent('''\
+            _.forEach(z, function (k, j) {
+              analyze(j, k);
+            });'''),
+
+        textwrap.dedent('''\
+            _.forEach(z, function (k, j) {
+              analyze(k, j);
+            });'''),
+
+        textwrap.dedent('''\
+            _.forEach(_.zip(z, zz), function (k, l) {
+              a(k, l);
+            });''')
     ]
-
-    for_each_in_zip = textwrap.dedent('''\
-        _.zip(z, zz).forEach(function(k, l) {
-          a(k, l);
-        }''')
 
     while_statement = textwrap.dedent('''\
         while (f() >= 42) {
-          b = g();
+          var b = g();
         }''')
 
     function_definition = textwrap.dedent('''\
@@ -114,18 +132,21 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
         }''')
 
     method_definition = textwrap.dedent('''\
-        function parse(source) {
+        A.prototype.parse = function (source) {
           this.ast = null;
           return [source];
         }''')
 
     anonymous_function = [
-        'function(source) { return ves(source.length); }',
+        textwrap.dedent('''\
+            function (source) {
+              return ves(source.length);
+            }'''),
 
         textwrap.dedent('''\
-            function(source) {
+            function (source) {
               console.log(source);
-              return ves(source);
+              return ves(source.length);
             }''')
     ]
 
@@ -134,12 +155,10 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
           this.a = a;
         }
 
-        A.prototype = _.create(B.prototype, {
-          'constructor': A
-        });
+        A.prototype = _.create(X.prototype, {constructor: A});
 
-        A.prototype.parse = function() {
-            return 42;
+        A.prototype.parse = function () {
+          return 42;
         }''')]
 
     this = 'this'
@@ -153,34 +172,40 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     try_statement = [
         textwrap.dedent('''\
             try {
-                a();
-                h(2);
+              a();
+              h(-4);
             } catch(e) {
+              if (e isinstanceof Error) {
                 console.log(e);
-            }'''),
+              } else {
+                throw e;
+              }
+            }'''), # yes obvsly its an Error, but we'll have other builtin errors in next versions
 
         textwrap.dedent('''\
             function NeptunError(message) {
-                this.message = message;
+              this.message = message;
             }
-            NeptunError.prototype = new Error;
+
+            NeptunError.prototype = _.create(Error.prototype, {constructor: NeptunError});
 
             try {
-                a();
-                h(2);
+              a();
+              h(-4);
             } catch(e) {
-                if (e instanceof NeptunError) {
-                    console.log(e);
-                } else {
-                    throw e;
-                }
+              if (e isinstanceof NeptunError) {
+                console.log(e);
+              } else {
+                throw e;
+              }
             }''')
     ]
 
     throw_statement = textwrap.dedent('''\
         function NeptunError(message) {
-                this.message = message;
-            }
-        NeptunError.prototype = new Error;
+          this.message = message;
+        }
 
-        throw new NeptunError('no tea')''')
+        NeptunError.prototype = _.create(Error.prototype, {constructor: NeptunError});
+
+        throw new NeptunError('no tea');''')

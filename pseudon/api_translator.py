@@ -55,6 +55,12 @@ class ApiTranslator(TreeTransformer):
             if node.value.right == node.target:
                 node = Node('operation_assign', slot=node.value.left, op=node.value.op, value=node.value.right)
         
+        if node.type == 'call':
+            print(node.y) 
+            # input()
+            if node.function.type == 'attr' and node.function.object.type == 'local' and hasattr(self, 'js_dependencies') and node.function.object.name in self.js_dependencies:
+                self.standard_dependencies.add(self.js_dependencies[node.function.object.name])                
+
         if in_block:
             results = [ass for ass in self.leaking_assignments]
             if node.type != 'assignment' or node.value:

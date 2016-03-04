@@ -27,6 +27,14 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     list_ = "['la']"
 
+    set_  = '{2}'
+
+    tuple_ = '(2, 42.2)'
+
+    array = '(2, 4)'
+
+    regex = "re.compile(r'[a-b]')"
+
     typename = 'Egg'
 
     instance_variable = 'self.egg'

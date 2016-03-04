@@ -24,6 +24,7 @@ class RubyGenerator(CodeGenerator):
 
     indent = 2
     use_spaces = True
+    middlewares = []
 
     def ruby_dict(self, node, indent):
         short_syntax = True
@@ -77,6 +78,8 @@ class RubyGenerator(CodeGenerator):
         string          = '%<#safe_single>',
         boolean         = '%<value>',
         null            = 'nil',
+
+        dependency      = "require '%<name>'",
 
         list            = "[%<elements:join ', '>]",
         dictionary      = '{%<#ruby_dict>}',
@@ -201,6 +204,14 @@ class RubyGenerator(CodeGenerator):
         ),
 
         index           = '%<sequence>[%<index>]',
+
+        tuple    = "[%<elements:join ', '>]",
+
+        array    = "[%<elements:join ', '>]",
+
+        set      = "Set.new([%<elements:join ', '>])",
+
+        regex    = "/%<value>/",
 
         block           = '%<block:line_join>'
     )

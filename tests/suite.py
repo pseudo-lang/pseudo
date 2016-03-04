@@ -39,8 +39,10 @@ class TestLanguage(type):
                 test_name = 'test_%s' % name
                 namespace[test_name] = generate_test(name, examples, exp)
 
-        namespace['gen'] = TestHelpers.gen
-        namespace['gen_with_imports'] = TestHelpers.gen_with_imports
+        if 'gen' not in namespace:
+            namespace['gen'] = TestHelpers.gen
+        if 'gen_with_imports' not in namespace:
+            namespace['gen_with_imports'] = TestHelpers.gen_with_imports
 
         return super().__new__(cls, name, bases, namespace)
 
@@ -279,13 +281,21 @@ Constructor = [Node('constructor',
 
 Index = [Node('index', sequence=to_node("'la'"), pseudo_type='String', index=to_node(2))]
 
+Regex = [Node('regex', value='[a-b]', pseudo_type='Regexp')]
+
+Tuple = [Node('tuple', elements=[to_node(2), to_node(42.2)], pseudo_type=['Tuple', 'Int', 'Float'])]
+
+Set = [Node('set', elements=[to_node(2)], pseudo_type=['Set', 'Int'])]
+
+Array = [Node('array', elements=[to_node(2), to_node(4)], pseudo_type=['Array', 'Int', 2])]
+
 u0 = \
 Node('try_statement', block=[
         call(local('a', ['Function', 'Int']), [], pseudo_type='Int'),
         call(local('h', ['Function', 'Int', 'Int']), [to_node(-4)], pseudo_type='Int')
     ], handlers=[
         Node('exception_handler',
-            exception='Exception',
+            exception=None,
             is_builtin=True,
             instance='e',
             block=[
