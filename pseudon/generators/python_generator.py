@@ -248,7 +248,7 @@ class PythonGenerator(CodeGenerator):
 
         for_sequence = '%<sequence>',
 
-        for_sequence_zip = "%<sequences:join ', '>",
+        for_sequence_zip = "zip(%<sequences:join ', '>)",
 
         for_sequence_with_index = 'enumerate(%<sequence>)',
 

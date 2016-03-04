@@ -1,6 +1,6 @@
 from pseudon.types import *
-from pseudon.api_translator import ApiTranslator
-from pseudon.pseudon_tree import Node, method_call, call, if_statement, for_each_with_index_statement, index_assignment, local_assignment, attr
+from pseudon.api_translator import ApiTranslator, to_op
+from pseudon.pseudon_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr
 
 
 class GolangTranslator(ApiTranslator):
@@ -85,6 +85,11 @@ class GolangTranslator(ApiTranslator):
                         pseudo_type=['Tuple', 'String', 'Error']))))
             ]
 
+    def go_bizarre(*e):
+        return e[0]
+
+    def bizarre(**e):
+        return e
     methods = {
         'List': {
             '@equivalent':  'slice',
@@ -93,8 +98,7 @@ class GolangTranslator(ApiTranslator):
             'pop':          bizarre(
                                 translate=
                                 lambda assignment, *l, receiver, pseudo_type: 
-                                    assignment_updated(assignment, value=go_last(receiver)
-                ,
+                                    assignment_updated(assignment, value=go_last(receiver))),
             'length':       '.length',
             'insert':       expand_insert
 

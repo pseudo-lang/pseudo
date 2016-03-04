@@ -157,16 +157,6 @@ class CSharpGenerator(CodeGenerator):
             for %<iterator> in %<sequence>:
                 %<#block>''',
     
-        for_range_statement = '''
-            for (var %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>)
-            {
-                %<block:lines>
-            }''',
-
-        for_range_statement_first = ('%<first>, ', '0'),
-
-        for_range_statement_step = ('%<step>', '1'),
-
         for_each_with_index_statement = '''
             for %<index>, %<iterator> in %<.sequence>:
                 %<#block>''',
@@ -205,7 +195,7 @@ class CSharpGenerator(CodeGenerator):
 
         for_iterator_zip = "%<iterators:join ', '>",
 
-        for_iterator_with_index = '%<index>, %<iterator>',
+        for_iterator_with_index = 'int %<index>, %<iterator>',
 
         for_iterator_with_items = '%<key>, %<value>',
 

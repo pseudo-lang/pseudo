@@ -1,7 +1,7 @@
 from pseudon.tree_transformer import TreeTransformer
 from pseudon.types import *
 from pseudon.env import Env
-from pseudon.pseudon_tree import Node, to_node, method_call, call
+from pseudon.pseudon_tree import Node, to_node, method_call, call, local
 from pseudon.errors import PseudonStandardLibraryError, PseudonDSLError
 
 def to_op(op, reversed=False):
@@ -24,13 +24,11 @@ class ApiTranslator(TreeTransformer):
 
     def __init__(self, tree):
         self.tree = tree
-        if not getattr(self, 'weird', None):
-            self.weird = {}
 
     def api_translate(self):
         self.standard_dependencies = set()
         self.used = set()
-        self.weird_assignments = []
+        self.leaking_assignments = []
         transformed = self.transform(self.tree)
 
         for l in self.used:
@@ -44,35 +42,23 @@ class ApiTranslator(TreeTransformer):
         return transformed
 
     def after(self, node, in_block, assignment):
+        if not isinstance(node, Node):
+            return node
         if node and node.type in {'list', 'dictionary', 'set', 'tuple', 'regexp', 'array'}:
             self.used.add(node.type.title())
-        elif node and node.type[-10:] == 'assignment':
-            print(node.y)
-            if node.value_type in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
-                self.used.add(node.value_type)
+        elif node and node.type == 'assignment':
+            if node.value and node.value.pseudo_type in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
+                self.used.add(node.value.pseudo_type)
 
-
-
-        if node.type[-10:] == 'assignment' and node.value and node.value.type == 'binary_op':
-            
-            if node.type == 'instance_assignment':
-                print(node.value.left.type == 'instance_variable')
-                if node.value.left.type == 'instance_variable':
-                    print(node.name == node.value.left.name)
-            
-            if node.type == 'local_assignment' and node.value.left.type == 'local' and node.local == node.value.left.name or\
-               node.type == 'instance_assignment' and node.value.left.type == 'instance_variable' and node.name == node.value.left.name or\
-               node.type == 'index_assignment' and node.value.left.type == 'index' and node.index == node.value.left.index and node.sequence == node.value.left.sequence or\
-               node.type == 'attr_assignment' and node.attr == node.value.left:
+        if node.type == 'assignment' and node.value and node.value.type == 'binary_op':
+            if node.value.right == node.target:
                 node = Node('operation_assign', slot=node.value.left, op=node.value.op, value=node.value.right)
         
-        if in_block:            
-            
-            results = [ass for ass in self.weird_assignments]
-            if node.type[-10:] != 'assignment' or node.value:
+        if in_block:
+            results = [ass for ass in self.leaking_assignments]
+            if node.type != 'assignment' or node.value:
                 results.append(node)
-
-            self.weird_assignments = []
+            self.leaking_assignments = []   
             return results
             
         else:
@@ -88,54 +74,63 @@ class ApiTranslator(TreeTransformer):
         node.args = [self.transform(arg) for arg in node.args]
         node.receiver = self.transform(node.receiver)
         
-        if 'standard_method_call' in self.weird and l in self.weird['standard_method_call'] and node.message in self.weird['standard_method_call'][l]:
-            return self.weird_call('standard_method_call', l, node.message, node, assignment)
-
-        elif l not in self.methods:
+        
+        if l not in self.methods:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t recognize %s as a standard type' % l)
         elif node.message not in self.methods[l]:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s#%s method' % (l, node.message))
+        
+        x = self.methods[l][node.message]
+        if isinstance(x, dict):
+            return self.leaking_call(x, l, node.message, node, assignment)
 
-        for a in node.args:
-            print(a.y)
         self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
-        return self._expand_api(self.methods[l][node.message], node.receiver, node.args, node.pseudo_type, self.methods[l]['@equivalent'])
+        return self._expand_api(x, node.receiver, node.args, node.pseudo_type, self.methods[l]['@equivalent'])
 
-    def weird_call(self, node_type, namespace, function, node, assignment):
-        w = self.weird[node_type][namespace][function]
+    def leaking_call(self, z, namespace, function, node, assignment):
+        '''
+        an expression leaking ...
+
+        assignment nodes into the nearest block list of nodes
+        c++ guys, stay calm
+        '''
+
         if assignment:
             ass = assignment
         else:
             ass = Node('local_assignment', 
-                pseudo_type='Void', value_type=node.pseudo_type[-1], local=w['_temp_name'])
-        if node_type == 'standad_method_call':
-            ass = w['_translate'](ass, namespace, function, node.receiver, node.args)
+                pseudo_type='Void', local=z['_temp_name'])
+        if node.type == 'standad_method_call':
+            ass = z['_translate'](ass, namespace, function, node.receiver, node.args)
         else:
-            ass = w['_translate'](ass, namespace, function, node.args)
+            ass = z['_translate'](ass, namespace, function, node.args)
+        
         if assignment is None:
-            self.weird_assignments.append(ass)
-            return local(w['_temp_name'])
+            self.leaking_assignments.append(ass)
+            return local(z['_temp_name'])
         else:
-            self.weird_assignments.append(ass)
-            return []
+            self.leaking_assignments.append(ass)
+            return None
 
     def transform_standard_call(self, node, in_block=False, assignment=None):
         # print('TRANSLATE CALL', node)
         namespace = node.namespace or 'global'
         node.args = [self.transform(arg) for arg in node.args]
-        if 'standard_call' in self.weird and namespace in self.weird['standard_call'] and node.function in self.weird['standard_call'][namespace]:
-            return self.weird_call('standard_call', node.namespace, node.function, node, assignment)
-        elif namespace not in self.functions:
+        if namespace not in self.functions:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s namespace' % namespace)
         elif node.function not in self.functions[namespace]:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
-
+        
+        x = self.functions[namespace][node.function]
+        if isinstance(x, dict):
+            return self.leaking_call(x, node.namespace, node.function, node, assignment)
+            
         self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
-        return self._expand_api(self.functions[namespace][node.function], None, node.args, node.pseudo_type, node.namespace)
+        return self._expand_api(x, None, node.args, node.pseudo_type, node.namespace)
 
     def update_dependencies(self, namespace, function, arg_types):
         if namespace == 'List':

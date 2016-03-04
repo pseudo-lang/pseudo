@@ -1,6 +1,5 @@
 import re
-import unittest
-from pseudon.pseudon_tree import Node, to_node, call, method_call, local
+from pseudon.pseudon_tree import Node, to_node, call, method_call, local, assignment
 
 SNAKE_CASE_REGEX = re.compile(r'(_\[a-z])')
 
@@ -57,98 +56,121 @@ Assignment = [
     Node('assignment', target=local('egg', pseudo_type='Int'), value=local('ham', pseudo_type='Int')),
     Node('assignment', target=Node('instance_variable', name='egg', pseudo_type='Int'), value=local('ham', pseudo_type='Int')),
     Node('assignment', target=Node('attr', object=Node('typename', name='T'), attr='egg', pseudo_type='String'), 
-         value=local('ham', pseudo_type='String'))
+         value=local('ham', pseudo_type='String')),
+    Node('assignment', 
+        target=Node('index',
+            sequence=local('x', pseudo_type=['List', 'String']),
+            index=to_node(4),
+            pseudo_type='String'),
+        value=to_node('"String"'))
 ]
 Call        = [call('map', [local('x')])]
 MethodCall  = [method_call(local('e'), 'filter', [to_node(42)])]
 StandardCall = [
-    Node('standard_call', namespace='io', function='display', args=[to_node(42)]),
-    Node('standard_call', namespace='io', function='read', args=[]),
-    Node('standard_call', namespace='math', function='ln', args=[Node('local', name='ham', pseudo_type='Int')]),
-    Node('standard_call', namespace='io', function='read_file', args=[to_node("'f.py'")])
+    Node('standard_call', namespace='io', function='display', args=[to_node(42)], pseudo_type='Void'),
+    Node('standard_call', namespace='io', function='read', args=[], pseudo_type='String'),
+    Node('standard_call', namespace='math', function='ln', args=[Node('local', name='ham', pseudo_type='Int')], pseudo_type='Float'),
+    assignment(
+        local('source', pseudo_type='String'),
+        Node('standard_call', namespace='io', function='read_file', args=[to_node('"f.py"')], pseudo_type='String'))
 ]
 
 StandardMethodCall = [
-    Node('standard_method_call', receiver=Node('local', name='l', pseudo_type='List[Int]'), message='length', args=[]),
-    Node('standard_method_call', receiver=Node('string', value='l', pseudo_type='String'), message='substr', args=[Node('int', value=0), Node('int', value=2)])
+    Node('standard_method_call', receiver=local('l', pseudo_type=['List', 'Int']), message='length', args=[], pseudo_type='Int'),
+    Node('standard_method_call', receiver=to_node('"l"'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String')
 ]
 
-BinaryOp = [Node('binary_op', op='+', left=Node('local', name='ham'), right=Node('local', name='egg'))]
-UnaryOp = [Node('unary_op', op='-', value=Node('local', name='a'))]
-Comparison = [Node('comparison', op='>', left=Node('local', name='egg'), right=Node('local', name='ham'))]
+BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
+UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]
+Comparison = [Node('comparison', op='>', left=local('egg', 'Float'), right=local('ham', 'Float'))]
 
 IfStatement = [
     Node('if_statement', 
         test=Node('comparison',
             op='==',
-            left=local('egg'),
-            right=local('ham')),
+            left=local('egg', 'Float'),
+            right=local('ham', 'Float'),
+            pseudo_type='Boolean'),
         block=[
             Node('standard_method_call',
-                receiver=Node('local', name='l', pseudo_type='List[String]'),
+                receiver=local('l', ['List', 'String']),
                 message='slice',
-                args=[to_node(0), to_node(2)])],
+                args=[to_node(0), to_node(2)],
+                pseudo_type=['List', 'String'])],
         otherwise=Node('elseif_statement', 
             test=Node('comparison',
                 op='==',
-                left=local('egg'),
-                right=local('ham')),
+                left=local('egg', 'Float'),
+                right=local('ham', 'Float'),
+                pseudo_type='Boolean'),
             block=[
-                Node('standard_call', namespace='io', function='display', args=[to_node(4.2)])
+                Node('standard_call', 
+                      namespace='io', 
+                      function='display', 
+                      args=[to_node(4.2)],
+                      pseudo_type='Void')
             ],
             otherwise=Node('else_statement', block=[
-                Node('local', name='z', pseudo_type='List[String]')
+                local('z', ['List', 'String'])
             ])))
 ]
 
 
-ForEachStatement = [Node('for_each_statement', 
-        iterator='a',
-        sequence=Node('local', name='sequence', pseudo_type='List[String]'),
+ForStatement = [
+    Node('for_statement', 
+        iterators=Node('for_iterator',
+                iterator=local('a', 'String')),
+        sequences=Node('for_sequence',
+                sequence=local('sequence', ['List', 'String'])),
         block=[
-            Node('method_call',
-                receiver=Node('local', name='a'),
-                message='sub',
-                args=[])])]
-ForRangeStatement = [Node('for_range_statement', 
-        index='j',
+            call(local('log', ['Function', 'String', 'Void']),
+                 [local('a', 'String')],
+                 pseudo_type='Void')
+        ]),
+
+    Node('for_range_statement', 
+        index=local('j', 'Int'),
         first=Node('int', value=0),
         last=Node('int', value=42),
         step=Node('int', value=2),
         block=[
-            Node('call',
-                function=Node('local', name='analyze', pseudo_type='Function[Int, Int]'),
-                args=[Node('local', name='j', pseudo_type='Int')])])]
-ForEachWithIndexStatement = [
-    Node('for_each_with_index_statement', 
-        index='j',
-        iterator='k',
-        sequence=Node('local', name='z', pseudo_type='List[String]'),
+            call(local('analyze', ['Function', 'Int', 'Int']),
+                 [local('j', 'Int')],
+                 pseudo_type='Int')
+        ]),
+
+    Node('for_statement', 
+        iterators=Node('for_iterator_with_index',
+                index=local('j', 'Int'),
+                iterator=local('k', 'String')),
+        sequences=Node('for_sequence_with_index',
+                sequence=local('z', ['List', 'String'])),
         block=[
-            Node('call',
-                function=Node('local', name='analyze', pseudo_type='Function[Int, String, Int]'),
-                args=[Node('local', name='j', pseudo_type='Int'), Node('local', name='k', pseudo_type='String')])]),
- 
-    Node('for_each_with_index_statement', 
-        index='j',
-        iterator='k',
-        sequence=Node('local', name='z', pseudo_type='Dictionary[String, Int]'),
+            call(local('analyze', ['Function', 'Int', 'String', 'Int']),
+                 [local('j', 'Int'), local('k','String')],
+                 pseudo_type='Int')]),
+
+    Node('for_statement', 
+        iterators=Node('for_iterator_with_items',
+                key=local('j', 'Int'),
+                value=local('k', 'String')),
+        sequences=Node('for_sequence_with_items',
+                sequence=local('z', ['Dictionary', 'Int', 'String'])),
         block=[
-            Node('call',
-                function=Node('local', name='analyze', pseudo_type='Function[String, Int, Int]'),
-                args=[Node('local', name='j', pseudo_type='String'), Node('local', name='k', pseudo_type='Int')])])
+            call(local('analyze', ['Function', 'String', 'Int', 'Int']),
+                 [local('k','String'), local('j', 'Int')],
+                 pseudo_type='Int')]),
+
+    Node('for_statement',
+        iterators=Node('for_iterator_zip',
+                iterators=[local('k', 'Int'), local('l', 'String')]),
+        sequences=Node('for_sequence_zip',
+                sequences=[local('z', ['List', 'Int']), local('zz', ['List', 'String'])]),
+        block=[
+            call(local('a', ['Function', 'Int', 'String', 'Int']),
+                 [local('k', 'Int'), local('l','String')])])
 ]
 
-ForEachInZipStatement = [Node('for_each_in_zip_statement', 
-        iterators=['k', 'l'],
-        sequences=[
-            Node('local', name='z', pseudo_type='List[String]'),
-            Node('local', name='zz', pseudo_type='List[Int]')
-        ],
-        block=[
-            Node('call',
-                function=Node('local', name='a', pseudo_type='Function[String, Int, Int]'),
-                args=[Node('local', name='k', pseudo_type='String'), Node('local', name='l', pseudo_type='Int')])])]
 WhileStatement = [Node('while_statement', 
         test=Node('comparison',
             op='>=',
@@ -216,7 +238,7 @@ ClassDefinition = [Node('class_definition',
             pseudo_type='Function[Int, A]',
             return_type='A',
             block=[
-                Node('instance_assignment', name='a', value=Node('local', name='a', pseudo_type='Int'))
+               Node('assignment', target=Node('instance_variable', name='a', pseudo_type='String'), value=local('a', pseudo_type='Int'))     
             ]),
         attrs=[
             Node('class_attr', name='a', is_public=True, pseudo_type='Int')
@@ -244,15 +266,11 @@ Constructor = [Node('constructor',
             pseudo_type='Function[Int, String, A]',
             return_type='A',
             block=[
-                Node('instance_assignment', name='a', value=Node('local', name='a', pseudo_type='Int')),
-                Node('instance_assignment', name='b', value=Node('local', name='b', pseudo_type='String'))
+                Node('assignment', target=Node('instance_variable', name='a'), value=Node('local', name='a', pseudo_type='Int')),
+                Node('assignment', target=Node('instance_variable', name='b'), value=Node('local', name='b', pseudo_type='String'))
             ])]
 
-Index = [Node('index', sequence=to_node("'la'"), pseudo_type='String'), index=to_node(2))]
-IndexAssignment = [Node('index_assignment', 
-    sequence=local('x', pseudo_type=['List', 'String']),
-    index=to_node(4),
-    value=to_node('"String"'))]
+Index = [Node('index', sequence=to_node("'la'"), pseudo_type='String', index=to_node(2))]
 
 u0 = \
 Node('try_statement', block=[

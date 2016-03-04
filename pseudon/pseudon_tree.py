@@ -10,6 +10,8 @@ class Node:
     def __init__(self, type, **fields):
         self.type = type
         self.__dict__.update(fields)
+        if 'pseudo_type' not in fields:
+            self.pseudo_type = 'Void'
 
     # and no, __dict__ is not good enough
     @property
@@ -46,7 +48,8 @@ def for_each_with_index_statement(iterators, sequence, block):
     return Node('for_each_with_index', iterators=iterators, sequence=sequence, block=block)
 
 def assignment(target, value, value_type=None):
-    return Node('assignment', target=target, value=value, pseudo_type='Void', value_type=value_type)
+    print(Node('assignment', target=target, value=value, pseudo_type='Void').y)
+    return Node('assignment', target=target, value=value, pseudo_type='Void')
 
 def attr(value, attr, pseudo_type=None):
     return Node('attr', value=value, attr=attr, pseudo_type=pseudo_type)

@@ -38,6 +38,11 @@ class PythonTranslator(ApiTranslator):
                                 def <other-name>_placeholder(self, receiver, *args, equivalent) which
                                 should return a Node
 
+        if you use a dict instead of a shortcut or a lambda, it defines a handler
+        for "leaking" expressions
+        we call leaking expressions, those which can "leak" nodes into the closest
+        surrounding block node list (e.g. adding an assignment before the current call)
+
         Nodes: Nodes can be either the official pseudon nodes or in special cases
                with `_<special_node>` when they describe syntax typical only for
                the target language of the translator
@@ -64,6 +69,10 @@ class PythonTranslator(ApiTranslator):
                 '_list_comp')
         else:
             return call('filter', [func, receiver])
+
+    def expand_set_slice(receiver, from_=None, to=None, value=None, pseudo_type=None):
+        s = expand_slice(receiver, from_, to, pseudo_type)
+        return assignment(s, value)
 
     def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
         if from_:
@@ -109,7 +118,7 @@ class PythonTranslator(ApiTranslator):
             'repeat':       to_op('*'),
             'set_slice':    expand_set_slice,
             'set_slice_from': expand_set_slice,
-            'set_slice_to': lambda receiver, to, pseudo_type: expand_set_slice(receiver, None, to, pseudo_type),            
+            'set_slice_to': lambda receiver, to, value, pseudo_type: expand_set_slice(receiver, None, to, value, pseudo_type),            
             'find':         '#find',
             'join':         lambda receiver, delimiter, _: method_call(delimiter, 'join', [receiver], pseudo_type='String')
 
@@ -178,7 +187,11 @@ class PythonTranslator(ApiTranslator):
                                 call=call('open', [filename, to_node("'w'")]), 
                                 context='_f', 
                                 block=[method_call(local('_f'), 'write', [content])],
-                                pseudo_type='Void')
+                                pseudo_type='Void'),
+            'read_file':    {
+               '_translate':   read_file,
+               '_temp_name':   '_file_contents'
+            }
         },
 
         'http': {
@@ -196,23 +209,7 @@ class PythonTranslator(ApiTranslator):
             'escape':       're.escape'
         }
     }
-
-    '''
-    weird has tree matches with handlers 
-    that can expand into the nearest block, not only in-place
-    '''
-
-    weird = {
-        'standard_call': {
-            'io': {
-                'read_file': {
-                    '_translate':   read_file,
-                    '_temp_name':   '_file_contents'
-                }
-            }
-        }
-    }
-
+    
     dependencies = {
         'Enumerable': {
             'map':  'functools'

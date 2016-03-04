@@ -2,23 +2,14 @@ constants: []
 definitions: []
 dependencies: []
 main:
-- local: h
-  pseudo_type: Void
-  type: local_assignment
-  value: {pseudo_type: String, type: string, value: ''}
-  value_type: String
-- local: f
-  pseudo_type: Void
-  type: local_assignment
+- pseudo_type: Void
+  target: {name: source, pseudo_type: String, type: local}
+  type: assignment
   value:
     args:
-    - elements:
-      - {name: h, pseudo_type: String, type: local}
-      pseudo_type: [Array, String]
-      type: list
-    message: c_format
+    - {pseudo_type: String, type: string, value: f.py}
+    function: read_file
+    namespace: io
     pseudo_type: String
-    receiver: {pseudo_type: String, type: string, value: n%s}
-    type: standard_method_call
-  value_type: String
+    type: standard_call
 type: module

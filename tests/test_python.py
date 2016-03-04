@@ -8,7 +8,11 @@ import suite
 class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
 
     def gen(self, ast):
-        return generate(ast, 'python').rstrip()
+        return generate(Node('module', 
+            definitions=[],
+            dependencies=[],
+            constants=[],
+            main=ast if isinstance(ast, list) else [ast]), 'python').rstrip()
 
     def gen_with_imports(self, ast):
         if isinstance(ast, Node):
@@ -25,7 +29,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             else:
                 main.append(node)
 
-        result = generate(Node('module', definitions=definitions, constants=[], main=main), 'python')
+        result = generate(Node('module', definitions=definitions, dependencies=[], constants=[], main=main), 'python')
         ls = result.split('\n')
         l = 0
         imports = []
@@ -61,11 +65,12 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     attr = 'e.egg'
 
-    local_assignment = 'egg = ham'
-
-    instance_assignment = 'self.egg = ham'
-
-    attr_assignment = 'T.egg = ham'
+    assignments = [
+        'egg = ham',
+        'self.egg = ham',
+        'T.egg = ham',
+        "x[4] = 'String'"
+    ]
 
     call = 'map(x)'
 
@@ -76,8 +81,8 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         'input()',
         (['math'], 'math.log(ham)\n'),
         textwrap.dedent('''\
-            with open('f.py', 'r') as f:
-                f.read()''')
+            with open('f.py', 'r') as _f:
+                source = _f.read()''')
     ]
 
     standard_method_call = [
@@ -99,99 +104,98 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         else:
             z''')
 
-    for_each_statement = textwrap.dedent('''\
-        for a in sequence:
-            a.sub()''')
+    for_statement = [
+        textwrap.dedent('''\
+            for a in sequence:
+                log(a)'''),
 
-    for_range_statement = textwrap.dedent('''\
-        for j in range(0, 42, 2):
-            analyze(j)''')
+        textwrap.dedent('''\
+             for j in range(0, 42, 2):
+                 analyze(j)'''),
+    
 
-    for_each_with_index_statement = [
         textwrap.dedent('''\
             for j, k in enumerate(z):
                 analyze(j, k)'''),
 
         textwrap.dedent('''\
             for j, k in z.items():
-                analyze(j, k)''')
+                analyze(k, j)'''),
+    
+        textwrap.dedent('''\
+            for k, l in zip(z, zz):
+                a(k, l)''')
     ]
-
-    for_each_in_zip_statement = textwrap.dedent('''\
-        for k, l in zip(z, zz):
-            a(k, l)''')
 
     while_statement = textwrap.dedent('''\
         while f() >= 42:
             b = g()''')
 
-    function_definition = textwrap.dedent('''\
-        def weird(z):
-            fixed = fix(z)
-            return fixed''')
+    # function_definition = textwrap.dedent('''\
+    #     def weird(z):
+    #         fixed = fix(z)
+    #         return fixed''')
 
-    method_definition = textwrap.dedent('''\
-        def parse(self, source):
-            self.ast = None
-            return [source]''')
+    # method_definition = textwrap.dedent('''\
+    #     def parse(self, source):
+    #         self.ast = None
+    #         return [source]''')
 
-    anonymous_function = [
-        'lambda source: ves(len(source))',
+    # anonymous_function = [
+    #     'lambda source: ves(len(source))',
 
-        ([], textwrap.dedent('''\
-            def a_0(source):
-                print(source)
-                return ves(len(source))
+    #     ([], textwrap.dedent('''\
+    #         def a_0(source):
+    #             print(source)
+    #             return ves(len(source))
 
             
 
-            a_0
+    #         a_0
 
-            '''))
-    ]
+    #         '''))
+    # ]
 
-    class_definition = [textwrap.dedent('''\
-        class A(B):
-            def __init__(self, a):
-                self.a = a
+    # class_definition = [textwrap.dedent('''\
+    #     class A(B):
+    #         def __init__(self, a):
+    #             self.a = a
 
-            def parse(self):
-                return 42''')]
+    #         def parse(self):
+    #             return 42''')]
 
-    this = 'self'
+    # this = 'self'
 
-    constructor = textwrap.dedent('''\
-        def __init__(self, a, b):
-            self.a = a
-            self.b = b''')
+    # constructor = textwrap.dedent('''\
+    #     def __init__(self, a, b):
+    #         self.a = a
+    #         self.b = b''')
 
-    index = "'la'[2]"
+    # index = "'la'[2]"
 
-    index_assignment ="x[4] = 'String'"
+    # try_statement = [
+    #     textwrap.dedent('''\
+    #         try:
+    #             a()
+    #             h(-4)
+    #         except Exception as e:
+    #             print(e)'''),
 
-    try_statement = [
-        textwrap.dedent('''\
-            try:
-                a()
-                h(-4)
-            except Exception as e:
-                print(e)'''),
+    #     textwrap.dedent('''\
+    #         class NeptunError(Exception):
+    #             pass
 
-        textwrap.dedent('''\
-            class NeptunError(Exception):
-                pass
+    #         try:
+    #             a()
+    #             h(-4)
+    #         except NeptunError as e:
+    #             print(e)''')
+    # ]
 
-            try:
-                a()
-                h(-4)
-            except NeptunError as e:
-                print(e)''')
-    ]
+    # throw_statement = textwrap.dedent('''\
+    #     class NeptunError(Exception):
+    #         pass
 
-    throw_statement = textwrap.dedent('''\
-        class NeptunError(Exception):
-            pass
-
-        throw NeptunError('no tea')''')
+    #     throw NeptunError('no tea')''')
 
 
