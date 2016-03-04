@@ -6,36 +6,10 @@ import suite
 
 #v
 class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-
-    def gen(self, ast):
-        return generate(ast, 'ruby')
-
-    def gen_with_imports(self, ast):
-        if isinstance(ast, Node):
-            if ast.type == 'block':
-                e = ast.block
-            else:
-                e = [ast]
-        else:
-            e = ast
-        definitions, main = [], []
-        for node in e:
-            if node.type.endswith('_definition'):
-                definitions.append(node)
-            else:
-                main.append(node)
-
-        result = generate(Node('module', definitions=definitions, main=main), 'ruby')
-        ls = result.split('\n')
-        l = 0
-        imports = []
-        while ls[l].startswith('require'):
-            imports.append(ls[l][9:-1])
-            l += 1
-        if not ls[l].strip():
-            l += 1
-        source = '\n'.join(ls[l:])
-        return imports, source
+    
+    _language = 'ruby'
+    _import = 'require'
+    _parse_import = lambda self, line: line[9:-1]
 
     # make declarative style great again
 
@@ -202,7 +176,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         class NeptunError < StandardError
         end
 
-        raise NeptunError, \'no tea\'''')
+        throw NeptunError.new(\'no tea\')''')
 
 
 

@@ -1,45 +1,13 @@
 import unittest
 import textwrap
-from pseudon import generate
-from pseudon.pseudon_tree import Node
 import suite
 
 #v
 class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-
-    def gen(self, ast):
-        return generate(Node('module', 
-            definitions=[],
-            dependencies=[],
-            constants=[],
-            main=ast if isinstance(ast, list) else [ast]), 'python').rstrip()
-
-    def gen_with_imports(self, ast):
-        if isinstance(ast, Node):
-            if ast.type == 'block':
-                e = ast.block
-            else:
-                e = [ast]
-        else:
-            e = ast
-        definitions, main = [], []
-        for node in e:
-            if node.type.endswith('_definition'):
-                definitions.append(node)
-            else:
-                main.append(node)
-
-        result = generate(Node('module', definitions=definitions, dependencies=[], constants=[], main=main), 'python')
-        ls = result.split('\n')
-        l = 0
-        imports = []
-        while ls[l].startswith('import'):
-            imports.append(ls[l][7:])
-            l += 1
-        if not ls[l].strip():
-            l += 1
-        source = '\n'.join(ls[l:])
-        return imports, source
+    
+    _language = 'python'
+    _import = 'import'
+    _parse_import = lambda self, line: line[7:]
 
     # make declarative style great again
 

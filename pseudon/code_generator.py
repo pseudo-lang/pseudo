@@ -108,9 +108,13 @@ class CodeGenerator:
 
     def _generate_from_template(self, template, node, depth):
         if isinstance(template, dict):
-            template = template.get(getattr(node, template['_key']))
-            if template is None:
-                template = template['_otherwise']
+            if isinstance(template['_key'], str):
+                t = template.get(getattr(node, template['_key']))
+            else:
+                t = template.get(str(template['_key'](node)))
+            if t is None:
+                t = template['_otherwise']
+            template = t
 
         expanded = []
         print('T',depth, template)

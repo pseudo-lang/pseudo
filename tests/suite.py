@@ -1,5 +1,7 @@
 import re
 from pseudon.pseudon_tree import Node, to_node, call, method_call, local, assignment
+from pseudon import generate
+from pseudon.pseudon_tree import Node
 
 SNAKE_CASE_REGEX = re.compile(r'(_\[a-z])')
 
@@ -36,6 +38,9 @@ class TestLanguage(type):
             if examples:
                 test_name = 'test_%s' % name
                 namespace[test_name] = generate_test(name, examples, exp)
+
+        namespace['gen'] = TestHelpers.gen
+        namespace['gen_with_imports'] = TestHelpers.gen_with_imports
 
         return super().__new__(cls, name, bases, namespace)
 
@@ -325,4 +330,39 @@ ThrowStatement = [
     ]
 ]
 
+
+class TestHelpers:
+    def gen(self, ast):
+        return generate(Node('module', 
+            definitions=[],
+            dependencies=[],
+            constants=[],
+            main=ast if isinstance(ast, list) else [ast]), self._language).rstrip()
+
+    def gen_with_imports(self, ast):
+        if isinstance(ast, Node):
+            if ast.type == 'block':
+                e = ast.block
+            else:
+                e = [ast]
+        else:
+            e = ast
+        definitions, main = [], []
+        for node in e:
+            if node.type.endswith('_definition'):
+                definitions.append(node)
+            else:
+                main.append(node)
+
+        result = generate(Node('module', definitions=definitions, dependencies=[], constants=[], main=main), self._language)
+        ls = result.split('\n')
+        l = 0
+        imports = []
+        while ls[l].startswith(self._import):
+            imports.append(self._parse_import(ls[l]).strip())
+            l += 1
+        if not ls[l].strip():
+            l += 1
+        source = '\n'.join(ls[l:])
+        return imports, source
 

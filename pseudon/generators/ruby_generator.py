@@ -1,7 +1,23 @@
-from pseudon.code_generator import CodeGenerator
+from pseudon.code_generator import CodeGenerator, switch
 import re
 
 SHORT_SYNTAX = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*')
+
+PRIORITIES = {
+    '**':   11,
+    '%':    11,
+    '/':    10,
+    '*':    10,
+    '+':    9,
+    '-':    9,
+    '>':    8,
+    '<':    8,
+    '>=':   8,
+    '<=':   8,
+    '==':   8,
+    'and':  7,
+    'or':   6,
+}
 
 class RubyGenerator(CodeGenerator):
     '''Ruby code generator'''
@@ -13,7 +29,7 @@ class RubyGenerator(CodeGenerator):
         short_syntax = True
         result = []
         for pair in node.pairs:
-            if short_syntax and pair.key.type == 'String' and re.match(SHORT_SYNTAX, pair):
+            if short_syntax and pair.key.type == 'String' and re.match(SHORT_SYNTAX, pair.key.value):
                 result.append('%s: %s' % (pair.key.value, self._generate_node(pair.value)))
             else:
                 short_syntax = False
@@ -105,7 +121,12 @@ class RubyGenerator(CodeGenerator):
 
         static_call = "%<receiver>.%<message>%<.args>",
         static_call_args = call_args,
-        call        = "%<function>%<.args>",
+        call        = switch(
+            lambda c: c.function.name if c.function.type == 'local' else '',
+
+            puts       = "puts %<args:join ', '>",
+            _otherwise = "%<function>%<.args>"
+        ),
         call_args   = call_args,
         method_call = "%<receiver>.%<message>%<.args>",
         method_call_args = call_args,
