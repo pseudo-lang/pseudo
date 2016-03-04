@@ -36,36 +36,6 @@ class RubyGenerator(CodeGenerator):
                 result.append('%s => %s' % (self._generate_node(pair.key), self._generate_node(pair.value)))
         return ', '.join(result)
 
-    def index_sequence(self, node, indent):
-        h = self._generate_node(node.sequence)
-        if node.sequence.pseudon_type.startswith('List'):
-            return '%s.each_with_index' % h
-        elif node.sequence.pseudon_type.startswith('Dictionary'):
-            return '%s.each' % h
-        elif node.sequence.pseudon_type == 'String':
-            return '%s.each_char.each_with_index' % h
-        else:
-            return '%s.each' % h
-
-    def index_iterator(self, node, indent):
-        index, iterator = self._generate_node(node.index), self._generate_node(node.iterator)
-        if node.sequence.pseudon_type.startswith('List'):
-            return '%s, %s' % (iterator, index)
-        elif node.sequence.pseudon_type.startswith('Dictionary'):
-            return '%s, %s' % (index, iterator)
-        elif node.sequence.pseudon_type == 'String': # we want to have explicitly all cases
-            return '%s, %s' % (iterator, index)
-        else:
-            return '%s, %s' % (iterator, index)
-
-    def each(self, node, indent):
-        if node.sequence.pseudon_type.startswith('List') or node.sequence.pseudon_type.startswith('Dictionary'):
-            return 'each'
-        elif node.sequence.pseudon_type == 'String':
-            return 'each_char'
-        else:
-            return 'each'
-
     call_args = ("(%<args:join ', '>)", '')
     function_params = ("(%<params:join ', '>)", '')
 
@@ -121,10 +91,10 @@ class RubyGenerator(CodeGenerator):
         static_call = "%<receiver>.%<message>%<.args>",
         static_call_args = call_args,
         call        = switch(
-            lambda c: c.function.name if c.function.type == 'local' else '',
+            lambda c: c.function.type == 'local' and c.function.name == 'puts' or len(c.args) == 0,
 
-            puts       = "puts %<args:join ', '>",
-            _otherwise = "%<function>%<.args>"
+            true       = "%<function>%<args:join_lws ', '>",
+            _otherwise = "%<function>(%<args:join ', '>)"
         ),
         call_args   = call_args,
         method_call = "%<receiver>.%<message>%<.args>",
@@ -172,17 +142,17 @@ class RubyGenerator(CodeGenerator):
 
         exception_handler_is_builtin = ('StandardError', '%<exception>'),
 
-        for_each_statement = '''
-            %<sequence>.%<#each> do |%<iterator>|
+        for_statement = '''
+            %<sequences> do |%<iterators>|
               %<block:line_join>
             end''',
 
         for_range_statement = '''
             (%<.first>...%<last>)%<.step>.each do |%<index>|
-              %<block:lines>
+              %<block:line_join>
             end''',
 
-        for_range_statement_first = ('%<first>, ', '0'),
+        for_range_statement_first = ('%<first>', '0'),
 
         for_range_statement_step = ('.step(%<step>)', ''),
 
@@ -190,6 +160,22 @@ class RubyGenerator(CodeGenerator):
             %<#index_sequence> do |%<#index_iterator>|
               %<block:line_join>
             end''',
+
+        for_sequence = '%<sequence>.each',
+
+        for_sequence_zip = "%<sequences:first>.zip(%<sequences:join_rest ', '>).each",
+
+        for_sequence_with_index = '%<sequence>.each_with_index',
+
+        for_sequence_with_items = '%<sequence>.each',
+
+        for_iterator = '%<iterator>',
+
+        for_iterator_zip = "%<iterators:join ', '>",
+
+        for_iterator_with_index = '%<iterator>, %<index>',
+
+        for_iterator_with_items = '%<key>, %<value>',
 
         explicit_return = 'return %<value>',
 
@@ -207,9 +193,9 @@ class RubyGenerator(CodeGenerator):
 
         anonymous_function = switch(
             lambda a: len(a.block) == 1,
-            true         = "-> %<params:join ', '> { %<block:join ''> }",
+            true         = "->%<params:join_lws ', '> { %<block:join ''> }",
             _otherwise   = '''
-                            -> %<params:join ', '> do
+                            ->%<params:join_lws ', '> do
                               %<block:line_join>
                             end'''
         ),

@@ -48,6 +48,12 @@ class CodeGenerator:
     def action_join(self, expanded, separator, depth):
         return separator.join(expanded)
 
+    def action_join_lws(self, expanded, separator, depth):
+        if expanded:
+            return ' ' + separator.join(expanded)
+        else:
+            return ''
+
     def action_each_rpad(self, expanded, value, depth):
         if expanded:
             return value.join(expanded) + value
@@ -65,6 +71,15 @@ class CodeGenerator:
             return expanded[-1]
         else:
             return ''
+
+    def action_first(self, expanded, depth):
+        if expanded:
+            return expanded[0]
+        else:
+            return ''
+
+    def action_join_rest(self, expanded, separator, depth):
+        return separator.join(expanded[1:])
 
     def action_lines(self, expanded, depth):
         if expanded:

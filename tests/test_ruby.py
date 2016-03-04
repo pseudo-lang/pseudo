@@ -75,17 +75,18 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
           z
         end''')
 
-    for_each_statement = textwrap.dedent('''\
-        sequence.each do |a|
-          a.sub
-        end''')
+    for_statement = [
+        textwrap.dedent('''\
+          sequence.each do |a|
+            log(a)
+          end'''),
 
-    for_range = textwrap.dedent('''\
-        (0...42).step(2).each do |j|
-          analyze(j)
-        end''')
+        textwrap.dedent('''\
+          (0...42).step(2).each do |j|
+            analyze(j)
+          end'''),
 
-    for_each_with_index = [
+
         textwrap.dedent('''\
           z.each_with_index do |k, j|
             analyze(j, k)
@@ -93,14 +94,14 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
         textwrap.dedent('''\
           z.each do |j, k|
-            analyze(j, k)
+            analyze(k, j)
+          end'''),
+
+        textwrap.dedent('''\
+          z.zip(zz).each do |k, l|
+            a(k, l)
           end''')
     ]
-
-    for_each_in_zip = textwrap.dedent('''\
-        z.zip(zz).each do |k, l|
-          a(k, l)
-        end''')
 
     while_statement = textwrap.dedent('''\
         while f >= 42

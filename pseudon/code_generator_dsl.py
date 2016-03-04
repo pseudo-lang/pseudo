@@ -55,6 +55,9 @@ class Action(FragmentGenerator):
 
     def expand(self, generator, node, depth):
         content = getattr(node, self.field)
+        if self.action in ['join', 'join_lws', 'each_lpad', 'each_rpad'] and self.args and self.args[0] != '\n':
+            depth = 0
+
         if isinstance(content, Iterable):
             if content:
                 expanded = [generator._generate_node(content[0], depth)]

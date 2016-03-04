@@ -37,11 +37,12 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     attr = 'e.egg'
 
-    local_assignment = 'egg = ham'
-
-    instance_assignment = 'this.egg = ham'
-
-    attr_assignment = 'T.egg = ham'
+    assignments = [
+        'egg = ham',
+        'this.egg = ham',
+        'T.egg = ham',
+        "x[4] = 'String'"
+    ]
 
     call = 'map(x)'
 
