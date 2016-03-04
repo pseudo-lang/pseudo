@@ -13,10 +13,8 @@
   - [instance_variable](#instance_variable)
   - [attr](#attr)
 - [assignments](#assignments)
-  - [local_assignment](#local_assignment)
-  - [instance_assignment](#instance_assignment)
-  - [attr_assignment](#attr_assignment)
-- [calls](#calls)
+  - [assignment](#assignment)
+  [calls](#calls)
   - [call](#call)
   - [method_call](#method_call)
   - [standard_call](#standard_call)
@@ -266,12 +264,14 @@ attr: size
 
 # assignments
 
-## local_assignments
+## assignment
+
+### local_assignments
 
 an assignment to a local variable (the usual kind of assignment).
 ```python
-LocalAssignment
-  local: str
+Assignment
+  target: Local
   value: Expression
 ```
 
@@ -283,22 +283,35 @@ x, y = 2, 4
 multi assignments is also supposed to be represented as series of assignment nodes
 
 ```yaml
-type: local_assignment
-local: e
+type: assignment
+target:
+  type: local
+  name: e
+  pseudo_type: String
 value:
   type: string
   value: eyes
+  pseudo_type: String
 
-type: local_assignment
-local: x
+type: assignment
+target:
+  type: local
+  name: x
+  pseudo_type: Int
 value:
   type: int
   value: 2
-type: local_assignment
-local: y
+  pseudo_type: Int
+
+type: assignment
+target:
+  type: local
+  name: y
+  pseudo_type: Int
 value:
   type: int
   value: 2
+  pseudo_type: Int
 ```
 
 ## instance_assignment

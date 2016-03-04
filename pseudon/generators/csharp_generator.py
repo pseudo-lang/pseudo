@@ -58,6 +58,7 @@ class CSharpGenerator(CodeGenerator):
         class_definition = '''
               public class %<name>%<.base>
               {
+                %<attrs:lines>
                 %<.constructor>
                 %<methods:lines>}''',
 
@@ -65,6 +66,10 @@ class CSharpGenerator(CodeGenerator):
 
         class_definiton_constructor = ('%<constructor>', ''),
 
+        class_attr = '%<.is_public>%<@pseudo_type> %<name>;',
+
+        class_attr_is_public = ('public ', 'private '),
+        
         anonymous_function = '(%<#params>) => <#anon_block>',
 
         constructor = '''
@@ -180,6 +185,30 @@ class CSharpGenerator(CodeGenerator):
         index_assignment = '%<sequence>[%<index>] = %<value>',
 
         constant = '%<constant> = %<init>',
+
+        regex = '@"%<value>',
+
+        for_statement = '''
+            foreach(%<iterators> in %<sequences>) {
+                %<#block>}''',
+        
+        for_range_statement = '''
+            for (var %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>)
+            {
+                %<block:lines>}''',
+
+        for_range_statement_first = ('%<first>, ', ''),
+
+        for_range_statement_step = (', %<step>', ''),
+
+        for_iterator = '@pseudo_type %<iterator>',
+
+        for_iterator_zip = "%<iterators:join ', '>",
+
+        for_iterator_with_index = '%<index>, %<iterator>',
+
+        for_iterator_with_items = '%<key>, %<value>',
+
 
         block = '%<block:semi>'
     )

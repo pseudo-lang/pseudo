@@ -136,9 +136,7 @@ class PythonGenerator(CodeGenerator):
         pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
 
-        local_assignment    = '%<local> = %<value>',
-        instance_assignment = 'self.%<name> = %<value>',
-        attr_assignment     = '%<attr> = %<value>',
+        assignment    = '%<target> = %<value>',
 
         operation_assign    = '%<slot> %<op>= %<value>',
 

@@ -90,7 +90,10 @@ class GolangTranslator(ApiTranslator):
             '@equivalent':  'slice',
 
             'push':         go_bizarre('append'),
-            'pop':          lambda receiver, pseudo_type: bizarre(go_last(receiver)
+            'pop':          bizarre(
+                                translate=
+                                lambda assignment, *l, receiver, pseudo_type: 
+                                    assignment_updated(assignment, value=go_last(receiver)
                 ,
             'length':       '.length',
             'insert':       expand_insert
@@ -139,3 +142,38 @@ class GolangTranslator(ApiTranslator):
             '@all':     'regexp'
         }
     }
+
+
+'''
+
+go: middleware for translation of error handlers
+
+builtin / custom
+
+add markers for functions:
+
+%error can raise an error from function
+
+[] possible errors
+
+builtin functions:
+  can only raise BuiltinException in pseudo terms
+  can raise CustomException in pseudo terms but BuiltinException too
+
+  manually mark the supported functions from the pseudo-go bridge
+
+  then analyze the pseudo tree
+
+  a f:
+    if f is calling g: 
+      if g is builtin:
+        if g raises an error, add BuiltinException to f errors and mark f %error
+      else:
+        if g is not analyzed:
+          a g
+        if g is %error look at f possible errors
+          if handler in f for them: add an if err and connect them
+          if handlers left: mark f %error and add unhandled errors to sig
+ok so it seems it can be done and yepp
+'''
+

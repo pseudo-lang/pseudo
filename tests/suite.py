@@ -53,11 +53,12 @@ Local       = [local('egg')]
 Typename    = [to_node('Egg')]
 InstanceVariable = [Node('instance_variable', name='egg')]
 Attr        = [Node('attr', object=local('e'), attr='egg')]
-LocalAssignment = [Node('local_assignment', local='egg', value=local('ham'))]
-InstanceAssignment = [Node('instance_assignment', name='egg', value=local('ham'))]
-AttrAssignment = [Node('attr_assignment', 
-        attr=Node('attr', object=to_node('T'), attr='egg'), 
-         value=local('ham'))]
+Assignment = [
+    Node('assignment', target=local('egg', pseudo_type='Int'), value=local('ham', pseudo_type='Int')),
+    Node('assignment', target=Node('instance_variable', name='egg', pseudo_type='Int'), value=local('ham', pseudo_type='Int')),
+    Node('assignment', target=Node('attr', object=Node('typename', name='T'), attr='egg', pseudo_type='String'), 
+         value=local('ham', pseudo_type='String'))
+]
 Call        = [call('map', [local('x')])]
 MethodCall  = [method_call(local('e'), 'filter', [to_node(42)])]
 StandardCall = [
@@ -154,7 +155,7 @@ WhileStatement = [Node('while_statement',
             right=to_node(42),
             left=call(local('f'), [])),
         block=[
-            Node('local_assignment', local='b', value=Node('call', function=Node('local', name='g'), args=[]))
+            Node('assignment', target=local('b', pseudo_type='Int'), value=call(local('g'), [], pseudo_type='Int'))
         ])]
 
 
@@ -164,7 +165,7 @@ FunctionDefinition = [Node('function_definition',
         pseudo_type='Function[Int, Int]',
         return_type='Int',
         block=[
-            Node('local_assignment', local='fixed', value=Node('call', function=Node('local', name='fix'), args=[Node('local', name='z')])),
+            Node('assignment', target=local('fixed', pseudo_type='Int'), value=call(local('fix'), [local('z')], pseudo_type='Int')),
             Node('implicit_return', value=Node('local', name='fixed'))
         ])]
 
@@ -176,7 +177,7 @@ MethodDefinition = [Node('method_definition',
         return_type='List[String]',
         is_public=True,
         block=[
-            Node('instance_assignment', name='ast', value=Node('null')),
+            Node('assignment', target=local('ast', pseudo_type='Void'), value=Node('null', pseudo_type='Void')),
             Node('implicit_return', value=Node('list', elements=[Node('local', name='source')]))
         ])]
 

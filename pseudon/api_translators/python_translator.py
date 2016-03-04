@@ -107,6 +107,9 @@ class PythonTranslator(ApiTranslator):
             'slice_from':   expand_slice,
             'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, None, to, pseudo_type),
             'repeat':       to_op('*'),
+            'set_slice':    expand_set_slice,
+            'set_slice_from': expand_set_slice,
+            'set_slice_to': lambda receiver, to, pseudo_type: expand_set_slice(receiver, None, to, pseudo_type),            
             'find':         '#find',
             'join':         lambda receiver, delimiter, _: method_call(delimiter, 'join', [receiver], pseudo_type='String')
 

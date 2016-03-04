@@ -45,8 +45,8 @@ def index_assignment(sequence, index, value):
 def for_each_with_index_statement(iterators, sequence, block):
     return Node('for_each_with_index', iterators=iterators, sequence=sequence, block=block)
 
-def local_assignment(local, value, value_type=None):
-    return Node('local_assignment', local=local, value=value, pseudo_type='Void', value_type=value_type)
+def assignment(target, value, value_type=None):
+    return Node('assignment', target=target, value=value, pseudo_type='Void', value_type=value_type)
 
 def attr(value, attr, pseudo_type=None):
     return Node('attr', value=value, attr=attr, pseudo_type=pseudo_type)
