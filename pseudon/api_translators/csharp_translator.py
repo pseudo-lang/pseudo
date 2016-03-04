@@ -48,7 +48,7 @@ class CSharpTranslator(ApiTranslator):
 
     '''
 
-    api = {
+    methods = {
         'List': {
             '@equivalent':  'List',
 
@@ -58,17 +58,40 @@ class CSharpTranslator(ApiTranslator):
 
             'remove_at':    '#RemoveAt',
 
-            'remove':       '#Remove'
+            'remove':       '#Remove',
+
+            'length':       '.Count!'
         },
         'Dictionary': {
-            'length':       'array_length',
-            'keys':         'array_keys',
-            'values':       'array_values'
+            '@equivalent':  'Dictionary',
+
+            'length':       '.Count!',
+            'keys':         '#Keys',
+            'values':       '#Values'
         },
-        'Enumerable': {
-            'map':          '#Select',
-            'filter':       '#Where',
-            'reduce':       '#Aggregate'
+        'String': {
+            '@equivalent':  'String',
+
+            'length':       '#Length',
+            'substr':       '#Substring',
+            'find':         '#Find'
+        },
+        'Set': {
+            '@equivalent':  'Set'
+        }
+    }
+
+    functions = {
+        'io': {
+            'display':    'Console.WriteLine',
+            'read':       'Console.ReadLine',
+            'read_file':  'System.ReadFile',
+            'write_file': 'System.WriteFile'
+        },
+
+        'math': {
+            'ln':          'Math.Log',
+            'tan':         'Math.Tan'
         }
     }
 

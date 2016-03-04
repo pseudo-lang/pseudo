@@ -2,12 +2,22 @@ import unittest
 import textwrap
 from pseudon import generate
 from pseudon.pseudon_tree import Node
-import pseudon.tests.suite as suite
+import suite
 
 #v
 class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
     
-    
+    _language = 'csharp'
+    _import = 'using'
+    _parse_import = lambda self, line: line[6:-1]
+
+    def gen(self, ast):
+        imports, source = self.gen_with_imports(ast)
+        out = '\n'.join(source.split('\n')[4:-3]).strip()
+        if out[-1] == ';':
+            return out[:-1]
+        else:
+            return out
 
     # make declarative style great again
 
@@ -25,9 +35,9 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     null = 'null'
 
-    dictionary = 'new Dictionary<String, Int>{ {"la", 0} }'
+    dictionary = 'new Dictionary<string, int> { {"la", 0} }'
 
-    list_ = 'new List<string>{ "la" }'
+    list_ = 'new List<string> {"la"}'
 
     local = 'egg'
 

@@ -1,25 +1,25 @@
 from pseudon.code_generator import CodeGenerator, switch
-
+from pseudon.middlewares import DeclarationMiddleware
 
 class CSharpGenerator(CodeGenerator):
     '''CSharp code generator'''
 
     indent = 4
     use_spaces = True
-    middlewares = []
+    middlewares = [DeclarationMiddleware]
 
     def params(self, node, indent):
         return ', '.join(
             '%s %s' % (
               self.render_type(node.pseudo_type[j + 1]), 
-              k) for j, k in enumerate(node.params) )
+              self._generate_node(k)) for j, k in enumerate(node.params) )
 
     def anon_block(self, node, indent):
         if len(node.block) == 1:
-            b = self._generate_node(node)
+            b = self._generate_node(node.block[0])
             return b
         else:
-            b = ';\n'.join(self._generate_node(node, indent + 1)) + ';\n'
+            b = ';\n'.join(self._generate_node(e, indent + 1) for e in node.block) + ';\n'
             return '{%s\n%s}' % (b, self.offset(indent))
 
     types = {
@@ -77,7 +77,7 @@ class CSharpGenerator(CodeGenerator):
 
         class_attr_is_public = ('public ', 'private '),
         
-        anonymous_function = '(%<#params>) => <#anon_block>',
+        anonymous_function = '(%<#params>) => %<#anon_block>',
 
         constructor = '''
             %<this>(%<#params>)
@@ -207,6 +207,9 @@ class CSharpGenerator(CodeGenerator):
 
         for_iterator_with_items = '%<key>, %<value>',
 
+        custom_exception = '''
+            class %<name> : Exception
+        ''',
 
         block = '%<block:semi>'
     )
