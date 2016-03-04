@@ -3,6 +3,7 @@ from pseudon.types import *
 from pseudon.env import Env
 from pseudon.pseudon_tree import Node, to_node, method_call, call, local
 from pseudon.errors import PseudonStandardLibraryError, PseudonDSLError
+import copy
 
 def to_op(op, reversed=False):
     '''
@@ -23,7 +24,7 @@ def to_op(op, reversed=False):
 class ApiTranslator(TreeTransformer):
 
     def __init__(self, tree):
-        self.tree = tree
+        self.tree = copy.deepcopy(tree)
 
     def api_translate(self):
         self.standard_dependencies = set()
@@ -74,7 +75,8 @@ class ApiTranslator(TreeTransformer):
         node.args = [self.transform(arg) for arg in node.args]
         node.receiver = self.transform(node.receiver)
         
-        
+        print(node.type, l)
+        # input()
         if l not in self.methods:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t recognize %s as a standard type' % l)
@@ -86,6 +88,7 @@ class ApiTranslator(TreeTransformer):
         if isinstance(x, dict):
             return self.leaking_call(x, l, node.message, node, assignment)
 
+        # input(x)
         self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
         return self._expand_api(x, node.receiver, node.args, node.pseudo_type, self.methods[l]['@equivalent'])
 
@@ -125,10 +128,12 @@ class ApiTranslator(TreeTransformer):
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
         
+        print(node.type, node.function)
+        # input()        
         x = self.functions[namespace][node.function]
         if isinstance(x, dict):
             return self.leaking_call(x, node.namespace, node.function, node, assignment)
-            
+        # input(x)    
         self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
         return self._expand_api(x, None, node.args, node.pseudo_type, node.namespace)
 

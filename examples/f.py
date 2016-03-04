@@ -1,3 +1,12 @@
-with open('f.py', 'r') as _f:
-    source = _f.read()
+def f():
+    return ''
+
+print(f())
+try:
+    2
+    f()
+except Exception as e:
+    print(e)
+
+
 

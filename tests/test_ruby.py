@@ -37,11 +37,12 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     attr = 'e.egg'
 
-    local_assignment = 'egg = ham'
-
-    instance_assignment = '@egg = ham'
-
-    attr_assignment = 'T.egg = ham'
+    assignments = [
+        'egg = ham',
+        '@egg = ham',
+        'T.egg = ham',
+        "x[4] = 'String'"
+    ]
 
     call = 'map(x)'
 
@@ -51,7 +52,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         'puts 42',
         'gets',
         'Math.log(ham)',
-        "File.read('f.py')"
+        "source = File.read('f.py')"
     ]
 
     standard_method_call = [
@@ -69,7 +70,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         if egg == ham
           l[0...2]
         elsif egg == ham
-          4.2
+          puts 4.2
         else
           z
         end''')
@@ -102,7 +103,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         end''')
 
     while_statement = textwrap.dedent('''\
-        while f() >= 42
+        while f >= 42
           b = g
         end''')
 
@@ -124,7 +125,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         textwrap.dedent('''\
             -> source do
               puts source
-              ves(source)
+              ves(source.length)
             end''')
     ]
 
@@ -149,8 +150,6 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     index = "'la'[2]"
 
-    index_assignment = "x[4] = 'String'"
-
     try_statement = [
         textwrap.dedent('''\
             begin
@@ -167,8 +166,8 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
             begin
               a
               h(-4)
-            resuce NeptunError => e
-              echo e
+            rescue NeptunError => e
+              puts e
             end''')
     ]
 

@@ -29,7 +29,7 @@ class RubyGenerator(CodeGenerator):
         short_syntax = True
         result = []
         for pair in node.pairs:
-            if short_syntax and pair.key.type == 'String' and re.match(SHORT_SYNTAX, pair.key.value):
+            if short_syntax and pair.key.type == 'string' and re.match(SHORT_SYNTAX, pair.key.value):
                 result.append('%s: %s' % (pair.key.value, self._generate_node(pair.value)))
             else:
                 short_syntax = False
@@ -74,21 +74,21 @@ class RubyGenerator(CodeGenerator):
 
         function_definition = '''
             def %<name>%<.params>
-              %<block:lines>
+              %<block:line_join>
             end''',
 
         function_definition_params = function_params,
 
         method_definition =     '''
             def %<name>%<.params>
-              %<block:lines>
+              %<block:line_join>
             end''',
 
         method_definition_params = function_params,
 
         constructor = '''
             def initialize%<.params>
-              %<block:lines>
+              %<block:line_join>
             end''',
 
         constructor_params = function_params,
@@ -111,9 +111,8 @@ class RubyGenerator(CodeGenerator):
         list            = "[%<elements:join ', '>]",
         dictionary      = '{%<#ruby_dict>}',
         attr            = '%<object>.%<attr>',
-        attr_assignment = '%<attr> = %<value>',
-        local_assignment = '%<local> = %<value>',
-        instance_assignment = '@%<name> = %<value>',
+        
+        assignment = '%<target> = %<value>',
 
         binary_op   = '%<left> %<op> %<right>',
         unary_op    = '%<op>%<value>',
@@ -140,21 +139,21 @@ class RubyGenerator(CodeGenerator):
         if_statement    = '''
             if %<test>
               %<block:line_join>
-            %<.otherwise>
-            end''',
+            %<.otherwise>''',
 
-        if_statement_otherwise = ('%<otherwise>', ''),
+        if_statement_otherwise = ('%<otherwise>', 'end'),
 
         elseif_statement = '''
             elsif %<test>
               %<block:line_join>
             %<.otherwise>''',
 
-        elseif_statement_otherwise = ('%<otherwise>', ''),
+        elseif_statement_otherwise = ('%<otherwise>', 'end'),
 
         else_statement = '''
             else
-              %<block:line_join>''',
+              %<block:line_join>
+            end''',
 
         while_statement = '''
             while %<test>
@@ -164,8 +163,8 @@ class RubyGenerator(CodeGenerator):
         try_statement = '''
             begin
               %<block:line_join>
-            %<handlers:lines>
-            end''',
+            %<handlers:line_join>end
+            ''',
 
         exception_handler = '''
             rescue %<.is_builtin> => %<instance>
@@ -202,16 +201,20 @@ class RubyGenerator(CodeGenerator):
 
         custom_exception_base = ('%<base>', 'StandardError'),
 
-        _slice          = '[%<from_>...%<to>]',
-        _slice_from     = '[%<from_>..-1]',
+        _slice          = '%<sequence>[%<from_>...%<to>]',
+        _slice_from     = '%<sequence>[%<from_>..-1]',
+        _slice_to       = '%<sequence>[0..%<to>]',
 
-        anonymous_function = '-> %<.params> %<anon_block>',
-
-        anonymous_function_params = function_params,
+        anonymous_function = switch(
+            lambda a: len(a.block) == 1,
+            true         = "-> %<params:join ', '> { %<block:join ''> }",
+            _otherwise   = '''
+                            -> %<params:join ', '> do
+                              %<block:line_join>
+                            end'''
+        ),
 
         index           = '%<sequence>[%<index>]',
-
-        index_assignment = '%<sequence>[%<index>] = %<value>',
 
         block           = '%<block:line_join>'
     )

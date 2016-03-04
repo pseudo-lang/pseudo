@@ -44,14 +44,14 @@ class RubyTranslator(ApiTranslator):
                      which helps with call nodes with normal `local` name callees
     '''
 
-    def expand_slice(receiver, from_=None, to=None):
+    def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
         if from_:
             if to:
-                return Node('_slice', sequence=receiver, from_=from_, to=to)
+                return Node('_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
             else:
-                return Node('_slice_from', sequence=receiver, from_=from_)
+                return Node('_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
         elif to:
-            return Node('_slice', sequence=receiver, from_=to_node(0), to=to)
+            return Node('_slice', sequence=receiver, from_=to_node(0), to=to, pseudo_type=pseudo_type)
         else:
             return None
 
@@ -68,7 +68,7 @@ class RubyTranslator(ApiTranslator):
             'remove':       '#delete',
             'slice':        expand_slice,
             'slice_from':   expand_slice,
-            'slice_to':     lambda receiver, to: expand_slice(receiver, to_node(0), to)
+            'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, to_node(0), to, pseudo_type)
         },
         'Dictionary': {
             '@equivalent':  'Hash',
@@ -93,8 +93,8 @@ class RubyTranslator(ApiTranslator):
 
     functions = {
         'global': {
-            'wat':          lambda: Node('block', block=[]),
-            'exit':         lambda status: call('exit', [status])
+            'wat':          lambda _: Node('block', block=[]),
+            'exit':         lambda status, _: call('exit', [status])
         },
 
         'io': {

@@ -1,15 +1,50 @@
 constants: []
-definitions: []
+definitions:
+- block:
+  - pseudo_type: String
+    type: implicit_return
+    value: {pseudo_type: String, type: string, value: ''}
+  name: f
+  params: []
+  pseudo_type: [Function, String]
+  return_type: String
+  type: function_definition
 dependencies: []
 main:
-- pseudo_type: Void
-  target: {name: source, pseudo_type: String, type: local}
-  type: assignment
-  value:
-    args:
-    - {pseudo_type: String, type: string, value: f.py}
-    function: read_file
-    namespace: io
+- args:
+  - args: []
+    function:
+      name: f
+      pseudo_type: [Function, String]
+      type: local
     pseudo_type: String
-    type: standard_call
+    type: call
+  function: display
+  namespace: io
+  pseudo_type: Void
+  type: standard_call
+- block:
+  - {pseudo_type: Int, type: int, value: 2}
+  - args: []
+    function:
+      name: f
+      pseudo_type: [Function, String]
+      type: local
+    pseudo_type: String
+    type: call
+  handlers:
+  - block:
+    - args:
+      - {name: e, pseudo_type: Exception, type: local}
+      function: display
+      namespace: io
+      pseudo_type: Void
+      type: standard_call
+    exception: Exception
+    instance: e
+    is_builtin: true
+    pseudo_type: Void
+    type: exception_handler
+  pseudo_type: Void
+  type: try_statement
 type: module

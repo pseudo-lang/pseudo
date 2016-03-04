@@ -48,10 +48,10 @@ Module      = [Node('module', constants=[], code=[])]
 Int         = [to_node(42)]
 Float       = [to_node(42.420)]
 String      = [to_node("'la'")]
-Boolean     = [to_node(True)]
+Boolean     = [Node('boolean', value='true', pseudo_type='Boolean')]
 Null        = [Node('null')]
 Dictionary  = [Node('dictionary', pairs=[
-                Node('pair', key=to_node("'la'"), value=to_node(0))])]
+                Node('pair', key=to_node('"la"'), value=to_node(0))])]
 List        = [Node('list', elements=[to_node("'la'")])]
 Local       = [local('egg')]
 Typename    = [to_node('Egg')]
@@ -180,7 +180,7 @@ WhileStatement = [Node('while_statement',
         test=Node('comparison',
             op='>=',
             right=to_node(42),
-            left=call(local('f'), [])),
+            left=call(local('f', ['Function', 'Int']), [], pseudo_type='Int')),
         block=[
             Node('assignment', target=local('b', pseudo_type='Int'), value=call(local('g'), [], pseudo_type='Int'))
         ])]
@@ -345,8 +345,10 @@ class TestHelpers:
                 e = ast.block
             else:
                 e = [ast]
-        else:
+        elif isinstance(ast, list):
             e = ast
+        else:
+            e = [ast]
         definitions, main = [], []
         for node in e:
             if node.type.endswith('_definition'):

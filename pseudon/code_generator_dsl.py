@@ -81,6 +81,8 @@ class SubTemplate(FragmentGenerator):
         f = getattr(node, self.field)
         layout, default = generator._parsed_templates['%s_%s' % (self.a, self.field)]
         if not f:
+            # input(default)
+        
             return generator._generate_from_template(
                 default,node, depth)
         else:

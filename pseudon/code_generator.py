@@ -111,7 +111,7 @@ class CodeGenerator:
             if isinstance(template['_key'], str):
                 t = template.get(getattr(node, template['_key']))
             else:
-                t = template.get(str(template['_key'](node)))
+                t = template.get(str(template['_key'](node)).lower())
             if t is None:
                 t = template['_otherwise']
             template = t
