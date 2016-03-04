@@ -41,7 +41,10 @@ class PseudonType(FragmentGenerator):
 
     def expand_type(self, t, generator):
         if isinstance(t, list):
-            return generator.types[t[0]].format(*[self.expand_type(base, generator) for base in t[1:]])
+            if t[0] == 'Tuple':
+                return generator.types['Tuple']([self.expand_type(base, generator) for base in t[1:]])
+            else:
+                return generator.types[t[0]].format(*[self.expand_type(base, generator) for base in t[1:]])
         elif t in generator.types:
             return generator.types[t]
         else:

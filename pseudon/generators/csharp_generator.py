@@ -1,4 +1,4 @@
-from pseudon.code_generator import CodeGenerator
+from pseudon.code_generator import CodeGenerator, switch
 
 
 class CSharpGenerator(CodeGenerator):
@@ -6,6 +6,7 @@ class CSharpGenerator(CodeGenerator):
 
     indent = 4
     use_spaces = True
+    middlewares = []
 
     def params(self, node, indent):
         return ', '.join(
@@ -28,6 +29,12 @@ class CSharpGenerator(CodeGenerator):
       'String': 'string',
       'List': 'List<{0}>',
       'Dictionary': 'Dictionary<{0}, {1}>',
+      'Set': 'Set<{0}>',
+      'Tuple': lambda x: 'Tuple<{0}>'.format(', '.join(x)),
+      'Array': '{0}[]', 
+      # fixed-size buffers in c# are not widely used
+      # they require a struct and an unsafe annotation
+      # we can a unsafe-fixed-size-buffer option to config
       'Void': 'void'
     }
 
@@ -93,9 +100,10 @@ class CSharpGenerator(CodeGenerator):
         pair        = "{%<key>, %<value>}",
         attr        = "%<object>.%<attr>",
 
-        local_assignment    = '%<local> = %<value>',
-        instance_assignment = 'this.%<name> = %<value>',
-        attr_assignment     = '%<attr> = %<value>',
+        assignment  = switch('first_mention',
+            true       = 'var %<target> = %<value>', # in v0.3 add config/use var only for generic types
+            _otherwise = '%<target> = %<value>'
+        ),
 
         binary_op   = '%<left> %<op> %<right>',
         unary_op    = '%<op>%<value>',
@@ -183,7 +191,7 @@ class CSharpGenerator(CodeGenerator):
                 %<#block>}''',
         
         for_range_statement = '''
-            for (var %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>)
+            for (int %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>)
             {
                 %<block:lines>}''',
 
@@ -191,11 +199,11 @@ class CSharpGenerator(CodeGenerator):
 
         for_range_statement_step = (', %<step>', ''),
 
-        for_iterator = '@pseudo_type %<iterator>',
+        for_iterator = 'var %<iterator>',
 
-        for_iterator_zip = "%<iterators:join ', '>",
+        for_iterator_zip = "var %<iterators:join ', '>",
 
-        for_iterator_with_index = 'int %<index>, %<iterator>',
+        for_iterator_with_index = 'int %<index>, var %<iterator>',
 
         for_iterator_with_items = '%<key>, %<value>',
 

@@ -6,22 +6,8 @@ import pseudon.tests.suite as suite
 
 #v
 class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    def gen(ast):
-        raw = generate(ast, 'csharp')
-        return raw[:-1] # no \n end
-
-    def gen_with_imports(ast):
-        raw = generate(Node('module', main=[ast]))[:-1]
-        lines = raw.split('\n')
-        main = '\n'.join([line[12:] for line in lines[lines.find('        static void') + 2:-3]])
-        
-        l = 0
-        imports = []
-        while lines[l].startswith('using'):
-            imports.append(lines[l][6:-1])
-            l += 1
-        source = '\n'.join(main)
-        return imports, source
+    
+    
 
     # make declarative style great again
 

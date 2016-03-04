@@ -48,7 +48,7 @@ or in pseudon AST format and we can translate to any of the supported target lan
   - [x] syntax tests passing
   - [ ] api tests passing
 - [ ] javascript
-  - [ ] syntax tests passing
+  - [x] syntax tests passing
   - [ ] api tests passing
 - [ ] c#
   - [ ] syntax tests passing
