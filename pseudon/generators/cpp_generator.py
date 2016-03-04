@@ -34,6 +34,9 @@ class CppGenerator(CodeGenerator):
       'String': 'string',
       'List': 'vector<{0}>',
       'Dictionary': 'unordered_map<{0}, {1}>',
+      'Tuple': lambda t: 'pair<{0}{1}>'.format(*t) if len(t) == 2 else 'tuple<{0}>'.format(', '.join(t)),
+      'Array': '{0}*',
+      'Set': 'set<{0}>',
       'Void': 'void'
     }
 
@@ -87,12 +90,15 @@ class CppGenerator(CodeGenerator):
 
         list        = "new %<@pseudo_type>({%<elements:join ', '>})",
         dictionary  = "new %<@pseudo_type>({%<pairs:join ', '>})",
+        set         = "new %<@pseudo_type>({%<elements:join ', '>})",
+        regex       = 'regex("%<value>")',
         pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
 
-        local_assignment    = '%<local> = %<value>',
-        instance_assignment = 'this->%<name> = %<value>',
-        attr_assignment     = '%<attr> = %<value>',
+        assignment    = switch('first_mention',
+          true = '%<@value:decl_type> %<target>%<@value:postfix_type> = %<value>',
+          _otherwise = '%<target> = %<value>'
+        ),
 
         binary_op   = '%<left> %<op> %<right>',
         unary_op    = '%<op>%<value>',
@@ -168,7 +174,7 @@ class CppGenerator(CodeGenerator):
             with %<call> as %<context>:
                 %<#block>''',
 
-        constant = '%<constant> = %<init>',
+        index = '%<sequence>[%<index>]',
 
         block = '%<block:semi>'
     )
