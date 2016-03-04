@@ -199,7 +199,9 @@ MethodDefinition = [Node('method_definition',
         return_type='List[String]',
         is_public=True,
         block=[
-            Node('assignment', target=local('ast', pseudo_type='Void'), value=Node('null', pseudo_type='Void')),
+            assignment(
+                Node('instance_variable', name='ast', pseudo_type='Void'), 
+                Node('null', pseudo_type='Void')),
             Node('implicit_return', value=Node('list', elements=[Node('local', name='source')]))
         ])]
 
@@ -231,7 +233,7 @@ AnonymousFunction = [
 
 ClassDefinition = [Node('class_definition', 
         name='A',
-        base='B',
+        base='X',
         constructor=Node('constructor',
             params=[Node('local', name='a', pseudo_type='Int')],
             this=to_node('A'),
@@ -259,44 +261,44 @@ This = [Node('this', pseudo_type='A')]
 
 Constructor = [Node('constructor',
             params=[
-                Node('local', name='a', pseudo_type='Int'),
-                Node('local', name='b', pseudo_type='String')
+                local('a', 'Int'),
+                local('b', 'Int')
             ],
             this=to_node('A'),
-            pseudo_type='Function[Int, String, A]',
+            pseudo_type=['Function', 'Int', 'Int', 'A'],
             return_type='A',
             block=[
-                Node('assignment', target=Node('instance_variable', name='a'), value=Node('local', name='a', pseudo_type='Int')),
-                Node('assignment', target=Node('instance_variable', name='b'), value=Node('local', name='b', pseudo_type='String'))
+                assignment(Node('instance_variable', name='a', pseudo_type='Int'), local('a', 'Int')),
+                assignment(Node('instance_variable', name='b', pseudo_type='Int'), local('b', 'Int'))
             ])]
 
 Index = [Node('index', sequence=to_node("'la'"), pseudo_type='String', index=to_node(2))]
 
 u0 = \
 Node('try_statement', block=[
-        call(local('a'), []),
-        call(local('h'), [to_node(-4)])
+        call(local('a', ['Function', 'Int']), [], pseudo_type='Int'),
+        call(local('h', ['Function', 'Int', 'Int']), [to_node(-4)], pseudo_type='Int')
     ], handlers=[
         Node('exception_handler',
             exception='Exception',
             is_builtin=True,
             instance='e',
             block=[
-                Node('standard_call', namespace='io', function='display', args=[Node('local', name='e')])
+                Node('standard_call', namespace='io', function='display', args=[local('e', 'Exception')], pseudo_type='Void')
             ])
     ])
 
 
 u = Node('try_statement', block=[
-        call(local('a'), []),
-        call(local('h'), [to_node(-4)])
-    ], handlers=[
+    call(local('a', ['Function', 'Int']), [], pseudo_type='Int'),
+    call(local('h', ['Function', 'Int', 'Int']), [to_node(-4)], pseudo_type='Int')
+], handlers=[
         Node('exception_handler',
             exception='NeptunError',
             is_builtin = False,
             instance='e',
             block=[
-                Node('standard_call', namespace='io', function='display', args=[Node('local', name='e')])
+                Node('standard_call', namespace='io', function='display', args=[local('e', 'NeptunError')], pseudo_type='Void')
             ])
     ])
 
@@ -307,20 +309,20 @@ u2 = Node('custom_exception',
 TryStatement = [
     u0,
 
-    Node('block', block=[
+    [
         u2,
         u
-    ])
+    ]
 ]
 
 ThrowStatement = [
-    Node('block', block=[
+    [
         u2,
 
         Node('throw_statement',
           exception='NeptunError',
           value=to_node("'no tea'"))
-    ])
+    ]
 ]
 
 

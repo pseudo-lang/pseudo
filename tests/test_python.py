@@ -131,71 +131,71 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         while f() >= 42:
             b = g()''')
 
-    # function_definition = textwrap.dedent('''\
-    #     def weird(z):
-    #         fixed = fix(z)
-    #         return fixed''')
+    function_definition = textwrap.dedent('''\
+        def weird(z):
+            fixed = fix(z)
+            return fixed''')
 
-    # method_definition = textwrap.dedent('''\
-    #     def parse(self, source):
-    #         self.ast = None
-    #         return [source]''')
+    method_definition = textwrap.dedent('''\
+        def parse(self, source):
+            self.ast = None
+            return [source]''')
 
-    # anonymous_function = [
-    #     'lambda source: ves(len(source))',
+    anonymous_function = [
+        'lambda source: ves(len(source))',
 
-    #     ([], textwrap.dedent('''\
-    #         def a_0(source):
-    #             print(source)
-    #             return ves(len(source))
+        ([], textwrap.dedent('''\
+            def a_0(source):
+                print(source)
+                return ves(len(source))
 
             
 
-    #         a_0
+            a_0
 
-    #         '''))
-    # ]
+            '''))
+    ]
 
-    # class_definition = [textwrap.dedent('''\
-    #     class A(B):
-    #         def __init__(self, a):
-    #             self.a = a
+    class_definition = [textwrap.dedent('''\
+        class A(X):
+            def __init__(self, a):
+                self.a = a
 
-    #         def parse(self):
-    #             return 42''')]
+            def parse(self):
+                return 42''')]
 
-    # this = 'self'
+    this = 'self'
 
-    # constructor = textwrap.dedent('''\
-    #     def __init__(self, a, b):
-    #         self.a = a
-    #         self.b = b''')
+    constructor = textwrap.dedent('''\
+        def __init__(self, a, b):
+            self.a = a
+            self.b = b''')
 
-    # index = "'la'[2]"
+    index = "'la'[2]"
 
-    # try_statement = [
-    #     textwrap.dedent('''\
-    #         try:
-    #             a()
-    #             h(-4)
-    #         except Exception as e:
-    #             print(e)'''),
+    try_statement = [
+        textwrap.dedent('''\
+            try:
+                a()
+                h(-4)
+            except Exception as e:
+                print(e)'''),
 
-    #     textwrap.dedent('''\
-    #         class NeptunError(Exception):
-    #             pass
+        textwrap.dedent('''\
+            class NeptunError(Exception):
+                pass
 
-    #         try:
-    #             a()
-    #             h(-4)
-    #         except NeptunError as e:
-    #             print(e)''')
-    # ]
+            try:
+                a()
+                h(-4)
+            except NeptunError as e:
+                print(e)''')
+    ]
 
-    # throw_statement = textwrap.dedent('''\
-    #     class NeptunError(Exception):
-    #         pass
+    throw_statement = textwrap.dedent('''\
+        class NeptunError(Exception):
+            pass
 
-    #     throw NeptunError('no tea')''')
+        raise NeptunError('no tea')''')
 
 
