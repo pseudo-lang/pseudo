@@ -37,13 +37,24 @@ def local(name, pseudo_type=None):
     return Node('local', name=name, pseudo_type=pseudo_type)
 
 def if_statement(test, block, otherwise):
-    return Node('if', test=test, block=block, otherwise=otherwise)
+    return Node('if', test=test, block=block, otherwise=otherwise, pseudo_type='Void')
 
-def item_assignment(sequence, index, value):
-    return Node('_item_assignment', sequence=sequence, index=index, value=value)
+def index_assignment(sequence, index, value):
+    return Node('index_assignment', sequence=sequence, index=index, value=value, pseudo_type='Void')
 
 def for_each_with_index_statement(iterators, sequence, block):
     return Node('for_each_with_index', iterators=iterators, sequence=sequence, block=block)
+
+def local_assignment(local, value, value_type=None):
+    return Node('local_assignment', local=local, value=value, pseudo_type='Void', value_type=value_type)
+
+def attr(value, attr, pseudo_type=None):
+    return Node('attr', value=value, attr=attr, pseudo_type=pseudo_type)
+
+def for_each(iterator, sequence, block):
+    return Node('for_statement', iterators=Node('for_iterator', iterator=iterator), 
+                sequences=Node('for_sequence', sequence=sequence), 
+                block=block, pseudo_type='Void')
 
 def to_node(name):
     '''Expand to a literal node if a basic type otherwise just returns the node'''

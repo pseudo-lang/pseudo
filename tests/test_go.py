@@ -5,7 +5,7 @@ from pseudon.pseudon_tree import Node
 import pseudon.tests.suite as suite
 
 def dedent_with_tabs(source):
-    a = textwrap.dedent(source)
+    a = dedent_with_tabs(source)
     return a.replace('    ', '\t')
 
 #v
@@ -40,9 +40,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     null = 'nil'
 
     dictionary = dedent_with_tabs('''\
-        Map[string]int{
-         "la": 0
-        }''')
+        Map[string]int{ "la": 0 }''')
 
     list_ = '[]string{"la"}'
 
@@ -75,7 +73,111 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     standard_method_call = [
         'len(l)',
-        '"l"[0:2]'
+        '"l"[0:2]',
+
+        #
+
+        'cpus = append(cpus, planet)', #cpus.push(planet)
+        'planet, cpus = cpus[len(cpus) - 1], cpus[:len(cpus) - 1]' # planet = cpus.pop()
+        'len(cpus)', # cpu.length
+        dedent_with_tabs('''\
+            cpus = append(cpus, 0)
+            copy(cpus[x + 1:], cpus[x:])
+            cpus[x] = planet
+            '''), # cpu.insert_at(planet, x)
+        'cpus = append([]int{planet}, cpus...)', # cpu.unshift(planet)
+        'planet, cpus := cpus[0], cpus[1:]', # planet = cpu.shift()
+        'cpus = append(cpus[:x], cpus[x + 1:]...)', # cpus.remove_at(x)
+        'starfleet := cpus[2:4]', # starfleet = cpus[2:4]
+        'starfleet := cpus[x:]', # starfleet = cpus[x:]
+        dedent_with_tabs('''\
+            repeated_cpus := cpus
+            for _ := range(3) {
+                repeated_cpus = append(repeated_cpus, cpus)
+            }                
+            sh(repeated_cpus)
+            '''), # sh(cpus * 4)
+        dedent_with_tabs('''\
+            found := -1
+            for as_index, as_element := range as {
+                if as_element == query {
+                    found := as_index
+                    break
+                }
+            }
+            sh(found, 2)
+            '''), # sh(as.find(query), 2)
+        (['strings'],
+         'sh(2, strings.Join(cpus, "\n"))'), # sh(2, '\n'.join(cpus))
+
+        dedent_with_tabs('''\
+            reversed_cpus := make([]int, len(cpus))
+            for cpus_index, cpus_element := range len(cpus) {
+                reversed_cpus[len(cpus) - cpus_index - 1] = cpus_element
+            }
+            sh(reversed_cpus)
+            '''), # sh(cpus.reverse())
+
+
+        # Dictionary
+
+        dedent_with_tabs('''
+            cpus_keys := make([]int, len(cpus))
+            cpus_index := 0
+            for cpus_key, _ := range cpus {
+                cpus_keys[cpu_index] = cpus_key
+                cpus_index += 1
+            }
+            sh(cpus_keys[:2])
+            '''), # sh(cpu.keys()[:2])
+
+        dedent_with_tabs('''
+            cpus_values := make([]int, len(cpus))
+            cpus_index := 0
+            for _, cpus_value := range cpus {
+                cpus_values[cpus_index] = cpus_key
+                cpus_index += 1
+            }
+            sh(cpus_keys[4])
+            '''),
+
+        'len(cpus)',
+
+        # String
+
+        'name[i:j]',
+        'name[i:]',
+        'name[:j + h()]',
+        'len(name)',
+        (['strings'],
+        'strings.Index(name, help)'), # name.find(help)
+        (['strings'],
+        'strings.Count(name, help)'), # name.count(help)
+        (['fmt'],
+        'fmt.Println("wow %s", wtf)'), # print('wow %s' % wtf)
+        (['strings'],
+        'strings.Repeat(name, count)'),  # name * count
+        (['buffer', 'fmt'],
+        dedent_with_tabs('''
+            var buffer bytes.Buffer
+            for h := cpus {
+                buffer.writeString(h)
+                buffer.writeString(" h")
+            }
+            ''')), # buffer = [h + ' h' for h in cpus]
+        (['strings'],
+          's.Trim("Achtung !!!  ", " ")'), # 'Achtung !!!  '.strip() 
+        (['strings'],
+          's.Split(help)'), # s.split(help)
+        (['strings'],
+         dedent_with_tabs('''
+            result := s.SplitN(help, 2)'
+            separator := help            
+            b := result[1]
+            sh(separator, b)
+            ''')), # _, separator, b = s.partition(help)
+                   # sh(separator, b)
+
     ]
 
     binary_op = 'ham + egg'
@@ -99,76 +201,58 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     
 
 
-    for_each_statement = dedent_with_tabs('''\
-        for _, a := range sequence {
-          a.sub()
-        }''')
+    for_statement = [
+        dedent_with_tabs('''\
+            for _, a := range sequence {
+                a.sub()
+            }'''),
+        dedent_with_tabs('''\
+            for k, v := range cpus {
+                h(k, v)
+            }'''),
+        dedent_with_tabs('''\
+            for j, a := range as {
+                b := bs[j]
+                h(a + b)
+            }''')
+    ],
 
-    for_range = textwrap.dedent('''\
-        for(int j = 0;j < 42; j += 2) {
+
+    for_range = dedent_with_tabs('''\
+        for j := 0, j < 42, j += 2 {
           analyze(j);
         }''')
 
-    for_each_with_index = [
-        textwrap.dedent('''\
-          for(int j = 0;j < z.size();j ++) 
-          {
-            var k = z[j];
-            analyze(j, k);
-          }'''),
-
-        (['unordered_map'],
-         textwrap.dedent('''\
-          foreach(auto _item in z)
-          {
-            analyze(_item->first, _item->second);
-          }'''))
-    ]
-
-    for_each_in_zip = textwrap.dedent('''\
-        for(var _index = 0;_index < min(z.size(), zz.size()
-);_index ++)
-        {
-          var k = z[_index];
-          var l = zz[_index];
-          a(k, l);
-        }
-        ''')
-
-    while_statement = textwrap.dedent('''\
-        while (f() >= 42)
-        {
-          b = g();
+    while_statement = dedent_with_tabs('''\
+        while f() >= 42 {
+            b = g()
         }''')
 
-    function_definition = textwrap.dedent('''\
-        int weird(int z)
-        {
-          int fixed = fix(z);
-          return fixed;
+    function_definition = dedent_with_tabs('''\
+        func weird(z Int) Int {
+            var fixed := fix(z)
+            return fixed
         }''')
 
     method_definition = (
         ['vector', 'string'],
-        textwrap.dedent('''\
-        vector<string> parse(string source)
-        {
-          this->ast = Null;
-          return vector<string>{ source };
+        dedent_with_tabs('''\
+            func parse(this A*, source string) list[string] {
+                this.ast = nil
+                return [source]
         }'''))
 
     anonymous_function = [
-        (['vector'],
-         '[](auto source) { return ves(source.size()); }'),
+        'func(source string) int { return len(ves); }',
 
-        textwrap.dedent('''\
-            [](auto source) {
-                cout << source << "\n";
-                return ves(source);
+        dedent_with_tabs('''\
+            func (source string) {
+                fmt.Println(source)
+                return ves(source)
             }''')
     ]
 
-    class_statement = [textwrap.dedent('''\
+    class_statement = [dedent_with_tabs('''\
         class A : B { 
             public int a;
 

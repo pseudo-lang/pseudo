@@ -24,6 +24,8 @@ class ApiTranslator(TreeTransformer):
 
     def __init__(self, tree):
         self.tree = tree
+        if not getattr(self, 'weird', None):
+            self.weird = {}
 
     def api_translate(self):
         self.standard_dependencies = set()
