@@ -39,6 +39,30 @@ You can almost think of it in a "~json-for-algorithms" way: we express
 our algorithm/function with standard basic types, collections and constructs in our favorite language 
 or in pseudon AST format and we can translate to any of the supported target languages
 
+## progress
+
+- [ ] python
+  - [x] syntax tests passing
+  - [ ] api tests passing
+- [ ] ruby
+  - [x] syntax tests passing
+  - [ ] api tests passing
+- [ ] javascript
+  - [ ] syntax tests passing
+  - [ ] api tests passing
+- [ ] c#
+  - [ ] syntax tests passing
+  - [ ] api tests passing
+- [ ] c++
+  - [ ] syntax tests passing
+  - [ ] api tests passing
+- [ ] go
+  - [ ] syntax tests passing
+  - [ ] api tests passing
+- [ ] php
+  - [ ] syntax tests passing
+  - [ ] api tests passing
+ 
 ## Target languages
 
 - [x] python
