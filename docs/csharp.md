@@ -7,14 +7,14 @@
 C# equivalents used for pseudo types and concepts:
 
 
-| Pseudo           | C#                 |
-|------------------|--------------------|
-| List[T]          | List<T>            |
-| Dictionary[K, V] | Dictionary<K, V>   |
-| Set[T]           | Set<T>             |
-| Tuple[T1, T2..]  | Tuple<T1, T2..>    |
-| Int              | int                |
-| Float            | float              |
+| Pseudo           | C#                   |
+|------------------|----------------------|
+| List[T]          | List\<T\>            |
+| Dictionary[K, V] | Dictionary\<K, V\>   |
+| Set[T]           | Set\<T\>             |
+| Tuple[T1, T2..]  | Tuple\<T1, T2..\>    |
+| Int              | int                  |
+| Float            | float                |
 
 # niceties
 

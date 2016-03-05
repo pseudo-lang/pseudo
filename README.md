@@ -119,7 +119,15 @@ of edge case handling helpers. That has a lot of advantages:
 added support for 5 more.
 * Easy to test: there is a simple test dsl too which helps all language tests to share input examples and I mean [just look](pseudon/tests/test_javascript.py) at it
 
-[progress](progress.md)
+## Target language specific docs
+
+* [python](docs/python.md)
+* [c#](docs/csharp.md)
+* [go](docs/go.md)
+* [ruby](docs/ruby.md)
+* [javascript](docs/javascript.md)
+* [c++](docs/cpp.md)
+* [php](docs/php.md)
 
 ## License
 
