@@ -66,3 +66,12 @@ class GoErrorHandlingMiddleware(Middleware):
             node.first_mention = False
         node.value = self.transform(node.value) # lambda can be somewhere here
         return node
+
+    '''
+        also if this.e = ... rewrite to {} constructor and add flag to top
+        that uses short syntax
+        
+        else create newA but
+        first n lines this.x = turn to this = A{..}
+        and if its a return just return it
+    '''

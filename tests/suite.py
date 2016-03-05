@@ -340,7 +340,7 @@ ThrowStatement = [
     ]
 ]
 
-
+GoErrorHandling
 class TestHelpers:
     def gen(self, ast):
         return generate(Node('module', 
@@ -367,6 +367,9 @@ class TestHelpers:
                 main.append(node)
 
         result = generate(Node('module', definitions=definitions, dependencies=[], constants=[], main=main), self._language)
+        if hasattr(self, 'gen_special'):
+            return self.gen_special(result)
+
         ls = result.split('\n')
         l = 0
         imports = []

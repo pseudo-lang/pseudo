@@ -9,11 +9,18 @@ class TreeTransformer:
 
     before = None
     after = None
+    whitelist = None # if a set, transform only those nodes, optimization
 
     def transform(self, tree, in_block=False, assignment=None):
         if isinstance(tree, Node):
             if self.before:
                 tree = self.before(tree, in_block, assignment)
+            if self.whitelist and tree.type not in self.whitelist:
+                return tree
+            elif tree.type == 'class_definition':
+                self.current_class = tree
+            elif tree.type == 'function_definition' or tree.type == 'method_definition':
+                self.current_function = tree
             handler = getattr(self, 'transform_%s' % tree.type, None)
             if handler:
                 tree = handler(tree, in_block, assignment)

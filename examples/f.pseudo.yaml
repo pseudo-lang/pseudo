@@ -1,50 +1,65 @@
 constants: []
 definitions:
 - block:
-  - pseudo_type: String
+  - pseudo_type: Int
     type: implicit_return
-    value: {pseudo_type: String, type: string, value: ''}
+    value:
+      args:
+      - {pseudo_type: Int, type: int, value: 2}
+      function:
+        name: s
+        pseudo_type: [Function, Int, Int]
+        type: local
+      pseudo_type: Int
+      type: call
   name: f
-  params: []
-  pseudo_type: [Function, String]
-  return_type: String
+  params: [s]
+  pseudo_type:
+  - Function
+  - [Function, Int, Int]
+  - Int
+  return_type: Int
   type: function_definition
-dependencies: []
-main:
-- args:
-  - args: []
-    function:
-      name: f
-      pseudo_type: [Function, String]
-      type: local
-    pseudo_type: String
-    type: call
-  function: display
-  namespace: io
-  pseudo_type: Void
-  type: standard_call
-- block:
-  - {pseudo_type: Int, type: int, value: 2}
-  - args: []
-    function:
-      name: f
-      pseudo_type: [Function, String]
-      type: local
-    pseudo_type: String
-    type: call
-  handlers:
+- attrs: []
+  base: null
+  constructor: null
+  methods:
   - block:
-    - args:
-      - {name: e, pseudo_type: Exception, type: local}
-      function: display
-      namespace: io
-      pseudo_type: Void
-      type: standard_call
-    exception: Exception
-    instance: e
-    is_builtin: true
-    pseudo_type: Void
-    type: exception_handler
-  pseudo_type: Void
-  type: try_statement
+    - pseudo_type: B
+      type: implicit_return
+      value:
+        class: {name: B, type: typename}
+        params:
+        - {name: a, pseudo_type: Int, type: local}
+        pseudo_type: B
+        type: new_instance
+    is_public: true
+    name: expand
+    params: [a]
+    pseudo_type: [Function, Int, B]
+    return_type: B
+    this: {name: A, type: typename}
+    type: method_definition
+  name: A
+  type: class_definition
+- attrs:
+  - {is_public: false, name: a, pseudo_type: Int, type: class_attr}
+  base: null
+  constructor:
+    block:
+    - pseudo_type: Void
+      target: {name: a, pseudo_type: Int, type: instance_variable}
+      type: assignment
+      value: {name: a, pseudo_type: Int, type: local}
+    name: __init__
+    params: [a]
+    pseudo_type: [Function, Int, B]
+    return_type: null
+    this: {name: B, type: typename}
+    type: constructor
+  methods: []
+  name: B
+  type: class_definition
+dependencies: []
+main: []
 type: module

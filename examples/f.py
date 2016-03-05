@@ -1,12 +1,13 @@
-def f():
-    return ''
+def f(s):
+    return s(2)
 
-print(f())
-try:
-    2
-    f()
-except Exception as e:
-    print(e)
+class A:
+    def expand(self, a):
+        return B(a)
 
+
+class B:
+    def __init__(self, a):
+        self.a = a
 
 
