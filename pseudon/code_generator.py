@@ -17,8 +17,8 @@ class CodeGenerator:
         if indent: self.indent = indent
         if use_spaces: self.use_spaces = use_spaces
         # always init them in classes
-        symbol = ' ' if self.use_spaces else '\t'
-        self._single_indent = symbol * (self.indent)
+        self._symbol = ' ' if self.use_spaces else '\t'
+        self._single_indent = self._symbol * (self.indent)
         self._parsed_templates = {k: self._parse_template(v, k) for k, v in self.templates.items()}
         self.a = [] # additional code, lambdas etc
         # print('[]')
@@ -162,11 +162,11 @@ class CodeGenerator:
                 print(' ',template[i-2] if i >= 2 else '', expanded[-3:])
                 if expanded == ['', '\n'] or expanded == ['']:
                     expanded = []
-                elif len(expanded) >= 2 and not expanded[-1] and (i >= 2 and isinstance(template[i - 2], Whitespace) and template[i - 2].is_offset):
+                elif len(expanded) >= 2 and not expanded[-1] and (i >= 2 and isinstance(template[i - 2], Whitespace) and template[i - 2].is_offset) and (not expanded[-2] or expanded[-2][0] == '\n' or expanded[-2][0] == self._symbol):
                     # unrealised fragment, we should swallow that line
                     # sorry sov
                     expanded.pop()
-                    expanded.pop()
+                    # expanded.pop()
                     print(expanded[-3:])
                 elif expanded:
                     expanded.append('\n')

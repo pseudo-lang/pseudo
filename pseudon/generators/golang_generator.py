@@ -26,7 +26,7 @@ class GolangGenerator(CodeGenerator):
 
     templates = dict(
         module     = '''
-          %<.dependencies>
+          %<#dependencies>
           %<constants:lines>
           %<definitions:lines>
           %<tuple_definitions:line_join>
@@ -34,23 +34,14 @@ class GolangGenerator(CodeGenerator):
               %<main:line_join>
           }''',
 
-        module_dependencies = (switch(lambda m: len(m.dependencies) == 1,
-                true        = 'import %<m.dependencies:first>',
-                _otherwise  = '''
-                    import (
-                        %<m.dependencies:line_join>
-                    )
-                '''
-            ), ''),
-
         function_definition   = '''
             func %<name>(%<#params>) %<@return_type> {
-                %<block:semi>
+                %<block:line_join>
             }''',
 
         method_definition =     '''
-            func %<name>(%<#params>) %<@return_type> {
-                %<block:semi>
+            func %<name>(this *%<this>, %<#params>) %<@return_type> {
+                %<block:line_join>
             }''',
 
         class_definition = '''
@@ -69,15 +60,15 @@ class GolangGenerator(CodeGenerator):
         class_attr = '%<name> %<@pseudo_type>',
 
         anonymous_function = switch(lambda a: len(a.block) == 1,
-            true        = 'func (#<params>) { %<block:first> }',
-            _otherwise  = '''func (#<params>)
+            true        = 'func (%<#params>) { %<block:first> }',
+            _otherwise  = '''func (%<#params>)
                 {
                     %<block:line_join>
                 }'''),
 
 
         constructor = '''
-            func new%<this>(this *%<this>, %<#params>) *%<this> {
+            func new%<this>(%<#params>) *%<this> {
                 %<block:line_join>
             }''',
 
@@ -153,7 +144,7 @@ class GolangGenerator(CodeGenerator):
 
         while_statement = '''
             for %<test> {
-                %<block:semi>
+                %<block:line_join>
             }''',
 
         # try_statement = '''
@@ -221,8 +212,16 @@ class GolangGenerator(CodeGenerator):
             class %<name> : Exception
         ''',
 
-        block = '%<block:semi>'
+        block = '%<block:line_join>'
     )
     
     def params(self, node, indent):
-        return ', '.join('%s %s' % (q.name, PseudonType('').expand_type(q, self)) for q in node.params)
+        return ', '.join('%s %s' % (q.name, PseudonType('').expand_type(q.pseudo_type, self)) for q in node.params)
+
+    def dependencies(self, node, indent):
+        if len(node.dependencies) == 1:
+            return 'import "%s"' % node.dependencies[0].name
+        elif len(node.dependencies) > 1:
+            return 'import (\n\t%s\n)\n' % '\n\t'.join('"%s"' % q.name for q in node.dependencies)
+        else:
+            return ''

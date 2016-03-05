@@ -2,29 +2,10 @@ constants: []
 definitions: []
 dependencies: []
 main:
-- pseudo_type: Void
-  target:
-    name: e
-    pseudo_type: [Array, Int, 2]
-    type: local
-  type: assignment
-  value:
-    elements:
-    - {pseudo_type: Int, type: int, value: 2}
-    - {pseudo_type: Int, type: int, value: 4}
-    pseudo_type: [Array, Int, 2]
-    type: array
-- pseudo_type: Void
-  target:
-    name: g
-    pseudo_type: [Tuple, String, Int, Int]
-    type: local
-  type: assignment
-  value:
-    elements:
-    - {pseudo_type: String, type: string, value: x}
-    - {pseudo_type: Int, type: int, value: 2}
-    - {pseudo_type: Int, type: int, value: 4}
-    pseudo_type: [Tuple, String, Int, Int]
-    type: tuple
+- args:
+  - {pseudo_type: Int, type: int, value: 2}
+  function: display
+  namespace: io
+  pseudo_type: Void
+  type: standard_call
 type: module

@@ -63,6 +63,10 @@ class GolangTranslator(ApiTranslator):
     dependencies = {
         'regexp': {
             '@all':     'regexp'
+        },
+        'io': {
+            'display': 'fmt',
+            'read':    'fmt'
         }
     }
 

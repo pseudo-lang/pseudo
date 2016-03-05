@@ -16,23 +16,27 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     def gen(self, ast):
         imports, source = self.gen_with_imports(ast)
-        out = '\n'.join(source.split('\n')[1:-2]).strip()
-        if out[-1] == ';':
-            return out[:-1]
-        else:
-            return out
+        return source.strip()
 
 
     def gen_special(self, source):
         lines = source.split('\n')
-        main = '\n'.join([line[1:] for line in lines[lines.index('func main() {') + 1:-2]])
-        
+        main_index = lines.index('func main() {')
+        main = '\n'.join([line[1:] for line in lines[main_index + 1:-2]]).strip()
         l = 0
+
         if lines[0].startswith('import'):
-            imports = [l.strip()[1:-1] for l in lines[1:lines.index(')')]]
+            if lines[0][7] == '"':
+                imports = [lines[0][8:-1]]
+                m = 1
+            else:
+                m = lines.index(')')
+                imports = [l.strip()[1:-1] for l in lines[1:m]]
+            definitions = '\n'.join(lines[m + 1:main_index])
         else:
             imports = []
-        return imports, source
+            definitions = '\n'.join(lines[:main_index])
+        return imports, definitions + main
 
     # make declarative style great again
 
@@ -235,13 +239,12 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         }''')
 
     function_definition = dedent_with_tabs('''\
-        func weird(z Int) Int {
-            var fixed := fix(z)
+        func weird(z int) int {
+            fixed := fix(z)
             return fixed
         }''')
 
     method_definition = (
-        ['vector', 'string'],
         dedent_with_tabs('''\
             func parse(this A*, source string) list[string] {
                 this.ast = nil
@@ -249,12 +252,12 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         }'''))
 
     anonymous_function = [
-        'func(source string) int { return len(ves); }',
+        'func (source string) { return ves(len(source)) }',
 
         dedent_with_tabs('''\
             func (source string) {
                 fmt.Println(source)
-                return ves(source)
+                return ves(len(source))
             }''')
     ]
 
