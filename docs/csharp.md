@@ -1,4 +1,4 @@
-# c#
+# c\#
 
 * support
 * [generator](https://github.com/alehander42/pseudo/tree/master/pseudo/generators/csharp_generator.py) [api translator](https://github.com/alehander42/pseudo/tree/master/pseudo/api_translators/csharp_translator.py) [tests](https://github.com/alehander42/pseudo/tree/master/tests/test_csharp.py)
