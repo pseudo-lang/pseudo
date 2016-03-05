@@ -29,6 +29,7 @@ class GolangGenerator(CodeGenerator):
         module     = '''
           %<#dependencies>
           %<constants:lines>
+          %<custom_exceptions:lines>
           %<definitions:lines>
           %<tuple_definitions:line_join>
           func main() {
@@ -93,10 +94,10 @@ class GolangGenerator(CodeGenerator):
         attr        = "%<object>.%<attr>",
         array       = "{%<elements:join ', '>}",
 
-        _slice      = '%<sequence>[%<from_>:%<to>]',
-        _slice_from = '%<sequence>[%<from_>:len(%<sequence>)]',
-        _slice_to   = '%<sequence>[0:%<to>]',
-        _slice_     = '%<sequence>[:]',
+        _go_slice      = '%<sequence>[%<from_>:%<to>]',
+        _go_slice_from = '%<sequence>[%<from_>:len(%<sequence>)]',
+        _go_slice_to   = '%<sequence>[0:%<to>]',
+        _go_slice_     = '%<sequence>[:]',
 
         assignment  = switch('first_mention',
             true       = '%<target> := %<value>',

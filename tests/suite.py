@@ -16,13 +16,19 @@ class TestLanguage(type):
                     expected = expected_
 
                 for example, exp in zip(examples, expected):
+                    if isinstance(example, tuple) and example[0] == 'custom_exceptions':
+                        custom_exceptions, example_ = example[1], example[2]
+                        # import pdb;pdb.set_trace() #input(custom_exceptions)
+                    else:
+                        custom_exceptions = []
+                        example_ = example if not isinstance(example, list) else example[:]
                     if isinstance(exp, str):
-                        self.assertEqual(self.gen(example), exp)
+                        self.assertEqual(self.gen(custom_exceptions, example_), exp)
                     elif exp[0] == 'raw':
-                        self.assertEqual(self.gen(example), exp)
+                        self.assertEqual(self.gen(custom_exceptions, example_), exp)
                     else:
                         # input(exp)
-                        imports, source = self.gen_with_imports(example)
+                        imports, source = self.gen_with_imports(custom_exceptions, example_)
                         self.assertEqual(imports, exp[0])
                         self.assertEqual(source, exp[1])
             return test
@@ -102,8 +108,8 @@ IfStatement = [
         block=[
             Node('standard_method_call',
                 receiver=local('l', ['List', 'String']),
-                message='slice',
-                args=[to_node(0), to_node(2)],
+                message='slice_to',
+                args=[to_node(2)],
                 pseudo_type=['List', 'String'])],
         otherwise=Node('elseif_statement', 
             test=Node('comparison',
@@ -195,7 +201,10 @@ FunctionDefinition = [Node('function_definition',
         pseudo_type=['Function', 'Int', 'Int'],
         return_type='Int',
         block=[
-            Node('assignment', target=local('fixed', pseudo_type='Int'), value=call(local('fix'), [local('z')], pseudo_type='Int')),
+            assignment(
+                local('fixed', pseudo_type='Int'), 
+                call(local('fix', pseudo_type=['Function', 'Int', 'Int']), 
+                     [local('z', 'Int')], pseudo_type='Int')),
             Node('implicit_return', value=Node('local', name='fixed'))
         ])]
 
@@ -208,10 +217,19 @@ MethodDefinition = [Node('method_definition',
         is_public=True,
         block=[
             assignment(
-                Node('instance_variable', name='ast', pseudo_type='Void'), 
-                Node('null', pseudo_type='Void')),
+                Node('instance_variable', name='ast', pseudo_type='Int'), 
+                to_node(0)),
             Node('implicit_return', value=Node('list', elements=[Node('local', name='source')], pseudo_type=['List', 'String']))
         ])]
+
+ClassWithMethodDefinition = [
+    Node('class_definition',
+        name='A',
+        constructor=None,
+        base=None,
+        attrs=[Node('class_attr', name='ast', is_public=False, pseudo_type='Int')],
+        methods=MethodDefinition)
+]
 
 AnonymousFunction = [
     Node('anonymous_function', 
@@ -280,6 +298,15 @@ Constructor = [Node('constructor',
                 assignment(Node('instance_variable', name='b', pseudo_type='Int'), local('b', 'Int'))
             ])]
 
+ClassConstructor = [Node('class_definition',
+    name='A',
+    constructor=Constructor[0],
+    base=None,
+    attrs=[
+        Node('class_attr', is_public=False, name='a', pseudo_type='Int'), 
+        Node('class_attr', is_public=False, name='b', pseudo_type='Int')],
+    methods=[])]
+
 Index = [Node('index', sequence=to_node('la'), pseudo_type='String', index=to_node(2))]
 
 Regex = [Node('regex', value='[a-b]', pseudo_type='Regexp')]
@@ -305,6 +332,19 @@ Node('try_statement', block=[
     ])
 
 
+CppNewInstance = [
+    assignment(
+        local('z', 'Z'),
+        Node('new_instance', class_name=typename('Z'), args=[], pseudo_type='Z'))
+]
+
+CppPointerMethodCall = [
+    method_call(
+        local('z', 'Z'),
+        'rave',
+        [to_node(0)],
+        pseudo_type='Int')]
+
 u = Node('try_statement', block=[
     call(local('a', ['Function', 'Int']), [], pseudo_type='Int'),
     call(local('h', ['Function', 'Int', 'Int']), [to_node(-4)], pseudo_type='Int')
@@ -325,33 +365,26 @@ u2 = Node('custom_exception',
 TryStatement = [
     u0,
 
-    [
-        u2,
-        u
-    ]
+    ('custom_exceptions', [u2], u)
 ]
 
-ThrowStatement = [
-    [
-        u2,
-
+ThrowStatement = [('custom_exceptions', [u2], 
         Node('throw_statement',
           exception='NeptunError',
-          value=to_node('no tea'))
-    ]
-]
+          value=to_node('no tea')))]
 
 # GoErrorHandling = [
     
 class TestHelpers:
-    def gen(self, ast):
+    def gen(self, custom_exceptions, ast):
         return generate(Node('module', 
             definitions=[],
             dependencies=[],
             constants=[],
+            custom_exceptions=custom_exceptions,
             main=ast if isinstance(ast, list) else [ast]), self._language).rstrip()
 
-    def gen_with_imports(self, ast):
+    def gen_with_imports(self, custom_exceptions, ast):
         if isinstance(ast, Node):
             if ast.type == 'block':
                 e = ast.block
@@ -368,7 +401,7 @@ class TestHelpers:
             else:
                 main.append(node)
 
-        result = generate(Node('module', definitions=definitions, dependencies=[], constants=[], main=main), self._language)
+        result = generate(Node('module', definitions=definitions, custom_exceptions=custom_exceptions, dependencies=[], constants=[], main=main), self._language)
         if hasattr(self, 'gen_special'):
             # input(result)
         

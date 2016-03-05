@@ -17,7 +17,7 @@ def expand_map(receiver, function, assignment, pseudo_type):
         iter = 'element'
     return Node('block', block=[Node('_go_multi_assignment',
         name=local('result'),
-        value=Node('_make_slice',
+        value=Node('_go_make_slice',
             type=receiver.pseudon_type,
             length=call('len', receiver))),
         for_each_with_index_statement(
@@ -36,7 +36,7 @@ def expand_filter(receiver, test, assignment, pseudo_type):
     return Node('block', block=[
         Node('_go_multi_assignment',
             name=local('result'),
-            value=Node('_make_slice',
+            value=Node('_go_make_slice',
                 type=receiver.pseudon_type,
                 length=call('len', receiver))),
             for_each_with_index_statement(
@@ -55,13 +55,13 @@ def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
     if from_:
         if to:
             if from_.type == 'int' and from_.value == 0:
-                return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
+                return Node('_go_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
             else:
-                return Node('_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
+                return Node('_go_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
         else:
-            return Node('_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
+            return Node('_go_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
     elif to:
-        return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
+        return Node('_go_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
     else:
         return None
 

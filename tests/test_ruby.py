@@ -124,7 +124,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     method_definition = textwrap.dedent('''\
         def parse(source)
-          @ast = nil
+          @ast = 0
           [source]
         end''')
 
@@ -172,6 +172,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
             class NeptunError < StandardError
             end
 
+
             begin
               a
               h(-4)
@@ -183,6 +184,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     throw_statement = textwrap.dedent('''\
         class NeptunError < StandardError
         end
+
 
         throw NeptunError.new(\'no tea\')''')
 

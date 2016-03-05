@@ -1,4 +1,7 @@
-import "fmt"
+class ExError : Exception
+
+
+
 func main() {
-	fmt.Println(2)
+	throw ExError("s")
 }

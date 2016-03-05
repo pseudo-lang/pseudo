@@ -1,7 +1,7 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator
 from pseudon.pseudon_tree import Node, method_call, call
-
+from pseudon.api_translators.csharp_api_handlers import expand_slice
 
 class CSharpTranslator(ApiTranslator):
     '''
@@ -22,7 +22,15 @@ class CSharpTranslator(ApiTranslator):
 
             'remove':       '#Remove',
 
-            'length':       '.Count!'
+            'length':       '.Count!',
+
+            'slice':        expand_slice,
+
+            'slice_from':   '#Drop',
+
+            'slice_to':     '#Take',
+
+            'slice_':       '#Slice'
         },
         'Dictionary': {
             '@equivalent':  'Dictionary',
@@ -34,7 +42,7 @@ class CSharpTranslator(ApiTranslator):
         'String': {
             '@equivalent':  'String',
 
-            'length':       '#Length',
+            'length':       '.Length!',
             'substr':       '#Substring',
             'find':         '#Find'
         },
@@ -47,8 +55,8 @@ class CSharpTranslator(ApiTranslator):
         'io': {
             'display':    'Console.WriteLine',
             'read':       'Console.ReadLine',
-            'read_file':  'System.ReadFile',
-            'write_file': 'System.WriteFile'
+            'read_file':  'File.ReadAllText',
+            'write_file': 'File.WriteAllText'
         },
 
         'math': {

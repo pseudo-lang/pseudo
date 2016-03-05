@@ -1,6 +1,6 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator
-from pseudon.pseudon_tree import Node
+from pseudon.pseudon_tree import Node, to_node
 from pseudon.api_translators.ruby_api_handlers import expand_slice
 
 class RubyTranslator(ApiTranslator):

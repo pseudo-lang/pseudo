@@ -41,6 +41,8 @@ or in pseudon AST format and we can translate to any of the supported target lan
 
 ## progress
 
+close to v0.2, several fixes and finishing the api only left
+
 - [ ] python
   - [x] syntax tests passing
   - [ ] api tests passing
@@ -51,13 +53,13 @@ or in pseudon AST format and we can translate to any of the supported target lan
   - [x] syntax tests passing
   - [ ] api tests passing
 - [ ] c#
-  - [ ] syntax tests passing
+  - [x] syntax tests passing
   - [ ] api tests passing
 - [ ] c++
-  - [ ] syntax tests passing
+  - [x] syntax tests passing
   - [ ] api tests passing
 - [ ] go
-  - [ ] syntax tests passing
+  - [x] syntax tests passing
   - [ ] api tests passing
 - [ ] php
   - [ ] syntax tests passing
@@ -74,7 +76,7 @@ or in pseudon AST format and we can translate to any of the supported target lan
 - [x] go
 - [ ] php
 
-next version:
+v0.3/v0.4:
 
 - [ ] java
 - [ ] perl
@@ -83,6 +85,7 @@ next version:
 - [ ] c ?
 
 - [ ] clojure ?
+
 ## Language support
 
 Using pseudon's DSL it's really easy to add support for a new language, so soon we'll try to support

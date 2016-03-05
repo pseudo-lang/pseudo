@@ -41,7 +41,11 @@ class RubyGenerator(CodeGenerator):
     function_params = ("(%<params:join ', '>)", '')
 
     templates = dict(
-        module         = '%<dependencies:lines>%<definitions:lines>%<main:lines>',
+        module         = '''
+            %<dependencies:lines>
+            %<custom_exceptions:lines>
+            %<definitions:lines>
+            %<main:lines>''',
 
         function_definition = '''
             def %<name>%<.params>
@@ -192,9 +196,9 @@ class RubyGenerator(CodeGenerator):
 
         custom_exception_base = ('%<base>', 'StandardError'),
 
-        _slice          = '%<sequence>[%<from_>...%<to>]',
-        _slice_from     = '%<sequence>[%<from_>..-1]',
-        _slice_to       = '%<sequence>[0..%<to>]',
+        _rb_slice          = '%<sequence>[%<from_>...%<to>]',
+        _rb_slice_from     = '%<sequence>[%<from_>..-1]',
+        _rb_slice_to       = '%<sequence>[0..%<to>]',
 
         anonymous_function = switch(
             lambda a: len(a.block) == 1,

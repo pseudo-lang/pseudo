@@ -1,7 +1,7 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator
-from pseudon.pseudon_tree import Node, method_call, call
-
+from pseudon.pseudon_tree import Node, method_call, call, to_node
+from pseudon.api_translators.cpp_api_handlers import Read, Slice, ReadFile
 
 class CppTranslator(ApiTranslator):
     '''
@@ -20,36 +20,85 @@ class CppTranslator(ApiTranslator):
 
     '''
 
-    def begin_placeholder(self, receiver, *args, equivalent):
-        return method_call(receiver, 'begin', [])
-
-    def end_placeholder(self, receiver, *args, equivalent):
-        return method_call(receiver, 'end', [])
-
-    def new_placeholder(self, receiver, *args, equivalent):
-        return Node('new_instance', klass=equivalent, args=[])
-
-    api = {
+    methods = {
         'List': {
             '@equivalent':  'vector',
 
             'push':         '#push_back',
             'insert':       '#insert(%{begin}, %{0})',
             'remove_at':    '#erase(%{begin}, %{0})',
-            'length':       '#size'
+            'length':       '#size',
+            'slice':        Slice,
+            'slice_from':   Slice,
+            'slice_to':     Slice,
         },
         'Dictionary': {
+            '@equivalent':  'unordered_map'
+        },
+        'String': {
+            '@equivalent':  'string',
+
+            'length':       '#length',
+            'substr':       '#substr'
+
         },
         'Enumerable': {
         }
     }
 
-    dependencies = {
-        'List': {
-            '@all': 'vector',
-            'remove': 'algorithm'
+    functions = {
+        'io': {
+            'display':      lambda *args: Node('_cpp_cout', args=list(args[:-1]), pseudo_type=args[-1]),
+            'read':         Read,
+            'read_file':    ReadFile,
+            'write_file':   'write_file'
+        },
+        'math': {
+            'ln':           'log',
+            'tan':          'tan'
         }
     }
+
+    dependencies = {
+        'List': {
+            '@all': ['iostream', 'vector'],
+            'remove': 'algorithm'
+        },
+        'Dictionary': {
+            '@all':  ['iostream', 'unordered_map']
+        },
+        'String': {
+            '@all': ['iostream', 'string']
+        },
+        'Set': {
+            '@all': ['iostream', 'set']
+        },
+        'Tuple': {
+            '@all': ['iostream', 'pair', 'tuple']
+        },
+        'io': {
+            'display':  'iostream',
+            'read':     ['iostream', 'string'],
+            'read_file': ['iostream', 'fstream', 'string'],
+            'write_file': ['iostream', 'fstream', 'string']
+        },
+        'math': {
+            '@all': 'math'
+        },
+        'Exception': {
+            '@all': ['stdexcept', 'exception']
+        }
+    }
+
+    def begin_placeholder(self, receiver, *args, equivalent):
+        return method_call(receiver, 'begin', [], 'CppIterator')
+
+    def end_placeholder(self, receiver, *args, equivalent):
+        return method_call(receiver, 'end', [], 'CppIterator')
+
+    def new_placeholder(self, receiver, *args, equivalent):
+        return Node('new_instance', class_name=equivalent, args=[], pseudo_type=equivalent)
+
 
 '''
 

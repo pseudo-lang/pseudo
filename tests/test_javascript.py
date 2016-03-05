@@ -6,13 +6,14 @@ import suite
 
 #v
 class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    def gen(self, ast):
-        return self.gen_with_imports(ast)[1]
+    def gen(self, custom_exceptions, ast):
+        return self.gen_with_imports(custom_exceptions, ast)[1]
 
-    def gen_with_imports(self, ast):
+    def gen_with_imports(self, custom_exceptions, ast):
         result = generate(Node('module',
             definitions=[],
             dependencies=[],
+            custom_exceptions=custom_exceptions,
             constants=[],
             main=ast if isinstance(ast, list) else [ast]), self._language).rstrip()
         if result.startswith("var _ = require('lodash')"):
@@ -133,7 +134,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     method_definition = textwrap.dedent('''\
         A.prototype.parse = function (source) {
-          this.ast = null;
+          this.ast = 0;
           return [source];
         }''')
 

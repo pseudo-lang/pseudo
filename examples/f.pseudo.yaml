@@ -1,11 +1,11 @@
 constants: []
+custom_exceptions:
+- {base: null, name: ExError, type: custom_exception}
 definitions: []
 dependencies: []
 main:
-- args:
-  - {pseudo_type: Int, type: int, value: 2}
-  function: display
-  namespace: io
+- exception: ExError
   pseudo_type: Void
-  type: standard_call
+  type: throw_statement
+  value: {pseudo_type: String, type: string, value: s}
 type: module

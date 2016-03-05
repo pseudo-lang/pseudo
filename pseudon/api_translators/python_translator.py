@@ -18,7 +18,7 @@ class PythonTranslator(ApiTranslator):
             'pop':          '#pop',
             'length':       'len',
             'insert':       '#insert',
-            'remove_at':    lambda receiver, index, _: Node('_del', node=Node('index', z=receiver, index=index), pseudo_type='Void'),
+            'remove_at':    lambda receiver, index, _: Node('_py_del', node=Node('index', z=receiver, index=index), pseudo_type='Void'),
             'remove':       '#remove',
             'slice':        expand_slice,
             'slice_from':   expand_slice,

@@ -87,7 +87,7 @@ class PythonGenerator(CodeGenerator):
             return base
 
     templates = dict(
-        module     = "%<dependencies:lines>%<constants:lines>%<definitions:lines>%<main:lines>",
+        module     = "%<dependencies:lines>%<constants:lines>%<custom_exceptions:lines>%<definitions:lines>%<main:lines>",
 
         function_definition   = '''
              def %<name>(%<params:join ','>):
@@ -147,11 +147,11 @@ class PythonGenerator(CodeGenerator):
 
         comparison  = '%<#binary_left> %<op> %<#binary_right>',
 
-        _del        = 'del %<value>',
-        _setitem    = '%<sequence>[%<key>] = %<value>',
-        _slice      = '%<sequence>[%<from_>:%<to>]',
-        _slice_from = '%<sequence>[%<from_>:]',
-        _slice_to   = '%<sequence>[:%<to>]',
+        _py_del        = 'del %<value>',
+        _py_setitem    = '%<sequence>[%<key>] = %<value>',
+        _py_slice      = '%<sequence>[%<from_>:%<to>]',
+        _py_slice_from = '%<sequence>[%<from_>:]',
+        _py_slice_to   = '%<sequence>[:%<to>]',
 
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
@@ -215,7 +215,7 @@ class PythonGenerator(CodeGenerator):
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
 
-        _with = '''
+        _py_with = '''
             with %<call> as %<context>:
                 %<#block>''',
 

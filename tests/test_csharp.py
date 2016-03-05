@@ -6,18 +6,28 @@ import suite
 
 #v
 class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    
+
     _language = 'csharp'
     _import = 'using'
     _parse_import = lambda self, line: line[6:-1]
 
-    def gen(self, ast):
-        imports, source = self.gen_with_imports(ast)
-        out = '\n'.join(source.split('\n')[4:-3]).strip()
-        if out[-1] == ';':
-            return out[:-1]
+    def gen(self, custom_exceptions, ast):
+        imports, source = self.gen_with_imports(custom_exceptions, ast)
+        lines = source.split('\n')
+        main_index = lines.index('    public static void Main()')
+        if main_index == 2:
+            x = '\n'.join(l[8:] for l in lines[4:-3]).strip()
+            if x[-1] == ';':
+                return x[:-1]
+            else:
+                return x
+        if lines[main_index + 2] == '    }':
+            if lines[main_index - 2] == 'public class Program':
+                return '\n'.join(lines[0:main_index - 2]).strip()
+            else:
+                return '\n'.join(lines[0:main_index - 1]) + '}'
         else:
-            return out
+            return source
 
     # make declarative style great again
 
@@ -53,19 +63,19 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     call = 'map(x)'
 
-    method_call = 'e.filter(42)'
+    method_call = 'e.Filter(42)'
 
     standard_call = [
         'Console.WriteLine(42)',
         'Console.ReadLine()',
         'Math.Log(ham)',
-        # "File.read('f.py')"
+        'var source = File.ReadAllText("f.py")'
     ]
 
-    # standard_method_call = [
-    #     'l.Count',
-    #     '"l".Substring(0, 2)'
-    # ]
+    standard_method_call = [
+        'l.Count',
+        '"l".Substring(0, 2)'
+    ]
 
     binary_op = 'ham + egg'
 
@@ -73,175 +83,191 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     comparison = 'egg > ham'
 
-    # if_statement = textwrap.dedent('''\
-    #     if (egg == ham)
-    #     {
-    #         l.Take(2);
-    #     }
-    #     else if (egg == ham)
-    #     {
-    #         Console.WriteLine(4.2);
-    #     } 
-    #     else 
-    #     {
-    #         z;
-    #     }''')
+    if_statement = textwrap.dedent('''\
+        if (egg == ham)
+        {
+            l.Take(2);
+        }
+        else if (egg == ham)
+        {
+            Console.WriteLine(4.2);
+        }
+        else 
+        {
+            z;
+        }''')
 
 
-    # for_each_statement = textwrap.dedent('''\
-    #     foreach(var a in sequence) 
-    #     {
-    #       a.Sub();
-    #     }''')
+    for_statement = [
+        textwrap.dedent('''\
+            foreach(var a in sequence)
+            {
+                log(a);
+            }'''),
 
-    # for_range = textwrap.dedent('''\
-    #     for(var j = 0;j < 42; j += 2)
-    #     {
-    #       Analyze(j);
-    #     }''')
+        textwrap.dedent('''\
+            for (int j = 0; j != 42; j += 2)
+            {
+                analyze(j);
+            }'''),
 
-    # for_each_with_index = [
-    #     textwrap.dedent('''\
-    #       for(int j = 0;j < z.Count;j ++) 
-    #       {
-    #         var k = z[j];
-    #         Analyze(j, k);
-    #       }'''),
+        textwrap.dedent('''\
+            for (int j = 0; j < z.Count; j ++)
+            {
+                var k = z[j];
+                analyze(j, k);
+            }'''),
 
-    #     textwrap.dedent('''\
-    #       foreach(var _item in z)
-    #       {
-    #         Analyze(_item.key, _item.value)
-    #       }''')
-    # ]
+        textwrap.dedent('''\
+            foreach(var _item in z)
+            {
+                var j = _item.key;
+                var k = _item.value;
+                analyze(k, j);
+            }'''),
 
-    # for_each_in_zip = textwrap.dedent('''\
-    #     for(var _index = 0;_index < Math.min(z.Count, zz.Count);_index ++)
-    #     {
-    #       var k = z[_index];
-    #       var l = zz[_index];
-    #       a(k, l);
-    #     }
-    #     ''')
+        textwrap.dedent('''\
+            for (int _index = 0; _index < z.Count; _index ++)
+            {
+                var k = z[_index];
+                var l = zz[_index];
+                a(k, l);
+            }''')
+    ]
 
-    # while_statement = textwrap.dedent('''\
-    #     while (f() >= 42)
-    #     {
-    #       b = g();
-    #     }''')
+    while_statement = textwrap.dedent('''\
+        while (f() >= 42)
+        {
+            var b = g();
+        }''')
 
-    # function_definition = textwrap.dedent('''\
-    #     int Weird(int z)
-    #     {
-    #       int fixed = fix(z);
-    #       return fixed;
-    #     }''')
+    function_definition = textwrap.dedent('''\
+        public class Program
+        {
+            static int Weird(int z)
+            {
+                var fixed = fix(z);
+                return fixed;
+            }
+        }''')
 
-    # method_definition = textwrap.dedent('''\
-    #     List<string> Parse(string source)
-    #     {
-    #       ast = Null;
-    #       return List<string>{ source };
-    #     }''')
+    class_with_method_definition = textwrap.dedent('''\
+        public class A
+        {
+            private int ast;
 
-    # anonymous_function = [
-    #     'source => ves(source.length)',
+            List<string> Parse(string source)
+            {
+                this.ast = 0;
+                return new List<string> {source};
+            }
 
-    #     textwrap.dedent('''\
-    #         source =>
-    #         {
-    #             Console.WriteLine(source);
-    #             return ves(source);
-    #         }''')
-    # ]
+        }''')
 
-    # class_statement = [textwrap.dedent('''\
-    #     public class A : B
-    #     { 
-    #         public int a;
+    anonymous_function = [
+        'source => ves(source.Length)',
 
-    #         A(int a)
-    #         {
-    #             this.a = a;
-    #         }
+        textwrap.dedent('''\
+            source =>
+            {
+                Console.WriteLine(source);
+                return ves(source.Length);
+            }''')
+    ]
 
-    #         int Parse()
-    #         {
-    #             return 42;
-    #         }
-    #     }''')]
+    class_definition = [textwrap.dedent('''\
+        public class A : X
+        {
+            public int a;
+
+            A(int a)
+            {
+                this.a = a;
+            }
+
+            int Parse()
+            {
+                return 42;
+            }
+
+        }''')]
 
     this = 'this'
 
-    # constructor = textwrap.dedent('''\
-    #     A(int a, string b)
-    #     {
-    #       this.a = a;
-    #       this.b = b;
-    #     }''')
+    class_constructor = textwrap.dedent('''\
+        public class A
+        {
+            private int a;
+            private int b;
 
-    # try_statement = [
-    #     textwrap.dedent('''\
-    #         try
-    #         {
-    #           a();
-    #           h(2);
-    #         }
-    #         catch (Exception e)
-    #         {
-    #           Console.WriteLine(e);
-    #         }'''),
+            A(int a, int b)
+            {
+                this.a = a;
+                this.b = b;
+            }
 
-    #     ('raw', 
-    #     textwrap.dedent('''\
-    #         using System;
+        }''')
 
-    #         public class NeptunError : Exception
-    #         {
-    #             public NeptunError(string message)
-    #                 : base(message)
-    #             {
-    #             }
-    #         }
+    try_statement = [
+        textwrap.dedent('''\
+            try
+            {
+                a();
+                h(-4);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }'''),
 
-    #         public class Program
-    #         {
-    #             public static void Main()
-    #             {
-    #                 try
-    #                 {
-    #                     a();
-    #                     h(2);
-    #                 }
-    #                 catch (NeptunError e)
-    #                 {
-    #                     Console.WriteLine(e);
-    #                 }
-    #             }
-    #         }
-    #         '''))
-    # ]
+        textwrap.dedent('''\
+            public class NeptunError : Exception
+            {
+                public NeptunError(string message)
+                    : base(message)
+                {
+                }
+            }
 
-    # throw_statement = (
-    #     'raw',
-    #     textwrap.dedent('''\
-    #     using System;
 
-    #         public class NeptunError : Exception
-    #         {
-    #             public NeptunError(string message)
-    #                 : base(message)
-    #             {
-    #             }
-    #         }
+            public class Program
+            {
+                public static void Main()
+                {
+                    try
+                    {
+                        a();
+                        h(-4);
+                    }
+                    catch (NeptunError e)
+                    {
+                        Console.WriteLine(e);
+                    }
 
-    #         public class Program
-    #         {
-    #             public static void Main()
-    #             {
-    #                 raise NeptunError('no tea');
-    #             }
-    #         }
-    #         '''))
+
+
+                }
+            }
+            ''')
+    ]
+
+    throw_statement = textwrap.dedent('''\
+        public class NeptunError : Exception
+        {
+            public NeptunError(string message)
+                : base(message)
+            {
+            }
+        }
+
+
+        public class Program
+        {
+            public static void Main()
+            {
+                throw new NeptunError("no tea");
+            }
+        }
+        ''')
 
 

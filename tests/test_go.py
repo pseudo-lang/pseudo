@@ -14,8 +14,8 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     _language = 'go'
     _import = 'import'
 
-    def gen(self, ast):
-        imports, source = self.gen_with_imports(ast)
+    def gen(self, custom_exceptions, ast):
+        imports, source = self.gen_with_imports(custom_exceptions, ast)
         return source.strip()
 
 
@@ -249,7 +249,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     method_definition = (
         dedent_with_tabs('''\
             func parse(this *A, source string) []string {
-                this.ast = nil
+                this.ast = 0
                 return []string {source}
             }'''))
 

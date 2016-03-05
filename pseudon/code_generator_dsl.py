@@ -32,14 +32,15 @@ class Placeholder(FragmentGenerator):
 
 
 class PseudonType(FragmentGenerator):
-    def __init__(self, type):
-        self.type = type
+    def __init__(self, placeholder):
+        self.placeholder = placeholder
     
     def expand(self, generator, node, depth):
-        t = getattr(node, self.type)
-        print(node.type, t)
-        # input()
-        return self.expand_type(t, generator)
+        current = node
+        for t in self.placeholder:
+            current = getattr(current, t)
+        # print(node.type, current, self.placeholder, node.y)
+        return self.expand_type(current, generator)
 
     def expand_type(self, t, generator):
         if isinstance(t, list):
@@ -105,7 +106,11 @@ class SubElement(FragmentGenerator):
         current = node
         for e in self.elements:
             current = getattr(current, e)
-        return current
+        # print(self.elements, current)
+        if isinstance(current, Node):
+            return generator._generate_node(current, depth)
+        else:
+            return current
 
 class Whitespace:
     def __init__(self, count=1, is_offset=True):

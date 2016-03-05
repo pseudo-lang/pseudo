@@ -6,6 +6,8 @@ from pseudon.errors import PseudonStandardLibraryError, PseudonDSLError
 from pseudon.api_handlers import LeakingNode, NormalLeakingNode, BizarreLeakingNode
 import copy
 
+TYPES = {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array', 'String'}
+
 def to_op(op, reversed=False):
     '''
     create a function that transforms a method to a binary op
@@ -83,7 +85,10 @@ class ApiTranslator(TreeTransformer):
         for l in self.used:
             m = self.dependencies.get(l, {}).get('@all')
             if m:
-                self.standard_dependencies.add(m)
+                if isinstance(m, list):
+                    self.standard_dependencies |= set(m)
+                else:
+                    self.standard_dependencies.add(m)
         
         transformed.dependencies = [
             Node('dependency', name=name) for name in self.standard_dependencies]
@@ -93,16 +98,23 @@ class ApiTranslator(TreeTransformer):
     def after(self, node, in_block, assignment):
         if node and not isinstance(node, Node):
             return node
-        if node and node.type in {'list', 'dictionary', 'set', 'tuple', 'regexp', 'array'}:
-            self.used.add(node.type.title())
-        elif node and node.type == 'assignment':
-            if node.value and isinstance(node.value.pseudo_type, list) and node.value.pseudo_type[0] in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
-                self.used.add(node.value.pseudo_type[0])
+        if node:
+            if node.type.title() in TYPES:
+                self.used.add(node.type.title())
+            # elif isinstance(node, list) and node.type[0] in TYPES:
+            #     self.used.add(node.type[0].title())
+        if node and (node.type == 'try_statement' or node.type == 'throw_statement'):
+            self.used.add('Exception')
+        if node and node.type == 'assignment' and node.value:
+            self.update_used(node.value.pseudo_type)
 
         if node and node.type == 'assignment' and node.value and node.value.type == 'binary_op':
             if node.value.right == node.target:
                 node = Node('operation_assign', slot=node.value.left, op=node.value.op, value=node.value.right)
         
+        if node and hasattr(node, 'params'):
+            self.update_used(node.pseudo_type)
+
         if node and node.type == 'call':
             if node.function.type == 'attr' and node.function.object.type == 'local' and hasattr(self, 'js_dependencies') and node.function.object.name in self.js_dependencies:
                 self.standard_dependencies.add(self.js_dependencies[node.function.object.name])                
@@ -159,7 +171,9 @@ class ApiTranslator(TreeTransformer):
         c++ guys, stay calm
         '''
 
-        z = z(module, name, node.args)
+        # input(node.y)
+        args = [node.receiver] + node.args if node.type == 'standard_method_call' else node.args
+        z = z(module, name, args)
         if context == 'expression':
             if isinstance(z, NormalLeakingNode):
                 leaked_nodes, exp = z.as_expression()
@@ -211,17 +225,11 @@ class ApiTranslator(TreeTransformer):
         return result
 
     def update_dependencies(self, namespace, function, arg_types):
-        if namespace == 'List':
-            self.used_list = True
-        elif namespace == 'Dictionary':
-            self.used_dictionary = True
+        if namespace in TYPES:
+            self.used.add(namespace)
 
         for a in arg_types:
-            if isinstance(a, list):
-                if a[0] == 'List':
-                    self.used_list = True
-                elif a[0] == 'Dictionary':
-                    self.used_dictionary = True
+            self.update_used(a)
 
         if namespace not in self.dependencies:
             return
@@ -279,7 +287,7 @@ class ApiTranslator(TreeTransformer):
     def _parse_part(self, part, receiver, args, equivalent):
         if part[0] == '%':  # %{v}
             inside = part[2:-1]
-            if inside.isnum():
+            if inside.isnumeric():
                 inside = int(inside)
                 return args[inside]
             elif inside == 'self':
@@ -294,3 +302,15 @@ class ApiTranslator(TreeTransformer):
                 return getattr(self, '%s_placeholder' % inside)(receiver, *args, equivalent=equivalent)
         else:
             return local(part)
+
+    def update_used(self, t):
+        if isinstance(t, list):
+            for type_ in t:
+                if isinstance(type_, str):
+                    if type_ in TYPES:
+                        self.used.add(type_)
+                else:
+                    self.update_used(type_)
+        else:
+            if t in TYPES:
+                self.used.add(t)

@@ -11,15 +11,21 @@ class TreeTransformer:
     after = None
     whitelist = None # if a set, transform only those nodes, optimization
 
+    current_class = None
+    current_function = None
+
     def transform(self, tree, in_block=False, assignment=None):
+        old_class, old_function = None, None
         if isinstance(tree, Node):
             if self.before:
                 tree = self.before(tree, in_block, assignment)
             if self.whitelist and tree.type not in self.whitelist:
                 return tree
-            elif tree.type == 'class_definition':
+            elif tree.type == 'class_definition' or tree.type == 'module':
+                old_class = self.current_class
                 self.current_class = tree
-            elif tree.type == 'function_definition' or tree.type == 'method_definition':
+            elif tree.type in {'function_definition', 'anonymous_function', 'constructor', 'method_definition', 'module'}:
+                old_function = self.current_function
                 self.current_function = tree
             handler = getattr(self, 'transform_%s' % tree.type, None)
             if handler:
@@ -28,6 +34,8 @@ class TreeTransformer:
                 tree = self.transform_default(tree)
             if self.after:
                 tree = self.after(tree, in_block, assignment)
+            self.current_function = old_function
+            self.current_class = old_class
             return tree
         elif isinstance(tree, list):
             return [self.transform(child) for child in tree]
@@ -58,3 +66,7 @@ class TreeTransformer:
             else:
                 results += result
         return results
+
+    # def transform_custom_exception(self, s, *w):
+    #     # input(s)
+    #     return s

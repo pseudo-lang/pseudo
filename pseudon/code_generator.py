@@ -101,7 +101,22 @@ class CodeGenerator:
 
     def action_semi(self, expanded, depth):
         # input(expanded)
-        semi = [exp.rstrip() + ';' if exp.rstrip() and exp.rstrip()[-1] not in ';}' else exp for exp in expanded]
+        
+        semi = []
+        for exp in expanded:
+            q = exp.rstrip()
+            if q and q[-1] == ';':
+                semi.append(exp)
+            elif q and q[-1] == '}':
+                last_line, _, _ = q.rpartition('\n')
+                if last_line.strip():
+                    semi.append(exp)
+                else:
+                    semi.append(q + ';')
+            else:
+                # if q and q[-1] == '}' and q[:-1].strip() != '':
+                #     input(q[:-1].strip())
+                semi.append(q + ';')
         return '\n'.join(semi)
 
     def action_line_join(self, expanded, depth):
@@ -166,7 +181,8 @@ class CodeGenerator:
                     # unrealised fragment, we should swallow that line
                     # sorry sov
                     expanded.pop()
-                    # expanded.pop()
+                    if not expanded[-1] or expanded[-1][0] == self._symbol:
+                        expanded.pop()
                     print(expanded[-3:])
                 elif expanded:
                     expanded.append('\n')
@@ -323,7 +339,7 @@ class CodeGenerator:
                     if placeholder[0] == '#':
                         q = Function(placeholder[1:])
                     elif placeholder[0] == '@':
-                        q = PseudonType(placeholder[1:])
+                        q = PseudonType(placeholder[1:].split('.'))
                     elif placeholder[0] == '.':
                         q = SubTemplate(label, placeholder[1:])
                     elif '.' in placeholder:

@@ -114,7 +114,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     method_definition = textwrap.dedent('''\
         def parse(self, source):
-            self.ast = None
+            self.ast = 0
             return [source]''')
 
     anonymous_function = [

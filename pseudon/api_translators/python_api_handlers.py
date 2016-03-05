@@ -4,7 +4,7 @@ from pseudon.api_handlers import BizarreLeakingNode, NormalLeakingNode
 def expand_map(receiver, func):
     if func.type == 'lambda':
         return Node(
-            '_list_comp',
+            '_py_list_comp',
             sequence=receiver)
     else:
         return call('map', [func, receiver])
@@ -12,7 +12,7 @@ def expand_map(receiver, func):
 def expand_filter(receiver, func):
     if func.type == 'lambda':
         return Node(
-            '_list_comp')
+            '_py_list_comp')
     else:
         return call('filter', [func, receiver])
 
@@ -24,13 +24,13 @@ def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
     if from_:
         if to:
             if from_.type == 'int' and from_.value == 0:
-                return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
+                return Node('_py_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
             else:
-                return Node('_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
+                return Node('_py_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
         else:
-            return Node('_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
+            return Node('_py_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
     elif to:
-        return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
+        return Node('_py_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
     else:
         return None
 
@@ -52,7 +52,7 @@ class ReadFile(BizarreLeakingNode):
     # inside: as_assignment with temp_name as target
     def as_expression(self):
         return [Node(
-            '_with', 
+            '_py_with', 
             call=call('open', [self.args[0], to_node('r')], 'File'),
             context='_f', 
             block=[method_call(local('_f', 'File'), 'read', [], 'String')],
@@ -75,7 +75,7 @@ class WriteFile(NormalLeakingNode):
 
     def as_expression(self):
         return [], Node(
-            '_with',
+            '_py_with',
             call=call('open', [self.args[0], to_node('w')], 'File'),
             context='_f',
             block=[method_call(local('_f', 'File'), 'write', [self.args[1]], 'Void')],

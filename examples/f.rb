@@ -1,13 +1,6 @@
-def f
-  ''
+class ExError < StandardError
 end
 
-puts f
-begin
-  2
-  f
-rescue StandardError => e
-  puts e
-end
 
+throw ExError.new('s')
 

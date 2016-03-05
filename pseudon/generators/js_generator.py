@@ -18,7 +18,7 @@ class JSGenerator(CodeGenerator):
             return '_e'
 
     templates = dict(
-        module     = "%<dependencies:lines>%<constants:lines>%<definitions:lines>%<main:semi>",
+        module     = "%<dependencies:lines>%<constants:lines>%<custom_exceptions:lines>%<definitions:lines>%<main:semi>",
 
         function_definition   = '''
             function %<name>(%<params:join ','>) {
