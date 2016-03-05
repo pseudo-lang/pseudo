@@ -24,5 +24,3 @@ C# equivalents used for pseudo types and concepts:
 
 
 
-
-
