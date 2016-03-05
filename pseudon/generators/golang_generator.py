@@ -1,6 +1,7 @@
 from pseudon.code_generator import CodeGenerator, switch
 from pseudon.middlewares import GoConstructorMiddleware, TupleMiddleware, DeclarationMiddleware # GoErrorHandlingMiddleware #, GoTupleMiddleware
 from pseudon.code_generator_dsl import PseudonType
+from pseudon.pseudon_tree import Node, local
 
 class GolangGenerator(CodeGenerator):
     '''Go generator'''
@@ -61,8 +62,8 @@ class GolangGenerator(CodeGenerator):
 
         anonymous_function = switch(lambda a: len(a.block) == 1,
             true        = 'func (%<#params>) { %<block:first> }',
-            _otherwise  = '''func (%<#params>)
-                {
+            _otherwise  = '''
+                func (%<#params>) {
                     %<block:line_join>
                 }'''),
 
@@ -124,16 +125,14 @@ class GolangGenerator(CodeGenerator):
         if_statement    = '''
             if %<test> {
                 %<block:line_join>
-            }
-            %<.otherwise>''',
+            } %<.otherwise>''',
 
         if_statement_otherwise = ('%<otherwise>', ''),
 
         elseif_statement = '''
             else if %<test> {
                 %<block:line_join>
-            }
-            %<.otherwise>''',
+            } %<.otherwise>''',
 
         elseif_statement_otherwise = ('%<otherwise>', ''),
 
@@ -162,7 +161,7 @@ class GolangGenerator(CodeGenerator):
         for_statement = switch(lambda f: f.iterators.type,
             for_iterator_zip = '''
                 for _index, _ := range %<sequences> {
-                    %<iterators>
+                    %<#zip_iterators>
                     %<block:line_join>
                 }
             ''',
@@ -173,13 +172,17 @@ class GolangGenerator(CodeGenerator):
         ),
         
         for_range_statement = '''
-            for %<index> := %<.start>; %<index> != %<end>; %<index> += %<.step> {
+            for %<index> := %<.first>; %<index> != %<last>; %<index> += %<.step> {
                 %<block:line_join>
             }''',
 
-        for_iterator = '%<iterator>',
+        for_range_statement_first = ('%<first>', '0'),
 
-        for_iterator_zip = '',
+        for_range_statement_step = ('%<step>', '1'),
+
+        for_iterator = '_, %<iterator>',
+
+        for_iterator_zip = '%<#zip_iterators>',
 
         for_iterator_with_index = '%<index>, %<iterator>',
 
@@ -191,7 +194,7 @@ class GolangGenerator(CodeGenerator):
 
         for_sequence_with_index = '%<sequence>',
 
-        for_sequence_items = '%<sequence>',
+        for_sequence_with_items = '%<sequence>',
 
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
@@ -204,10 +207,6 @@ class GolangGenerator(CodeGenerator):
 
         regex = '@"%<value>',
 
-        for_range_statement_first = ('%<first>', '0'),
-
-        for_range_statement_step = ('%<step>', '1'),
-
         custom_exception = '''
             class %<name> : Exception
         ''',
@@ -215,13 +214,26 @@ class GolangGenerator(CodeGenerator):
         block = '%<block:line_join>'
     )
     
-    def params(self, node, indent):
+    def params(self, node, depth):
         return ', '.join('%s %s' % (q.name, PseudonType('').expand_type(q.pseudo_type, self)) for q in node.params)
 
-    def dependencies(self, node, indent):
+    def dependencies(self, node, depth):
         if len(node.dependencies) == 1:
             return 'import "%s"' % node.dependencies[0].name
         elif len(node.dependencies) > 1:
             return 'import (\n\t%s\n)\n' % '\n\t'.join('"%s"' % q.name for q in node.dependencies)
         else:
             return ''
+
+    def zip_iterators(self, node, depth):
+        return '\n'.join(
+            '%s%s := %s' % (
+                self.offset(depth) if j else '',
+                q.name,
+                self._generate_node(
+                    Node('index',
+                        sequence=node.sequences.sequences[j],
+                        index=local('_index', 'Int'),
+                        pseudo_type=node.sequences.sequences[j].pseudo_type[1])))
+            for j, q 
+            in enumerate(node.iterators.iterators))

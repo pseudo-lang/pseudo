@@ -37,6 +37,8 @@ class PseudonType(FragmentGenerator):
     
     def expand(self, generator, node, depth):
         t = getattr(node, self.type)
+        print(node.type, t)
+        # input()
         return self.expand_type(t, generator)
 
     def expand_type(self, t, generator):

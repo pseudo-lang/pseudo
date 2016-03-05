@@ -1,7 +1,7 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator, to_op
 from pseudon.pseudon_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr
-from pseudon.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, read, ReadFile, WriteFile
+from pseudon.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, Read
 
 class GolangTranslator(ApiTranslator):
     '''
@@ -53,9 +53,13 @@ class GolangTranslator(ApiTranslator):
         },
         'io': {
             'display':      'fmt.Println',
-            'read':         read,
-            'read_file':    ReadFile,
-            'write_file':   WriteFile
+            'read':         Read,
+            'read_file':    'ioutil.ReadFile',
+            'write_file':   'ioutil.WriteFile'
+        },
+        'math': {
+            'ln':       'Math.Log',
+            'tan':      'Math.Tan' 
         }
     }
 
@@ -66,7 +70,12 @@ class GolangTranslator(ApiTranslator):
         },
         'io': {
             'display': 'fmt',
-            'read':    'fmt'
+            'read':    ['bufio', 'os'],
+            'read_file': ['io/ioutil'],
+            'write_file': ['io/ioutil']
+        },
+        'math': {
+            '@all':     'math'
         }
     }
 

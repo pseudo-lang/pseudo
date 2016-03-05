@@ -44,7 +44,7 @@ class DeclarationMiddleware(Middleware):
         node.value = self.transform(node.value) # lambda can be somewhere here
         return node
 
-    def transform__go_assignment(self, node, in_block=False, assignment=False):
+    def transform__go_multi_assignment(self, node, in_block=False, assignment=False):
         node.first_mention = False
         for t in node.targets:
             if t.type == 'local' and t.name not in self.envs[-1]:

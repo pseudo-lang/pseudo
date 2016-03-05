@@ -27,14 +27,14 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
         if lines[0].startswith('import'):
             if lines[0][7] == '"':
-                imports = [lines[0][8:-1]]
+                imports = {lines[0][8:-1]}
                 m = 1
             else:
                 m = lines.index(')')
-                imports = [l.strip()[1:-1] for l in lines[1:m]]
+                imports = {line.strip()[1:-1] for line in lines[1:m]}
             definitions = '\n'.join(lines[m + 1:main_index])
         else:
-            imports = []
+            imports = set()
             definitions = '\n'.join(lines[:main_index])
         return imports, definitions + main
 
@@ -73,12 +73,12 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     method_call = 'e.filter(42)'
 
     standard_call = [
-        (['fmt'], 'fmt.Println(42)'),
-        (['bufio', 'os'], dedent_with_tabs('''\
-            reader := bufio.NewReader(os.Stdin)
-            reader.ReadString('\n')''')),
-        (['math'], 'Math.Log(ham)'),
-        (['io/ioutil'], 'ioutil.ReadFile("f.py")')
+        ({'fmt'}, 'fmt.Println(42)'),
+        ({'bufio', 'os'}, dedent_with_tabs('''\
+            reader, err := bufio.NewReader(os.Stdin)
+            reader.ReadString("\\n")''')),
+        ({'math'}, 'Math.Log(ham)'),
+        ({'io/ioutil'}, 'source := ioutil.ReadFile("f.py")')
     ]
 
     standard_method_call = [
@@ -197,14 +197,13 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     comparison = 'egg > ham'
 
     if_statement = (
-        ['fmt'],
+        {'fmt'},
         dedent_with_tabs('''\
             if egg == ham {
                 l[0:2]
             } else if egg == ham {
                 fmt.Println(4.2)
-            } 
-            else {
+            } else {
                 z
             }''')
     )
@@ -214,24 +213,27 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     for_statement = [
         dedent_with_tabs('''\
             for _, a := range sequence {
-                a.sub()
+                log(a)
             }'''),
         dedent_with_tabs('''\
-            for k, v := range cpus {
-                h(k, v)
+            for j := 0; j != 42; j += 2 {
+                analyze(j)
             }'''),
         dedent_with_tabs('''\
-            for j, a := range as {
-                b := bs[j]
-                h(a + b)
+            for j, k := range z {
+                analyze(j, k)
+            }'''),
+        dedent_with_tabs('''\
+            for j, k := range z {
+                analyze(k, j)
+            }'''),
+        dedent_with_tabs('''\
+            for _index, _ := range len(z) {
+                k := z[_index]
+                l := zz[_index]
+                a(k, l)
             }''')
-    ],
-
-
-    for_range = dedent_with_tabs('''\
-        for j := 0, j < 42, j += 2 {
-            analyze(j);
-        }''')
+    ]
 
     while_statement = dedent_with_tabs('''\
         for f() >= 42 {
@@ -246,10 +248,10 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     method_definition = (
         dedent_with_tabs('''\
-            func parse(this A*, source string) list[string] {
+            func parse(this *A, source string) []string {
                 this.ast = nil
-                return [source]
-        }'''))
+                return []string {source}
+            }'''))
 
     anonymous_function = [
         'func (source string) { return ves(len(source)) }',

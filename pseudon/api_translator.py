@@ -91,7 +91,7 @@ class ApiTranslator(TreeTransformer):
         return transformed
 
     def after(self, node, in_block, assignment):
-        if not isinstance(node, Node):
+        if node and not isinstance(node, Node):
             return node
         if node and node.type in {'list', 'dictionary', 'set', 'tuple', 'regexp', 'array'}:
             self.used.add(node.type.title())
@@ -109,6 +109,9 @@ class ApiTranslator(TreeTransformer):
 
         if in_block:
             results = [ass for ass in self.leaked_nodes]
+            # input(type(self).__name__ )
+            if type(self).__name__ == 'GolangTranslator':
+                2# 2 input(node)
             if node and not (node.type == 'assignment' and node.value is None):
                 results.append(node)
             self.leaked_nodes = []
@@ -142,10 +145,11 @@ class ApiTranslator(TreeTransformer):
             else:
                 args = ['expression']
 
-            return self.leaking(x, l, node.message, node, *args)
-
+            result = self.leaking(x, l, node.message, node, *args)
+        else:
+            result = self._expand_api(x, node.receiver, node.args, node.pseudo_type, self.methods[l]['@equivalent'])
         self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
-        return self._expand_api(x, node.receiver, node.args, node.pseudo_type, self.methods[l]['@equivalent'])
+        return result        
 
     def leaking(self, z, module, name, node, context, *data):
         '''
@@ -200,10 +204,11 @@ class ApiTranslator(TreeTransformer):
             else:
                 args = ['expression']
 
-            return self.leaking(x, namespace, node.function, node, *args)
-
+            result = self.leaking(x, namespace, node.function, node, *args)
+        else:
+            result = self._expand_api(x, None, node.args, node.pseudo_type, node.namespace)
         self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
-        return self._expand_api(x, None, node.args, node.pseudo_type, node.namespace)
+        return result
 
     def update_dependencies(self, namespace, function, arg_types):
         if namespace == 'List':

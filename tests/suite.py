@@ -21,6 +21,7 @@ class TestLanguage(type):
                     elif exp[0] == 'raw':
                         self.assertEqual(self.gen(example), exp)
                     else:
+                        # input(exp)
                         imports, source = self.gen_with_imports(example)
                         self.assertEqual(imports, exp[0])
                         self.assertEqual(source, exp[1])
@@ -191,7 +192,7 @@ WhileStatement = [Node('while_statement',
 FunctionDefinition = [Node('function_definition', 
         name='weird',
         params=[Node('local', name='z', pseudo_type='Int')],
-        pseudo_type='Function[Int, Int]',
+        pseudo_type=['Function', 'Int', 'Int'],
         return_type='Int',
         block=[
             Node('assignment', target=local('fixed', pseudo_type='Int'), value=call(local('fix'), [local('z')], pseudo_type='Int')),
@@ -202,21 +203,21 @@ MethodDefinition = [Node('method_definition',
         name='parse',
         params=[Node('local', name='source', pseudo_type='String')],
         this=Node('typename', name='A'),
-        pseudo_type='Function[String, List[String]]',
-        return_type='List[String]',
+        pseudo_type=['Function', 'String', ['List', 'String']],
+        return_type=['List', 'String'],
         is_public=True,
         block=[
             assignment(
                 Node('instance_variable', name='ast', pseudo_type='Void'), 
                 Node('null', pseudo_type='Void')),
-            Node('implicit_return', value=Node('list', elements=[Node('local', name='source')]))
+            Node('implicit_return', value=Node('list', elements=[Node('local', name='source')], pseudo_type=['List', 'String']))
         ])]
 
 AnonymousFunction = [
     Node('anonymous_function', 
         params=[Node('local', name='source', pseudo_type='String')],
-        pseudo_type='Function[String, List[String]]',
-        return_type='List[String]',
+        pseudo_type=['Function', 'String', 'String'],
+        return_type=['List', 'String'],
         block=[
             Node('implicit_return', value=call(local('ves'), [
                 Node('standard_method_call', 
@@ -227,8 +228,8 @@ AnonymousFunction = [
 
     Node('anonymous_function', 
         params=[Node('local', name='source', pseudo_type='String')],
-        pseudo_type='Function[String, List[String]]',
-        return_type='List[String]',
+        pseudo_type=['Function', 'String', 'String'],
+        return_type=['List', 'String'],
         block=[
             Node('standard_call', namespace='io', function='display', args=[Node('local', name='source', pseudo_type='String')]),
             Node('implicit_return', value=call(local('ves'), [
@@ -244,7 +245,7 @@ ClassDefinition = [Node('class_definition',
         constructor=Node('constructor',
             params=[Node('local', name='a', pseudo_type='Int')],
             this=typename('A'),
-            pseudo_type='Function[Int, A]',
+            pseudo_type=['Function', 'Int', 'A'],
             return_type='A',
             block=[
                Node('assignment', target=Node('instance_variable', name='a', pseudo_type='String'), value=local('a', pseudo_type='Int'))     
@@ -257,7 +258,7 @@ ClassDefinition = [Node('class_definition',
                 name='parse',
                 params=[],
                 this=typename('A'),
-                pseudo_type='Function[Int]',
+                pseudo_type=['Function', 'Int'],
                 return_type='Int',
                 block=[
                     Node('implicit_return', value=to_node(42))
@@ -369,6 +370,8 @@ class TestHelpers:
 
         result = generate(Node('module', definitions=definitions, dependencies=[], constants=[], main=main), self._language)
         if hasattr(self, 'gen_special'):
+            # input(result)
+        
             return self.gen_special(result)
 
         ls = result.split('\n')

@@ -1,4 +1,4 @@
-from pseudon.pseudon_tree import Node, call, method_call, local, assignment
+from pseudon.pseudon_tree import Node, call, method_call, local, assignment, attr, to_node
 from pseudon.api_handlers import BizarreLeakingNode, NormalLeakingNode
 
 def expand_push(receiver, element):
@@ -15,7 +15,7 @@ def expand_map(receiver, function, assignment, pseudo_type):
         iter = function.args[0]
     else:
         iter = 'element'
-    return Node('block', block=[Node('_go_assignment',
+    return Node('block', block=[Node('_go_multi_assignment',
         name=local('result'),
         value=Node('_make_slice',
             type=receiver.pseudon_type,
@@ -34,7 +34,7 @@ def expand_filter(receiver, test, assignment, pseudo_type):
     else:
         iter = 'element'
     return Node('block', block=[
-        Node('_go_assignment',
+        Node('_go_multi_assignment',
             name=local('result'),
             value=Node('_make_slice',
                 type=receiver.pseudon_type,
@@ -65,22 +65,31 @@ def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
     else:
         return None
 
-def read(assignment, namespace, function, args):
-    return [
-        local_assignment('reader', call(attr(local('bufio'), 'NewReader'), [attr(local('os'), 'Stdin')])),
+class Read(BizarreLeakingNode):
+    '''
+    transform `io:read`
+    '''
+    
+    def temp_name(self, target):
+        return '_read_result'
 
-        assignment_updated(
-            local_assignment(call(
-                attr(local('reader'), 
-                    'ReadString', 
-                    ['\n'], 
-                    pseudo_type=['Tuple', 'String', 'Error']))))
-        ]
+    def as_expression(self):
+        return [
+        Node('_go_multi_assignment',
+            targets=[local('reader', 'Reader'), local('err', 'Error')],
+            values=[call(attr(local('bufio', 'GoLibrary'),
+                    'NewReader', ['Function', 'IO', 'Reader']), 
+                [attr(local('os', 'GoLibrary'), 'Stdin', 'IO')],
+                pseudo_type='Reader')]),
+            call(
+                attr(local('reader', 'Reader'), 
+                    'ReadString',
+                    ['Function', 'String', 'String']),
+                    [to_node('\\n')],
+                    pseudo_type='String')], None
 
-class ReadFile(BizarreLeakingNode):
-    pass
-
-class WriteFile(BizarreLeakingNode):
-    pass
-
+    def as_assignment(self, target):
+        expression = self.as_expression()
+        expression[1] = assignment(target, expression[1])
+        return expression
 

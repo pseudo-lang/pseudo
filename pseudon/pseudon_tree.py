@@ -54,7 +54,7 @@ def assignment(target, value):
     return Node('assignment', target=target, value=value, pseudo_type='Void')
 
 def attr(value, attr, pseudo_type=None):
-    return Node('attr', value=value, attr=attr, pseudo_type=pseudo_type)
+    return Node('attr', object=value, attr=attr, pseudo_type=pseudo_type)
 
 def for_each(iterator, sequence, block):
     return Node('for_statement', iterators=Node('for_iterator', iterator=iterator), 
