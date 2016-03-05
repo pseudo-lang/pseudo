@@ -96,8 +96,8 @@ class ApiTranslator(TreeTransformer):
         if node and node.type in {'list', 'dictionary', 'set', 'tuple', 'regexp', 'array'}:
             self.used.add(node.type.title())
         elif node and node.type == 'assignment':
-            if node.value and node.value.pseudo_type in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
-                self.used.add(node.value.pseudo_type)
+            if node.value and isinstance(node.value.pseudo_type, list) and node.value.pseudo_type[0] in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
+                self.used.add(node.value.pseudo_type[0])
 
         if node and node.type == 'assignment' and node.value and node.value.type == 'binary_op':
             if node.value.right == node.target:

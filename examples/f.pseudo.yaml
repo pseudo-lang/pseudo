@@ -1,65 +1,30 @@
 constants: []
-definitions:
-- block:
-  - pseudo_type: Int
-    type: implicit_return
-    value:
-      args:
-      - {pseudo_type: Int, type: int, value: 2}
-      function:
-        name: s
-        pseudo_type: [Function, Int, Int]
-        type: local
-      pseudo_type: Int
-      type: call
-  name: f
-  params: [s]
-  pseudo_type:
-  - Function
-  - [Function, Int, Int]
-  - Int
-  return_type: Int
-  type: function_definition
-- attrs: []
-  base: null
-  constructor: null
-  methods:
-  - block:
-    - pseudo_type: B
-      type: implicit_return
-      value:
-        class: {name: B, type: typename}
-        params:
-        - {name: a, pseudo_type: Int, type: local}
-        pseudo_type: B
-        type: new_instance
-    is_public: true
-    name: expand
-    params: [a]
-    pseudo_type: [Function, Int, B]
-    return_type: B
-    this: {name: A, type: typename}
-    type: method_definition
-  name: A
-  type: class_definition
-- attrs:
-  - {is_public: false, name: a, pseudo_type: Int, type: class_attr}
-  base: null
-  constructor:
-    block:
-    - pseudo_type: Void
-      target: {name: a, pseudo_type: Int, type: instance_variable}
-      type: assignment
-      value: {name: a, pseudo_type: Int, type: local}
-    name: __init__
-    params: [a]
-    pseudo_type: [Function, Int, B]
-    return_type: null
-    this: {name: B, type: typename}
-    type: constructor
-  methods: []
-  name: B
-  type: class_definition
+definitions: []
 dependencies: []
-main: []
+main:
+- pseudo_type: Void
+  target:
+    name: e
+    pseudo_type: [Array, Int, 2]
+    type: local
+  type: assignment
+  value:
+    elements:
+    - {pseudo_type: Int, type: int, value: 2}
+    - {pseudo_type: Int, type: int, value: 4}
+    pseudo_type: [Array, Int, 2]
+    type: array
+- pseudo_type: Void
+  target:
+    name: g
+    pseudo_type: [Tuple, String, Int, Int]
+    type: local
+  type: assignment
+  value:
+    elements:
+    - {pseudo_type: String, type: string, value: x}
+    - {pseudo_type: Int, type: int, value: 2}
+    - {pseudo_type: Int, type: int, value: 4}
+    pseudo_type: [Tuple, String, Int, Int]
+    type: tuple
 type: module

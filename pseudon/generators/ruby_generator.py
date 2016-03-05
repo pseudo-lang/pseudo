@@ -109,6 +109,8 @@ class RubyGenerator(CodeGenerator):
 
         throw_statement = 'throw %<exception>.new(%<value>)',
 
+        new_instance    = "%<class_name>.new(%<args:join ', '>)",
+
         if_statement    = '''
             if %<test>
               %<block:line_join>

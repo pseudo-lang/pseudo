@@ -1,2 +1,4 @@
 from pseudon.middlewares.declaration_middleware import DeclarationMiddleware
-from pseudon.middlewares.go_error_handling_middleware import GoErrorHandlingMiddleware
+from pseudon.middlewares.go_constructor_middleware import GoConstructorMiddleware
+from pseudon.middlewares.tuple_middleware import TupleMiddleware
+#	go_error_handling_middleware import GoErrorHandlingMiddleware

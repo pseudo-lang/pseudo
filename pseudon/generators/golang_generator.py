@@ -1,5 +1,6 @@
 from pseudon.code_generator import CodeGenerator, switch
-from pseudon.middlewares import GoErrorHandlingMiddleware #, GoTupleMiddleware
+from pseudon.middlewares import GoConstructorMiddleware, TupleMiddleware, DeclarationMiddleware # GoErrorHandlingMiddleware #, GoTupleMiddleware
+from pseudon.code_generator_dsl import PseudonType
 
 class GolangGenerator(CodeGenerator):
     '''Go generator'''
@@ -7,7 +8,7 @@ class GolangGenerator(CodeGenerator):
     indent = 1
     use_spaces = False
 
-    middlewares = [GoErrorHandlingMiddleware]
+    middlewares = [TupleMiddleware, GoConstructorMiddleware, DeclarationMiddleware] # GoErrorHandlingMiddleware
     
     types = {
       'Int': 'int',
@@ -29,10 +30,18 @@ class GolangGenerator(CodeGenerator):
           %<constants:lines>
           %<definitions:lines>
           %<tuple_definitions:line_join>
-          func Main() {
-              %<main:lines>
-          }
-          ''',
+          func main() {
+              %<main:line_join>
+          }''',
+
+        module_dependencies = (switch(lambda m: len(m.dependencies) == 1,
+                true        = 'import %<m.dependencies:first>',
+                _otherwise  = '''
+                    import (
+                        %<m.dependencies:line_join>
+                    )
+                '''
+            ), ''),
 
         function_definition   = '''
             func %<name>(%<#params>) %<@return_type> {
@@ -55,15 +64,13 @@ class GolangGenerator(CodeGenerator):
 
         class_definition_base = ('extend %<base>', ''),
 
-        class_definiton_constructor = ('%<constructor>', ''),
+        class_definition_constructor = ('%<constructor>', ''),
 
         class_attr = '%<name> %<@pseudo_type>',
 
-        anonymous_function = 'func (%<#params>) %<.block>',
-
-        anonymous_function_block = switch(lambda a: len(a.block) == 1,
-            true        = '{ %<block:first> }',
-            _otherwise  = '''
+        anonymous_function = switch(lambda a: len(a.block) == 1,
+            true        = 'func (#<params>) { %<block:first> }',
+            _otherwise  = '''func (#<params>)
                 {
                     %<block:line_join>
                 }'''),
@@ -92,6 +99,12 @@ class GolangGenerator(CodeGenerator):
         dictionary  = "%<@pseudo_type> { %<pairs:join ', '> }",
         pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
+        array       = "{%<elements:join ', '>}",
+
+        _slice      = '%<sequence>[%<from_>:%<to>]',
+        _slice_from = '%<sequence>[%<from_>:len(%<sequence>)]',
+        _slice_to   = '%<sequence>[0:%<to>]',
+        _slice_     = '%<sequence>[:]',
 
         assignment  = switch('first_mention',
             true       = '%<target> := %<value>',
@@ -155,7 +168,7 @@ class GolangGenerator(CodeGenerator):
         #     {
         #         %<block:semi>''',
 
-        for_statement = switch(lambda f: f.iterator.type,
+        for_statement = switch(lambda f: f.iterators.type,
             for_iterator_zip = '''
                 for _index, _ := range %<sequences> {
                     %<iterators>
@@ -210,3 +223,6 @@ class GolangGenerator(CodeGenerator):
 
         block = '%<block:semi>'
     )
+    
+    def params(self, node, indent):
+        return ', '.join('%s %s' % (q.name, PseudonType('').expand_type(q, self)) for q in node.params)

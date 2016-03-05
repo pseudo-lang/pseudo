@@ -100,6 +100,8 @@ class CSharpGenerator(CodeGenerator):
         pair        = "{%<key>, %<value>}",
         attr        = "%<object>.%<attr>",
 
+        new_instance = "new %<class_name>(%<args:join ', '>)",
+
         assignment  = switch('first_mention',
             true       = 'var %<target> = %<value>', # in v0.3 add config/use var only for generic types
             _otherwise = '%<target> = %<value>'

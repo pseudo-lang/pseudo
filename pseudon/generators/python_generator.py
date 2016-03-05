@@ -111,7 +111,7 @@ class PythonGenerator(CodeGenerator):
 
         class_definition_constructor = ('%<constructor>', ''),
 
-        new_instance = "%<class>(%<params:join ', '>)",
+        new_instance = "%<class_name>(%<params:join ', '>)",
 
         anonymous_function = '%<#anonymous_function>',
 

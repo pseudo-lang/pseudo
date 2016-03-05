@@ -7,26 +7,6 @@ class CppGenerator(CodeGenerator):
     indent = 4
     use_spaces = True
 
-    def namespace(self, node, indent):
-        return self.name.capitalize()
-
-    def header(self, node, indent):
-        return 'using System;\nnamespace %s;\n{\n' % self.namespace()
-
-    def params(self, node, indent):
-        return ', '.join(
-            '%s %s' % (
-              self.render_type(node.pseudo_type[:-1].partition('[')[2].split(', ')[j]), 
-              k) for j, k in enumerate(node.params) )
-
-    def anon_block(self, node, indent):
-        if len(node.block) == 1:
-            b = self._generate_node(node)
-            return b + ';'
-        else:
-            b = ';\n'.join(self._generate_node(node, indent + 1)) + ';\n'
-            return '%s\n%s' % (b, self.offset(indent))
-
     types = {
       'Int': 'int',
       'Float': 'float',
@@ -112,6 +92,8 @@ class CppGenerator(CodeGenerator):
 
         instance_variable = 'this->%<name>',
 
+        new_instance    = "new %<class_name>(%<args:join ', '>)",
+
         throw_statement = 'throw %<exception>(%<value>)',
 
         if_statement    = '''
@@ -178,3 +160,25 @@ class CppGenerator(CodeGenerator):
 
         block = '%<block:semi>'
     )
+  
+    def namespace(self, node, indent):
+        return self.name.capitalize()
+
+    def header(self, node, indent):
+        return 'using System;\nnamespace %s;\n{\n' % self.namespace()
+
+    def params(self, node, indent):
+        return ', '.join(
+            '%s %s' % (
+              self.render_type(node.pseudo_type[:-1].partition('[')[2].split(', ')[j]), 
+              k) for j, k in enumerate(node.params) )
+
+    def anon_block(self, node, indent):
+        if len(node.block) == 1:
+            b = self._generate_node(node)
+            return b + ';'
+        else:
+            b = ';\n'.join(self._generate_node(node, indent + 1)) + ';\n'
+            return '%s\n%s' % (b, self.offset(indent))
+
+  

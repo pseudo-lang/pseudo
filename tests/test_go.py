@@ -16,7 +16,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     def gen(self, ast):
         imports, source = self.gen_with_imports(ast)
-        out = '\n'.join(source.split('\n')[1:-1]).strip()
+        out = '\n'.join(source.split('\n')[1:-2]).strip()
         if out[-1] == ';':
             return out[:-1]
         else:
@@ -25,14 +25,13 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     def gen_special(self, source):
         lines = source.split('\n')
-        main = '\n'.join([line[1:] for line in lines[lines.find('func mai') + 1:-1]])
+        main = '\n'.join([line[1:] for line in lines[lines.index('func main() {') + 1:-2]])
         
         l = 0
         if lines[0].startswith('import'):
             imports = [l.strip()[1:-1] for l in lines[1:lines.index(')')]]
         else:
             imports = []
-        source = '\n'.join(main)
         return imports, source
 
     # make declarative style great again
@@ -47,9 +46,9 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     null = 'nil'
 
-    dictionary = 'map[string]int{ "la": 0 }'
+    dictionary = 'map[string]int { "la": 0 }'
 
-    list_ = '[]string{"la"}'
+    list_ = '[]string {"la"}'
 
     local = 'egg'
 
@@ -231,8 +230,8 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         }''')
 
     while_statement = dedent_with_tabs('''\
-        while f() >= 42 {
-            b = g()
+        for f() >= 42 {
+            b := g()
         }''')
 
     function_definition = dedent_with_tabs('''\
@@ -279,7 +278,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
           return A{a + b}
         }''')
 
-    index = "'la'[2]"
+    index = '"la"[2]'
 
     # try_statement = [
     #     textwrap.dedent('''\
@@ -332,3 +331,4 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
 
 
+    

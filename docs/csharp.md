@@ -1,7 +1,7 @@
 # c\#
 
 * support
-* [generator](https://github.com/alehander42/pseudo/tree/master/pseudo/generators/csharp_generator.py) [api translator](https://github.com/alehander42/pseudo/tree/master/pseudo/api_translators/csharp_translator.py) [tests](https://github.com/alehander42/pseudo/tree/master/tests/test_csharp.py)
+* [generator](../pseudo/generators/csharp_generator.py) [api translator](../pseudo/api_translators/csharp_translator.py) [tests](../tests/test_csharp.py)
 * target version: C# 4+
 
 C# equivalents used for pseudo types and concepts:

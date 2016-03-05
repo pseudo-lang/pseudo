@@ -17,9 +17,11 @@ class GolangTranslator(ApiTranslator):
             'push':         'append',
             'pop':          lambda assignment, *l, receiver, pseudo_type: 
                                     assignment_updated(assignment, value=go_last(receiver)),
-            'length':       '.length',
-            'insert':       expand_insert
-
+            'length':       'len',
+            'insert':       expand_insert,
+            'slice':        expand_slice,
+            'slice_from':   expand_slice,
+            'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, None, to, pseudo_type)
         },
         'Dictionary': {
         },
@@ -65,4 +67,6 @@ class GolangTranslator(ApiTranslator):
     }
 
 
+    errors = {
 
+    }

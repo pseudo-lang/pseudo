@@ -340,7 +340,8 @@ ThrowStatement = [
     ]
 ]
 
-GoErrorHandling
+# GoErrorHandling = [
+    
 class TestHelpers:
     def gen(self, ast):
         return generate(Node('module', 
