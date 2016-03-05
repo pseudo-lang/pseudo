@@ -29,49 +29,49 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     string = '"la"'
 
-    # boolean = 'true'
+    boolean = 'true'
 
     null = 'null'
 
-    # dictionary = 'new Dictionary<string, int> { {"la", 0} }'
+    dictionary = 'new Dictionary<string, int> { {"la", 0} }'
 
-    # list_ = 'new List<string> {"la"}'
+    list_ = 'new List<string> {"la"}'
 
-    # local = 'egg'
+    local = 'egg'
 
-    # typename = 'Egg'
+    typename = 'Egg'
 
-    # instance_variable = 'this.egg'
+    instance_variable = 'this.egg'
 
-    # attr = 'e.egg'
+    attr = 'e.egg'
 
-    # local_assignment = 'egg = ham'
+    local_assignment = 'egg = ham'
 
-    # instance_assignment = 'this.egg = ham'
+    instance_assignment = 'this.egg = ham'
 
-    # attr_assignment = 'T.egg = ham'
+    attr_assignment = 'T.egg = ham'
 
-    # call = 'map(x)'
+    call = 'map(x)'
 
-    # method_call = 'e.filter(42)'
+    method_call = 'e.filter(42)'
 
-    # standard_call = [
-    #     'Console.WriteLine(42)',
-    #     'Console.ReadLine()',
-    #     'Math.Log(ham)',
-    #     "File.read('f.py')"
-    # ]
+    standard_call = [
+        'Console.WriteLine(42)',
+        'Console.ReadLine()',
+        'Math.Log(ham)',
+        # "File.read('f.py')"
+    ]
 
     # standard_method_call = [
     #     'l.Count',
     #     '"l".Substring(0, 2)'
     # ]
 
-    # binary_op = 'ham + egg'
+    binary_op = 'ham + egg'
 
-    # unary_op = '-a'
+    unary_op = '-a'
 
-    # comparison = 'egg > ham'
+    comparison = 'egg > ham'
 
     # if_statement = textwrap.dedent('''\
     #     if (egg == ham)
@@ -171,7 +171,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     #         }
     #     }''')]
 
-    # this = 'this'
+    this = 'this'
 
     # constructor = textwrap.dedent('''\
     #     A(int a, string b)
