@@ -1,106 +1,14 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator, to_op
 from pseudon.pseudon_tree import Node, method_call, call, to_node, local, assignment_updated
-
+from pseudon.api_translators.python_api_handlers import expand_map, expand_filter, expand_slice, expand_set_slice, ReadFile, WriteFile
 
 class PythonTranslator(ApiTranslator):
     '''
     Python api translator
 
-        Java specific:
-
-        `%{new}`:
-            expands to new %{equivalent}
-
-    DSL:
-        you can use either a lambda/function which returns a Node with signature
-        `(receiver, *args)` (e.g. `lambda receiver, value: Node('none'))
-        or
-
-        shortcuts:
-        `#method_name`  => calls that method of the equivalent class with the same args
-        `function_name` => calls that function with the same args
-        `.attr_name`    => accesses that attribute of the equivalent class
-        `!method_name`  => calls that static method of the equivalent class with the same args
-
-        `class_name<shortcut>` =>
-            transforms into the method/attr according to previous rules but of the class_name class,
-            not the equivalent one
-
-        `<shortcut>(%{0}, %{self})` =>
-            transforms into the call according to previous rules but with args ordered like in the
-            placeholders
-
-            %{<number>}      => the n-th arg(starts from 0)
-            %{self}          => the receiver of the method
-            %{equivalent}    => the equivalent class
-            %{<other-name>}  => each language translator can redefine it with
-                                def <other-name>_placeholder(self, receiver, *args, equivalent) which
-                                should return a Node
-
-        if you use a dict instead of a shortcut or a lambda, it defines a handler
-        for "leaking" expressions
-        we call leaking expressions, those which can "leak" nodes into the closest
-        surrounding block node list (e.g. adding an assignment before the current call)
-
-        Nodes: Nodes can be either the official pseudon nodes or in special cases
-               with `_<special_node>` when they describe syntax typical only for
-               the target language of the translator
-
-        helpers: quite useful helpers from pseudon.pseudon_tree are
-                 `method_call(receiver: str/Node, message: str, args: [Node])`
-                     which helps with method call nodes with normal `local` name object receivers
-
-                 `call(callee: str/Node, args: [Node])`
-                     which helps with call nodes with normal `local` name callees
+    The DSL is explained in the ApiTranslator docstring
     '''
-
-    def expand_map(receiver, func):
-        if func.type == 'lambda':
-            return Node(
-                '_list_comp',
-                sequence=receiver)
-        else:
-            return call('map', [func, receiver])
-
-    def expand_filter(receiver, func):
-        if func.type == 'lambda':
-            return Node(
-                '_list_comp')
-        else:
-            return call('filter', [func, receiver])
-
-    def expand_set_slice(receiver, from_=None, to=None, value=None, pseudo_type=None):
-        s = expand_slice(receiver, from_, to, pseudo_type)
-        return assignment(s, value)
-
-    def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
-        if from_:
-            if to:
-                if from_.type == 'int' and from_.value == 0:
-                    return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
-                else:
-                    return Node('_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
-            else:
-                return Node('_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
-        elif to:
-            return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
-        else:
-            return None
-
-    def read_file(assignment, namespace, function, args):
-        return Node('_with', call=call('open', [args[0], to_node("'r'")], pseudo_type='File'), 
-                        context='_f', 
-                        block=[
-                            assignment_updated(
-                                assignment, 
-                                value=method_call(
-                                    local('_f'), 
-                                    'read', 
-                                    [], 
-                                    pseudo_type='String'))],
-                        pseudo_type='Void',
-                        value_type='String')
 
     methods = {
         'List': {
@@ -183,15 +91,8 @@ class PythonTranslator(ApiTranslator):
         'io': {
             'display':      'print',
             'read':         'input',
-            'write_file':    lambda filename, content, _: _Node('_with', 
-                                call=call('open', [filename, to_node("'w'")]), 
-                                context='_f', 
-                                block=[method_call(local('_f'), 'write', [content])],
-                                pseudo_type='Void'),
-            'read_file':    {
-               '_translate':   read_file,
-               '_temp_name':   '_file_contents'
-            }
+            'write_file':   WriteFile,
+            'read_file':    ReadFile
         },
 
         'http': {

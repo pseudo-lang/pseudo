@@ -370,7 +370,6 @@ class CodeGenerator:
             if "'" in node.value:
                 s = '"%s"' % node.value.replace('"', '\\"')
             else:
-                input(node.value)
                 s = "'%s'" % node.value
         else:
             s = '"%s"' % node.value

@@ -6,3 +6,6 @@ class PseudonStandardLibraryError(PseudonError):
 
 class PseudonDSLError(PseudonError):
     pass
+
+class PseudonTypeError(PseudonError):
+	pass

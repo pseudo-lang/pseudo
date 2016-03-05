@@ -4,7 +4,11 @@ from pseudon.pseudon_tree import Node, method_call, call
 
 
 class JSTranslator(ApiTranslator):
-    '''Javascript api translator'''
+    '''
+    JS api translator
+
+    The DSL is explained in the ApiTranslator docstring
+    '''
 
     methods = {
         'List': {

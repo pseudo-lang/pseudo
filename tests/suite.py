@@ -1,7 +1,6 @@
 import re
-from pseudon.pseudon_tree import Node, to_node, call, method_call, local, assignment
+from pseudon.pseudon_tree import Node, to_node, call, method_call, local, typename, assignment
 from pseudon import generate
-from pseudon.pseudon_tree import Node
 
 SNAKE_CASE_REGEX = re.compile(r'(_\[a-z])')
 
@@ -49,14 +48,15 @@ class TestLanguage(type):
 Module      = [Node('module', constants=[], code=[])]
 Int         = [to_node(42)]
 Float       = [to_node(42.420)]
-String      = [to_node("'la'")]
+String      = [to_node('la')]
 Boolean     = [Node('boolean', value='true', pseudo_type='Boolean')]
 Null        = [Node('null')]
 Dictionary  = [Node('dictionary', pairs=[
-                Node('pair', key=to_node('"la"'), value=to_node(0))])]
-List        = [Node('list', elements=[to_node("'la'")])]
+                Node('pair', key=to_node('la'), value=to_node(0))],
+                pseudo_type=['Dictionary', 'String', 'Int'])]
+List        = [Node('list', elements=[to_node('la')], pseudo_type=['List', 'String'])]
 Local       = [local('egg')]
-Typename    = [to_node('Egg')]
+Typename    = [typename('Egg')]
 InstanceVariable = [Node('instance_variable', name='egg')]
 Attr        = [Node('attr', object=local('e'), attr='egg')]
 Assignment = [
@@ -69,7 +69,7 @@ Assignment = [
             sequence=local('x', pseudo_type=['List', 'String']),
             index=to_node(4),
             pseudo_type='String'),
-        value=to_node('"String"'))
+        value=to_node('String'))
 ]
 Call        = [call('map', [local('x')])]
 MethodCall  = [method_call(local('e'), 'filter', [to_node(42)])]
@@ -79,12 +79,12 @@ StandardCall = [
     Node('standard_call', namespace='math', function='ln', args=[Node('local', name='ham', pseudo_type='Int')], pseudo_type='Float'),
     assignment(
         local('source', pseudo_type='String'),
-        Node('standard_call', namespace='io', function='read_file', args=[to_node('"f.py"')], pseudo_type='String'))
+        Node('standard_call', namespace='io', function='read_file', args=[to_node('f.py')], pseudo_type='String'))
 ]
 
 StandardMethodCall = [
     Node('standard_method_call', receiver=local('l', pseudo_type=['List', 'Int']), message='length', args=[], pseudo_type='Int'),
-    Node('standard_method_call', receiver=to_node('"l"'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String')
+    Node('standard_method_call', receiver=to_node('l'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String')
 ]
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
@@ -243,7 +243,7 @@ ClassDefinition = [Node('class_definition',
         base='X',
         constructor=Node('constructor',
             params=[Node('local', name='a', pseudo_type='Int')],
-            this=to_node('A'),
+            this=typename('A'),
             pseudo_type='Function[Int, A]',
             return_type='A',
             block=[
@@ -256,7 +256,7 @@ ClassDefinition = [Node('class_definition',
             Node('method_definition',
                 name='parse',
                 params=[],
-                this=to_node('A'),
+                this=typename('A'),
                 pseudo_type='Function[Int]',
                 return_type='Int',
                 block=[
@@ -271,7 +271,7 @@ Constructor = [Node('constructor',
                 local('a', 'Int'),
                 local('b', 'Int')
             ],
-            this=to_node('A'),
+            this=typename('A'),
             pseudo_type=['Function', 'Int', 'Int', 'A'],
             return_type='A',
             block=[
@@ -279,7 +279,7 @@ Constructor = [Node('constructor',
                 assignment(Node('instance_variable', name='b', pseudo_type='Int'), local('b', 'Int'))
             ])]
 
-Index = [Node('index', sequence=to_node("'la'"), pseudo_type='String', index=to_node(2))]
+Index = [Node('index', sequence=to_node('la'), pseudo_type='String', index=to_node(2))]
 
 Regex = [Node('regex', value='[a-b]', pseudo_type='Regexp')]
 
@@ -336,7 +336,7 @@ ThrowStatement = [
 
         Node('throw_statement',
           exception='NeptunError',
-          value=to_node("'no tea'"))
+          value=to_node('no tea'))
     ]
 ]
 

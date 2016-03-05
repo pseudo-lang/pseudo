@@ -1,104 +1,22 @@
 from pseudon.types import *
 from pseudon.api_translator import ApiTranslator, to_op
 from pseudon.pseudon_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr
-
+from pseudon.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, read, ReadFile, WriteFile
 
 class GolangTranslator(ApiTranslator):
-    '''Go translator'''
+    '''
+    Go api translator
 
-    def expand_push(receiver, element):
-        return Node(
-            '_go_assignment',
-            name=receiver,
-            value=call('append', [receiver, element]))
-
-    def expand_pop(receiver):
-        return call('append', [])
-
-    def expand_insert(receiver, index, element):
-        return call('append', [])
-
-    def expand_map(receiver, function, assignment, pseudo_type):
-        if function.type == 'lambda':
-            iter = function.args[0]
-        else:
-            iter = 'element'
-        return Node('block', block=[Node('_go_assignment',
-            name=local('result'),
-            value=Node('_make_slice',
-                type=receiver.pseudon_type,
-                length=call('len', receiver))),
-            for_each_with_index_statement(
-                [iter, 'j'],
-                receiver, [
-                    item_assignment(local('result'),
-                        local('j'),
-                        call(function, [iter]))]),
-            local('result')])
-
-    def expand_filter(receiver, test, assignment, pseudo_type):
-        if function.type == 'lambda':
-            iter = function.args[0]
-        else:
-            iter = 'element'
-        return Node('block', block=[
-            Node('_go_assignment',
-                name=local('result'),
-                value=Node('_make_slice',
-                    type=receiver.pseudon_type,
-                    length=call('len', receiver))),
-                for_each_with_index_statement(
-                    [iter, 'j'],
-                    receiver, [
-                        if_statement(
-                            call(test, [iter]), [
-                                local_assignment(
-                                    local('result'),
-                                    call('append', [local('result'), local(iter)]))], None)
-                ]),
-            local('result')])
-
-
-    def expand_slice(receiver, from_=None, to=None, pseudo_type=None):
-        if from_:
-            if to:
-                if from_.type == 'int' and from_.value == 0:
-                    return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
-                else:
-                    return Node('_slice', sequence=receiver, from_=from_, to=to, pseudo_type=pseudo_type)
-            else:
-                return Node('_slice_from', sequence=receiver, from_=from_, pseudo_type=pseudo_type)
-        elif to:
-            return Node('_slice_to', sequence=receiver, to=to, pseudo_type=pseudo_type)
-        else:
-            return None
-
-    def read(assignment, namespace, function, args):
-        return [
-            local_assignment('reader', call(attr(local('bufio'), 'NewReader'), [attr(local('os'), 'Stdin')])),
-
-            assignment_updated(
-                local_assignment(call(
-                    attr(local('reader'), 
-                        'ReadString', 
-                        ['\n'], 
-                        pseudo_type=['Tuple', 'String', 'Error']))))
-            ]
-
-    def go_bizarre(*e):
-        return e[0]
-
-    def bizarre(**e):
-        return e
+    The DSL is explained in the ApiTranslator docstring
+    '''
+    
     methods = {
         'List': {
             '@equivalent':  'slice',
 
-            'push':         go_bizarre('append'),
-            'pop':          bizarre(
-                                translate=
-                                lambda assignment, *l, receiver, pseudo_type: 
-                                    assignment_updated(assignment, value=go_last(receiver))),
+            'push':         'append',
+            'pop':          lambda assignment, *l, receiver, pseudo_type: 
+                                    assignment_updated(assignment, value=go_last(receiver)),
             'length':       '.length',
             'insert':       expand_insert
 
@@ -133,10 +51,9 @@ class GolangTranslator(ApiTranslator):
         },
         'io': {
             'display':      'fmt.Println',
-            'read':         bizarre(
-                translate=read,
-                temp_name='_input'
-            )
+            'read':         read,
+            'read_file':    ReadFile,
+            'write_file':   WriteFile
         }
     }
 

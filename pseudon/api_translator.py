@@ -3,6 +3,7 @@ from pseudon.types import *
 from pseudon.env import Env
 from pseudon.pseudon_tree import Node, to_node, method_call, call, local
 from pseudon.errors import PseudonStandardLibraryError, PseudonDSLError
+from pseudon.api_handlers import LeakingNode, NormalLeakingNode, BizarreLeakingNode
 import copy
 
 def to_op(op, reversed=False):
@@ -22,6 +23,53 @@ def to_op(op, reversed=False):
 
 
 class ApiTranslator(TreeTransformer):
+    '''
+    A base class for the api translators
+
+    DSL:
+    you can use either 
+      a lambda/function defined in <lang>_api_handlers.py which returns a Node with signature
+    `(receiver, *args)` (e.g. `lambda receiver, value: Node('none'))
+    or
+      a <Name> class inheriting from LeakingNode 
+      which can inject nodes in the closest block
+    or
+
+    shortcuts:
+    '#method_name'  => calls that method of the receiver with the same args
+    'function_name' => calls that function with the same args
+    'namespace.function_name' => calls the function in the namespace
+    '.attr_name!'   => accesses that attribute of the receiver
+    '.method_name'  => calls that static method
+    `to_op(op)`     => transforms `receiver.method(arg)` to a `receiver op arg` binary
+
+    `class_name<shortcut>` =>
+        transforms into the method/attr according to previous rules but of the class_name class,
+        not the equivalent one
+
+    `<shortcut>(%{0}, %{self})` =>
+        transforms into the call according to previous rules but with args ordered like in the
+        placeholders
+
+        %{<number>}      => the n-th arg(starts from 0)
+        %{self}          => the receiver of the method
+        %{equivalent}    => the equivalent class
+        %{<other-name>}  => each language translator can redefine it with
+                            def <other-name>_placeholder(self, receiver, *args, equivalent) which
+                            should return a Node
+
+
+    Nodes: Nodes can be either the official pseudon nodes or in special cases
+           with `_<special_node>` when they describe syntax typical only for
+           the target language of the translator
+
+    helpers: quite useful helpers from pseudon.pseudon_tree are
+             `method_call(receiver: str/Node, message: str, args: [Node])`
+                 which helps with method call nodes with normal `local` name object receivers
+
+             `call(callee: str/Node, args: [Node])`
+                 which helps with call nodes with normal `local` name callees
+    '''
 
     def __init__(self, tree):
         self.tree = copy.deepcopy(tree)
@@ -29,7 +77,7 @@ class ApiTranslator(TreeTransformer):
     def api_translate(self):
         self.standard_dependencies = set()
         self.used = set()
-        self.leaking_assignments = []
+        self.leaked_nodes = []
         transformed = self.transform(self.tree)
 
         for l in self.used:
@@ -51,21 +99,19 @@ class ApiTranslator(TreeTransformer):
             if node.value and node.value.pseudo_type in {'List', 'Dictionary', 'Set', 'Tuple', 'Regexp', 'Array'}:
                 self.used.add(node.value.pseudo_type)
 
-        if node.type == 'assignment' and node.value and node.value.type == 'binary_op':
+        if node and node.type == 'assignment' and node.value and node.value.type == 'binary_op':
             if node.value.right == node.target:
                 node = Node('operation_assign', slot=node.value.left, op=node.value.op, value=node.value.right)
         
-        if node.type == 'call':
-            print(node.y) 
-            # input()
+        if node and node.type == 'call':
             if node.function.type == 'attr' and node.function.object.type == 'local' and hasattr(self, 'js_dependencies') and node.function.object.name in self.js_dependencies:
                 self.standard_dependencies.add(self.js_dependencies[node.function.object.name])                
 
         if in_block:
-            results = [ass for ass in self.leaking_assignments]
-            if node.type != 'assignment' or node.value:
+            results = [ass for ass in self.leaked_nodes]
+            if node and not (node.type == 'assignment' and node.value is None):
                 results.append(node)
-            self.leaking_assignments = []   
+            self.leaked_nodes = []
             return results
             
         else:
@@ -73,7 +119,6 @@ class ApiTranslator(TreeTransformer):
 
 
     def transform_standard_method_call(self, node, in_block=False, assignment=None):
-        # print('TRANSLATE METHOD', node)
         l = node.receiver.pseudo_type
         if isinstance(l, list):
             l = l[0]
@@ -81,8 +126,6 @@ class ApiTranslator(TreeTransformer):
         node.args = [self.transform(arg) for arg in node.args]
         node.receiver = self.transform(node.receiver)
         
-        print(node.type, l)
-        # input()
         if l not in self.methods:
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t recognize %s as a standard type' % l)
@@ -91,14 +134,20 @@ class ApiTranslator(TreeTransformer):
                 'pseudon doesn\'t have a %s#%s method' % (l, node.message))
         
         x = self.methods[l][node.message]
-        if isinstance(x, dict):
-            return self.leaking_call(x, l, node.message, node, assignment)
+        if isinstance(x, type) and issubclass(x, LeakingNode):
+            if in_block:
+                args = ['block']
+            elif assignment:
+                args = ['assignment', assignment.target]
+            else:
+                args = ['expression']
 
-        # input(x)
+            return self.leaking(x, l, node.message, node, *args)
+
         self.update_dependencies(l, node.message, [a.pseudo_type for a in node.args])
         return self._expand_api(x, node.receiver, node.args, node.pseudo_type, self.methods[l]['@equivalent'])
 
-    def leaking_call(self, z, namespace, function, node, assignment):
+    def leaking(self, z, module, name, node, context, *data):
         '''
         an expression leaking ...
 
@@ -106,25 +155,33 @@ class ApiTranslator(TreeTransformer):
         c++ guys, stay calm
         '''
 
-        if assignment:
-            ass = assignment
-        else:
-            ass = Node('local_assignment', 
-                pseudo_type='Void', local=z['_temp_name'])
-        if node.type == 'standad_method_call':
-            ass = z['_translate'](ass, namespace, function, node.receiver, node.args)
-        else:
-            ass = z['_translate'](ass, namespace, function, node.args)
-        
-        if assignment is None:
-            self.leaking_assignments.append(ass)
-            return local(z['_temp_name'])
-        else:
-            self.leaking_assignments.append(ass)
-            return None
+        z = z(module, name, node.args)
+        if context == 'expression':
+            if isinstance(z, NormalLeakingNode):
+                leaked_nodes, exp = z.as_expression()
+            else:
+                leaked_nodes = z.as_assignment(z.temp_name(data[0]))
+                exp = local(z.temp_name(data[0]), node.pseudo_type)
+            if exp is None or exp.pseudo_type == 'Void':
+                raise PseudonTypeError("pseudo can't handle values with void type in expression: %s?%s" % (module, name))
+            self.leaked_nodes += leaked_nodes
+            return exp
+        elif context == 'assignment':
+            if isinstance(z, NormalLeakingNode):
+                leaked_nodes, exp = z.as_expression()
+                if exp is None or exp.pseudo_type == 'Void':
+                    raise PseudonTypeError("pseudo can't handle values with void type in expression: %s?%s" % (module, name))
+                self.leaked_nodes += leaked_nodes
+                return assignment(data[0], exp)
+            else:
+                self.leaked_nodes += z.as_assignment(data[0])
+                return None
+        elif context == 'block':
+            leaked_nodes, exp = z.as_expression()
+            self.leaked_nodes += leaked_nodes
+            return exp
 
     def transform_standard_call(self, node, in_block=False, assignment=None):
-        # print('TRANSLATE CALL', node)
         namespace = node.namespace or 'global'
         node.args = [self.transform(arg) for arg in node.args]
         if namespace not in self.functions:
@@ -134,12 +191,17 @@ class ApiTranslator(TreeTransformer):
             raise PseudonStandardLibraryError(
                 'pseudon doesn\'t have a %s:%s function' % (namespace, node.function))
         
-        print(node.type, node.function)
-        # input()        
         x = self.functions[namespace][node.function]
-        if isinstance(x, dict):
-            return self.leaking_call(x, node.namespace, node.function, node, assignment)
-        # input(x)    
+        if isinstance(x, type) and issubclass(x, LeakingNode):
+            if in_block:
+                args = ['block']
+            elif assignment:
+                args = ['assignment', assignment.target]
+            else:
+                args = ['expression']
+
+            return self.leaking(x, namespace, node.function, node, *args)
+
         self.update_dependencies(namespace, node.function, [a.pseudo_type for a in node.args])
         return self._expand_api(x, None, node.args, node.pseudo_type, node.namespace)
 
@@ -222,8 +284,8 @@ class ApiTranslator(TreeTransformer):
                     raise PseudonDSLError(
                         '%{self} not working for functions with api dsl')
             elif inside == 'equivalent':
-                return to_node(equivalent)
+                return typename(equivalent)
             else:
                 return getattr(self, '%s_placeholder' % inside)(receiver, *args, equivalent=equivalent)
         else:
-            return to_node(part)
+            return local(part)

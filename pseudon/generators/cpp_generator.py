@@ -1,4 +1,4 @@
-from pseudon.code_generator import CodeGenerator
+from pseudon.code_generator import CodeGenerator, switch
 
 
 class CppGenerator(CodeGenerator):
