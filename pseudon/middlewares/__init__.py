@@ -1,7 +1,0 @@
-from pseudon.middlewares.declaration_middleware import DeclarationMiddleware
-from pseudon.middlewares.go_constructor_middleware import GoConstructorMiddleware
-from pseudon.middlewares.tuple_middleware import TupleMiddleware
-from pseudon.middlewares.name_middleware import NameMiddleware
-from pseudon.middlewares.cpp_pointer_middleware import CppPointerMiddleware
-from pseudon.middlewares.cpp_display_exception_middleware import CppDisplayExceptionMiddleware
-#	go_error_handling_middleware import GoErrorHandlingMiddleware

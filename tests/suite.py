@@ -1,6 +1,6 @@
 import re
-from pseudon.pseudon_tree import Node, to_node, call, method_call, local, typename, assignment
-from pseudon import generate
+from pseudo.pseudo_tree import Node, to_node, call, method_call, local, typename, assignment
+from pseudo import generate
 
 SNAKE_CASE_REGEX = re.compile(r'(_\[a-z])')
 

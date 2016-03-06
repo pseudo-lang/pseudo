@@ -59,7 +59,7 @@ the logarithm of x to the given base
 display(*args: Any) -> Void
 ```
 
-displays the contents on the screen using the native print function. `display` is the only pseudon
+displays the contents on the screen using the native print function. `display` is the only pseudo
 function accepting a variable number of args
 
 

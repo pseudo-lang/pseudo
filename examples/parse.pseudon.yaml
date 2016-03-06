@@ -3,7 +3,7 @@ definitions:
   - type: function_definition
     name: parse
     params: [z]
-    pseudon_type: Int
+    pseudo_type: Int
     block:
       - type: local_assignment
         local: ast

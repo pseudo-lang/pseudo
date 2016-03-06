@@ -1,7 +1,7 @@
 import unittest
 import textwrap
-from pseudon import generate
-from pseudon.pseudon_tree import Node
+from pseudo import generate
+from pseudo.pseudo_tree import Node
 import suite
 
 #v
