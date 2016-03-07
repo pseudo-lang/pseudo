@@ -80,6 +80,11 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     list_slice_from = 'cpus[2..-1]'
     list_slice_to   = 'cpus[0...2]'
     list_filter     = 'cpus.select { |value| value.length == 0 }'
+    list_reduce     = textwrap.dedent('''\
+                        cpus.reduce('') do |value, other|
+                          result = value + other
+                          result
+                        end''')
 
     binary_op = 'ham + egg'
 

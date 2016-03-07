@@ -23,9 +23,9 @@ class RubyTranslator(ApiTranslator):
             'slice':        expand_slice,
             'slice_from':   expand_slice,
             'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, to_node(0), to, pseudo_type),
-
             'map':          to_method_rb_block('map'),
-            'filter':       to_method_rb_block('select')
+            'filter':       to_method_rb_block('select'),
+            'reduce':       to_method_rb_block('reduce')
         },
         'Dictionary': {
             '@equivalent':  'Hash',

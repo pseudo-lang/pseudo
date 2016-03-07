@@ -126,6 +126,18 @@ ADD_A = Node('anonymous_function',
     pseudo_type=['Function', 'String', 'String'],
     return_type='String')
 
+COMBINER = Node('anonymous_function',
+    params=['value', 'other'],
+    block=[
+        assignment(local('result', 'String'), standard_method_call(
+        local('value', 'String'),
+        'concat',
+        [local('other', 'String')],
+        'String')),
+        Node('implicit_return', value=local('result', 'String'), pseudo_type='String')],
+    pseudo_type=['Function', 'String', 'String'],
+    return_type='String')
+
 StandardMethodCall = [
     Node('standard_method_call', receiver=local('l', pseudo_type=['List', 'Int']), message='length', args=[], pseudo_type='Int'),
     Node('standard_method_call', receiver=to_node('l'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String'),
@@ -143,6 +155,7 @@ ListSlice       = standard_method_call(LIST_EXAMPLE, 'slice', [to_node(2), to_no
 ListSliceFrom   = standard_method_call(LIST_EXAMPLE, 'slice_from', [to_node(2)], LIST_EXAMPLE_TYPE)
 ListSliceTo     = standard_method_call(LIST_EXAMPLE, 'slice_to', [to_node(2)], LIST_EXAMPLE_TYPE)
 ListFilter      = standard_method_call(LIST_EXAMPLE, 'filter', [EMPTY], LIST_EXAMPLE_TYPE)
+ListReduce      = standard_method_call(LIST_EXAMPLE, 'reduce', [COMBINER, to_node('')], 'String')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]

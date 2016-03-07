@@ -78,6 +78,17 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     list_slice_from     = 'cpus[2:]'
     list_slice_to       = 'cpus[:2]'
     list_filter         = '[value for value in cpus if len(value) == 0]'
+    list_reduce         = (['functools'], textwrap.dedent('''\
+                            
+                            def a_0(value, other):
+                                result = value + other
+                                return result
+
+
+
+                            functools.reduce(a_0, '')
+
+                            '''))
 
     binary_op = 'ham + egg'
 
