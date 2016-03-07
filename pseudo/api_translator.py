@@ -1,6 +1,5 @@
 from pseudo.tree_transformer import TreeTransformer
 from pseudo.types import *
-from pseudo.env import Env
 from pseudo.pseudo_tree import Node, to_node, method_call, call, local
 from pseudo.errors import PseudoStandardLibraryError, PseudoDSLError
 from pseudo.api_handlers import LeakingNode, NormalLeakingNode, BizarreLeakingNode
