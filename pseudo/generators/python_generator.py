@@ -27,65 +27,6 @@ class PythonGenerator(CodeGenerator):
     use_spaces = True
     middlewares = []
 
-    def to_boolean(self, node, indent):
-        if node.value == 'true':
-            return 'True'
-        else:
-            return 'False'
-
-    def block(self, node, indent):
-        if node.block:
-            e = self._generate_node(node.block[0])
-            other = [self.offset(indent) + self._generate_node(n, indent) for n in node.block[1:]]
-            return '\n'.join([e] + other)
-        else:
-            return 'pass'
-
-    def anonymous_function(self, node, indent):
-        params = ', '.join(map(self._generate_node, node.params))
-        lambda_head = 'lambda%s:' % (' ' + params if params else '')
-        if not node.block:
-            return '%s pass' % lambda_head
-        elif len(node.block) == 1 and node.block[0].type in EXPRESSION_TYPES:
-            if node.block[0].type == 'implicit_return' or node.block[0].type == 'explicit_return':
-                block = node.block[0].value
-            else:
-                block = node.block[0]
-            return '%s %s' % (lambda_head, self._generate_node(block))
-        else:
-            name = 'a_%d' % len(self.a)
-            block = [self.offset(1) + self._generate_node(z) for z in node.block]
-            code = 'def %s(%s):\n%s\n' % (name, params, '\n'.join(block))
-            self.a.append(code)
-            return name
-
-    def class_pass(self, node, indent):
-        if not node.constructor and not node.methods:
-            return 'pass'
-        else:
-            return ''
-
-    def index_sequence(self, node, indent):
-        if node.sequence.pseudo_type.startswith('List'):
-            return 'enumerate(%s)' % self._generate_node(node.sequence)
-        else:
-            return '%s.items()' % self._generate_node(node.sequence)
-
-    def binary_left(self, node, indent):
-        return self.binary_side(node.left, node.op)
-
-    def binary_right(self, node, indent):
-        return self.binary_side(node.right, node.op)
-
-    def binary_side(self, field, op):
-        base = self._generate_node(field)
-        print(field.pseudo_type)
-        if (field.type == 'binary_op' or field.pseudo_type == 'comparison') and\
-           PRIORITIES[field.op] < PRIORITIES[op]:
-            return '(%s)' % base
-        else:
-            return base
-
     templates = dict(
         module     = "%<dependencies:lines>%<constants:lines>%<custom_exceptions:lines>%<definitions:lines>%<main:lines>",
 
@@ -272,3 +213,57 @@ class PythonGenerator(CodeGenerator):
 
         index    = '%<sequence>[%<index>]',
     )
+    
+    def to_boolean(self, node, indent):
+        if node.value == 'true':
+            return 'True'
+        else:
+            return 'False'
+
+    def block(self, node, indent):
+        if node.block:
+            e = self._generate_node(node.block[0])
+            other = [self.offset(indent) + self._generate_node(n, indent) for n in node.block[1:]]
+            return '\n'.join([e] + other)
+        else:
+            return 'pass'
+
+    def anonymous_function(self, node, indent):
+        params = ', '.join(map(self._generate_node, node.params))
+        lambda_head = 'lambda%s:' % (' ' + params if params else '')
+        if not node.block:
+            return '%s pass' % lambda_head
+        elif len(node.block) == 1 and node.block[0].type in EXPRESSION_TYPES:
+            if node.block[0].type == 'implicit_return' or node.block[0].type == 'explicit_return':
+                block = node.block[0].value
+            else:
+                block = node.block[0]
+            return '%s %s' % (lambda_head, self._generate_node(block))
+        else:
+            name = 'a_%d' % len(self.a)
+            block = [self.offset(1) + self._generate_node(z) for z in node.block]
+            code = 'def %s(%s):\n%s\n' % (name, params, '\n'.join(block))
+            self.a.append(code)
+            return name
+
+    def class_pass(self, node, indent):
+        if not node.constructor and not node.methods:
+            return 'pass'
+        else:
+            return ''
+
+    def binary_left(self, node, indent):
+        return self.binary_side(node.left, node.op)
+
+    def binary_right(self, node, indent):
+        return self.binary_side(node.right, node.op)
+
+    def binary_side(self, field, op):
+        base = self._generate_node(field)
+        print(field.pseudo_type)
+        if (field.type == 'binary_op' or field.pseudo_type == 'comparison') and\
+           PRIORITIES[field.op] < PRIORITIES[op]:
+            return '(%s)' % base
+        else:
+            return base
+
