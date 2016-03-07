@@ -10,6 +10,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     _language = 'csharp'
     _import = 'using'
     _parse_import = lambda self, line: line[6:-1]
+    _no_strip = True
 
     def gen(self, custom_exceptions, ast):
         imports, source = self.gen_with_imports(custom_exceptions, ast)

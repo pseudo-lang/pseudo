@@ -19,6 +19,8 @@ PRIORITIES = {
     'or':   6,
 }
 
+OPS = {'not': '!', 'and': '&&', 'or': '||'}
+
 class RubyGenerator(CodeGenerator):
     '''Ruby code generator'''
 
@@ -92,7 +94,7 @@ class RubyGenerator(CodeGenerator):
         assignment = '%<target> = %<value>',
 
         binary_op   = '%<left> %<op> %<right>',
-        unary_op    = '%<op>%<value>',
+        unary_op    = '%<#op>%<value>',
         comparison  = '%<left> %<op> %<right>',
 
         static_call = "%<receiver>.%<message>%<.args>",
@@ -218,6 +220,8 @@ class RubyGenerator(CodeGenerator):
                     %<block:line_join>
                 end'''),
 
+        _rb_regex_interpolation = "/#{%<value>}/",
+
         index           = '%<sequence>[%<index>]',
 
         tuple    = "[%<elements:join ', '>]",
@@ -231,3 +235,6 @@ class RubyGenerator(CodeGenerator):
         regex    = "/%<value>/",
 
     )
+    
+    def op(self, node, depth):
+        return OPS.get(node.op, node.op)

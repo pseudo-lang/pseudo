@@ -55,11 +55,31 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     standard_call = [
         'print(42)',
         'input()',
-        (['math'], 'math.log(ham)\n'),
+        (['math'], 'math.log(ham)'),
         textwrap.dedent('''\
             with open('f.py', 'r') as _f:
                 source = _f.read()''')
     ]
+
+    # io
+    io_display          = "print(2, 'z')"
+    io_read             = 'source = input()'
+    io_read_file        = textwrap.dedent('''\
+                            with open('z.py', 'r') as _f:
+                                source = _f.read()''')
+    io_write_file       = textwrap.dedent('''\
+                            with open('z.py', 'w') as _f:
+                                _f.write(source)''')
+
+    # math
+    math_ln             = (['math'], 'math.log(z)')
+    math_tan            = (['math'], 'math.tan(z)')
+    math_sin            = (['math'], 'math.sin(z)')
+    math_cos            = (['math'], 'math.cos(z)')
+
+    # regexp
+    regexp_compile      = (['re'], 're.compile(s)')
+    regexp_escape       = (['re'], 're.escape(s)')
 
     standard_method_call = [
         'len(l)',
@@ -79,16 +99,14 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     list_slice_to       = 'cpus[:2]'
     list_filter         = '[value for value in cpus if len(value) == 0]'
     list_reduce         = (['functools'], textwrap.dedent('''\
-                            
                             def a_0(value, other):
                                 result = value + other
                                 return result
 
 
 
-                            functools.reduce(a_0, '')
+                            functools.reduce(a_0, '')'''))
 
-                            '''))
     list_any            = 'any(len(value) == 0 for value in cpus)'
     list_all            = 'all(len(value) == 0 for value in cpus)'
 
@@ -125,6 +143,13 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     string_justify      = 's.center(z, t)'
     string_cformat      = "s % ('z', 0)"
     string_format       = "s.format('z', 0)"
+
+    #Regexp
+    regexp_match        = (['re'], 'r.match(s)')
+
+    #RegexpMatch
+    regexp_match_group  = 'm.group(2)'
+    regexp_match_has_match = 'm'
 
     binary_op = 'ham + egg'
 
@@ -187,9 +212,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
 
 
-            a_0
-
-            '''))
+            a_0'''))
     ]
 
     class_definition = [textwrap.dedent('''\

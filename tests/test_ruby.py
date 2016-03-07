@@ -58,10 +58,27 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     standard_call = [
         'puts 42',
-        'gets',
+      'gets',
         'Math.log(ham)',
         "source = File.read('f.py')"
     ]
+
+    # io
+    io_display          = "puts 2, 'z'"
+    io_read             = 'source = gets'
+    io_read_file        = "source = File.read('z.py')"
+    io_write_file       = "File.write('z.py', source)"
+
+    # math
+    math_ln             = 'Math.log(z)'
+    math_tan            = 'Math.tan(z)'
+    math_sin            = 'Math.sin(z)'
+    math_cos            = 'Math.cos(z)'
+
+    # regexp
+    regexp_compile      = '/#{s}/'
+    regexp_escape       = 'Regexp.escape(s)'
+
 
     standard_method_call = [
         'l.length',
@@ -119,6 +136,13 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     string_trim         = 's.trim'
     string_reversed     = 's.reverse'
     string_justify      = 's.center(z, t)'
+
+    # Regexp
+    regexp_match        = 's.scan(r)'
+
+    # RegexpMatch   # result of s.scan is an array, fix regex in next versions
+    regexp_match_group  = 'm[2][0]'
+    regexp_match_has_match = '!m.empty?'
 
     binary_op = 'ham + egg'
 

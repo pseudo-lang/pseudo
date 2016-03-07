@@ -135,7 +135,9 @@ class PythonTranslator(ApiTranslator):
 
         'math': {
             'ln':           'math.log',
-            'tan':          'math.tan'
+            'tan':          'math.tan',
+            'sin':          'math.sin',
+            'cos':          'math.cos'
         },
 
         'regexp': {

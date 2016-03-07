@@ -11,6 +11,13 @@ def standard_method_call(receiver, message, args, pseudo_type):
         args=args,
         pseudo_type=pseudo_type)
 
+def standard_call(namespace, function, args, pseudo_type):
+    return Node('standard_call',
+        namespace=namespace,
+        function=function,
+        args=args,
+        pseudo_type=pseudo_type)
+
 class TestLanguage(type):
 
     def __new__(cls, name, bases, namespace, **kwargs):
@@ -100,12 +107,30 @@ StandardCall = [
         Node('standard_call', namespace='io', function='read_file', args=[to_node('f.py')], pseudo_type='String'))
 ]
 
+IoDisplay   = standard_call('io', 'display', [to_node(2), to_node('z')], 'Void')
+IoRead      = assignment(local('source', 'String'), standard_call('io', 'read', [], 'String'))
+IoReadFile  = assignment(local('source', 'String'), standard_call('io', 'read_file', [to_node('z.py')], 'String'))
+IoWriteFile = standard_call('io', 'write_file', [to_node('z.py'), local('source', 'String')], 'Void')
+
+INT_EXAMPLE = local('z', 'Int')
+MathLn      = standard_call('math', 'ln', [INT_EXAMPLE], 'Float')
+MathTan     = standard_call('math', 'tan', [INT_EXAMPLE], 'Float')
+MathSin     = standard_call('math', 'sin', [INT_EXAMPLE], 'Float')
+MathCos     = standard_call('math', 'cos', [INT_EXAMPLE], 'Float')
+
+
 LIST_EXAMPLE_TYPE = ['List', 'String']
 LIST_EXAMPLE = local('cpus', LIST_EXAMPLE_TYPE)
 LIST_EXAMPLE_ELEMENT_TYPE = 'String'
 LITERAL_STRING_EXAMPLE = to_node('')
 STRING_EXAMPLE = local('s', 'String')
 OTHER_STRING_EXAMPLE = local('t', 'String')
+
+REGEXP_EXAMPLE = local('r', 'Regexp')
+REGEXP_MATCH_EXAMPLE = local('m', 'RegexpMatch')
+
+RegexpCompile = standard_call('regexp', 'compile', [STRING_EXAMPLE], 'Regexp')
+RegexpEscape = standard_call('regexp', 'escape', [STRING_EXAMPLE], 'String')
 
 EMPTY = Node('anonymous_function',
     params=['value'],
@@ -210,6 +235,13 @@ StringReversed     = standard_method_call(STRING_EXAMPLE, 'reversed', [], 'Strin
 StringJustify      = standard_method_call(STRING_EXAMPLE, 'justify', [local('z', 'Int'), OTHER_STRING_EXAMPLE], 'String')
 StringCFormat      = standard_method_call(STRING_EXAMPLE, 'c_format', [to_node('z'), to_node(0)], 'String')
 StringFormat       = standard_method_call(STRING_EXAMPLE, 'format', [to_node('z'), to_node(0)], 'String')
+
+#Regexp
+RegexpMatch           = standard_method_call(REGEXP_EXAMPLE, 'match', [STRING_EXAMPLE], 'RegexpMatch')
+
+#RegexpMatch
+RegexpMatchGroup      = standard_method_call(REGEXP_MATCH_EXAMPLE, 'group', [to_node(2)], 'String')
+RegexpMatchHasMatch   = standard_method_call(REGEXP_MATCH_EXAMPLE, 'has_match', [], 'Boolean')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]
@@ -533,5 +565,7 @@ class TestHelpers:
         if not ls[l].strip():
             l += 1
         source = '\n'.join(ls[l:])
+        if not hasattr(self, '_no_strip'):
+            source = source.strip()
         return imports, source
 

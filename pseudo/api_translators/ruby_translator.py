@@ -1,5 +1,5 @@
 from pseudo.api_translator import ApiTranslator, to_op
-from pseudo.pseudo_tree import Node, to_node
+from pseudo.pseudo_tree import Node, to_node, method_call
 from pseudo.api_translators.ruby_api_handlers import expand_slice, to_method_rb_block
 
 class RubyTranslator(ApiTranslator):
@@ -68,6 +68,23 @@ class RubyTranslator(ApiTranslator):
             'trim':         '#trim',
             'reversed':     '#reverse',
             'justify':      '#center'
+        },
+        'Regexp': {
+            '@equivalent':  'Regexp',
+
+            'match':        '%{0}#scan(%{self})'
+        },
+        'RegexpMatch': {
+            '@equivalent':  'Regexp_',
+
+            'group':        lambda receiver, index, _: Node('index',
+                                sequence=Node('index', sequence=receiver, index=index, pseudo_type=['List', 'String']),
+                                index=to_node(0),
+                                pseudo_type='String'),
+            'has_match':    lambda receiver, _: Node('unary_op',
+                                op='not',
+                                value=method_call(receiver, 'empty?', [], 'Boolean'),
+                                pseudo_type='Boolean')
         }
     }
 
@@ -91,7 +108,14 @@ class RubyTranslator(ApiTranslator):
 
         'math': {
             'ln':           'Math.log',
-            'tag':          'Math.tag'
+            'tan':          'Math.tan',
+            'sin':          'Math.sin',
+            'cos':          'Math.cos'
+        },
+
+        'regexp': {
+            'compile':      lambda value, _: Node('_rb_regex_interpolation', value=value, pseudo_type='Regexp'),
+            'escape':       'Regexp.escape'
         }
     }
 
