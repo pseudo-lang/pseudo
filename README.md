@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/alehander42/pseudo.svg?branch=master)](https://travis-ci.org/alehander42/pseudo)
+[![codecov.io](https://codecov.io/github/alehander42/pseudo/coverage.svg?branch=master)](https://codecov.io/github/alehander42/pseudo?branch=master)
+[![MIT License](http://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 # pseudo
 
 Pseudo is a library for generating code in different high level languages and a system for language translation: its goal is to be able to translate any code expressed in a certain "pseudo-translateable" subset of each supported language or as a pseudo AST to readable and idiomatic code in any of the supported target languages. 
