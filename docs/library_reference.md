@@ -32,8 +32,17 @@
     - [substr_from](#substr_from)
     - [substr_to](#substr_to)
     - [length](#length)
+    - [concat](#concat)
     - [find](#find)
     - [count](#count)
+    - [partition](#partition)
+    - [split](#split)
+    - [trim](#trim)
+    - [reversed](#reversed)
+    - [justify](#justify)
+    - [c_format](#c_format)
+    - [format](#format)
+
 - [functions](#functions)
   - [math](#math)
     - [log](#log)
@@ -228,6 +237,12 @@ String#substr_to(to: Int) -> String
 String#length() -> Int
 ```
 
+### concat
+
+```javascript
+String#concat(value: String) -> String
+```
+
 ### find
 
 ```javascript
@@ -238,6 +253,50 @@ String#find(element: String) -> Int
 
 ```javascript
 String#count(element: String) -> Int
+```
+
+### partition
+
+```javascript
+String#partition(on: String) -> Tuple[String, String]
+```
+
+### split
+
+```javascript
+String#split(delimiter: String) -> List[String]
+```
+
+### trim
+
+```javascript
+String#trim() -> String
+```
+
+### reversed
+
+```javascript
+String#reversed() -> String
+```
+
+### justify
+
+```javascript
+String#justify() -> String
+```
+
+### c_format
+
+```javascript
+String#c_format(*args: Any) -> String
+```
+
+formats using c-style `%d`, `%f`, `%s` etc, function accepting a variable number of args
+
+### format
+
+```javascript
+String#format(*args: Any) -> String
 ```
 
 # functions

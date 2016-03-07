@@ -77,12 +77,14 @@ class PythonTranslator(ApiTranslator):
             'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, 'String'),
             'find':         '#index',
             'count':        '#count',
-            'partition':    '#partition',
+            'partition':    '#partition', 
             'split':        '#split',
             'trim':         '#strip',
             'format':       '#format',
             'concat':       to_op('+'),
-            'c_format':     to_op('%')
+            'c_format':     to_op('%'),
+            'justify':      '#center',
+            'reversed':     'reversed'
         },
         'Set': {
             '@equivalent':  'set',
@@ -163,3 +165,13 @@ class PythonTranslator(ApiTranslator):
             '@all': 're'
         }
     }
+
+#lambda receiver, on, _: Node(
+# '_py_step',
+# sequence=method_call(
+#     receiver, 
+#     'partition', 
+#     [on], 
+#     ['Tuple', 'String', 'String', 'String']),
+# step=to_node(2),
+# pseudo_type=['Tuple', 'String', 'String']),

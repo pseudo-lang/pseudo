@@ -202,6 +202,14 @@ StringSubstrTo     = standard_method_call(STRING_EXAMPLE, 'substr_to', [to_node(
 StringLength       = standard_method_call(STRING_EXAMPLE, 'length', [], 'Int')
 StringFind         = standard_method_call(STRING_EXAMPLE, 'find', [OTHER_STRING_EXAMPLE], 'Int')
 StringCount        = standard_method_call(STRING_EXAMPLE, 'count', [OTHER_STRING_EXAMPLE], 'Int')
+StringConcat       = standard_method_call(STRING_EXAMPLE, 'concat', [OTHER_STRING_EXAMPLE], 'String')
+StringPartition    = standard_method_call(STRING_EXAMPLE, 'partition', [OTHER_STRING_EXAMPLE], ['Tuple', 'String', 'String', 'String'])
+StringSplit        = standard_method_call(STRING_EXAMPLE, 'split', [OTHER_STRING_EXAMPLE], ['List', 'String'])
+StringTrim         = standard_method_call(STRING_EXAMPLE, 'trim', [], 'String')
+StringReversed     = standard_method_call(STRING_EXAMPLE, 'reversed', [], 'String')
+StringJustify      = standard_method_call(STRING_EXAMPLE, 'justify', [local('z', 'Int'), OTHER_STRING_EXAMPLE], 'String')
+StringCFormat      = standard_method_call(STRING_EXAMPLE, 'c_format', [to_node('z'), to_node(0)], 'String')
+StringFormat       = standard_method_call(STRING_EXAMPLE, 'format', [to_node('z'), to_node(0)], 'String')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]

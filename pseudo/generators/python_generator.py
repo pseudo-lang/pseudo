@@ -228,6 +228,8 @@ class PythonGenerator(CodeGenerator):
 
         _py_in   = '%<value> in %<sequence>',
 
+        _py_step = '%<sequence>[::%<step>]',
+
         regex    = "re.compile(r'%<value>')",
 
     )

@@ -117,6 +117,14 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     string_length       = 'len(s)'
     string_find         = 's.index(t)'
     string_count        = 's.count(t)'
+    string_concat       = 's + t'
+    string_partition    = 's.partition(t)'
+    string_split        = 's.split(t)'
+    string_trim         = 's.strip()'
+    string_reversed     = 'reversed(s)'
+    string_justify      = 's.center(z, t)'
+    string_cformat      = "s % ('z', 0)"
+    string_format       = "s.format('z', 0)"
 
     binary_op = 'ham + egg'
 

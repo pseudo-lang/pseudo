@@ -113,6 +113,12 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     string_length       = 's.length'
     string_find         = 's.find(t)'
     string_count        = 's.count(t)'
+    string_concat       = 's + t'
+    string_partition    = 's.partition(t)'
+    string_split        = 's.split(t)'
+    string_trim         = 's.trim'
+    string_reversed     = 's.reverse'
+    string_justify      = 's.center(z, t)'
 
     binary_op = 'ham + egg'
 

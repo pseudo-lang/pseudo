@@ -62,7 +62,12 @@ class RubyTranslator(ApiTranslator):
             'length':       '#length',
             'concat':       to_op('+'),
             'find':         '#find',
-            'count':        '#count'
+            'count':        '#count',
+            'partition':    '#partition',
+            'split':        '#split',
+            'trim':         '#trim',
+            'reversed':     '#reverse',
+            'justify':      '#center'
         }
     }
 
