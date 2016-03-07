@@ -73,6 +73,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     list_map            = "[value + 'a' for value in cpus]"
     list_remove         = 'cpus.remove(s)'
     list_remove_at      = 'del cpus[0]'
+    list_length         = 'len(cpus)'
 
     binary_op = 'ham + egg'
 

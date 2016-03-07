@@ -73,7 +73,10 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     list_pop        = "cpus.pop"
     list_length     = "cpus.length"
     list_map        = "cpus.map { |value| value + 'a' }"
-
+    list_remove     = "cpus.delete(s)"
+    list_remove_at  = "cpus.delete_at(0)"
+    list_length     = "cpus.length"
+    
     binary_op = 'ham + egg'
 
     unary_op = '-a'
