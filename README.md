@@ -41,7 +41,7 @@ However Pseudo support a very clear and somehow limited subset of a language:
 
 Those constructs and entities have almost the same behavior and very same-spirited api in a lot of the languages which Pseudo would support.
 
-## pseudo makes easier to:
+## use cases
 
   * generate code for the same task/algorithm in different languages (parser generators etc)
   * port a library/codebase
