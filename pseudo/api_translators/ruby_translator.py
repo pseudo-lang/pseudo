@@ -36,12 +36,6 @@ class RubyTranslator(ApiTranslator):
             'values':       '#values',
             'contains?':    '#include?'
         },
-        'Enumerable': {
-            '@equivalent':  'Enumerable',
-
-            'map':          '#map',
-            'filter':       '#select'
-        },
         'String': {
             '@equivalent':  'String',
             'substr':       expand_slice,

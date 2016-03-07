@@ -95,6 +95,8 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     #Dict
     dictionary_length   = 'len(pointers)'
     dictionary_contains = "s in pointers"
+    dictionary_keys     = 'list(pointers.keys())'  # list for compatibillity with pseudo api
+    dictionary_values   = 'list(pointers.values())'
 
     binary_op = 'ham + egg'
 

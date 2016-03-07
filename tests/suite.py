@@ -171,6 +171,8 @@ ListAll         = standard_method_call(LIST_EXAMPLE, 'all?', [EMPTY], 'Boolean')
 #Dictionary
 DictionaryLength   = standard_method_call(DICTIONARY_EXAMPLE, 'length', [], 'Int')
 DictionaryContains = standard_method_call(DICTIONARY_EXAMPLE, 'contains?', [LOCAL_STRING_EXAMPLE], 'Boolean')
+DictionaryKeys     = standard_method_call(DICTIONARY_EXAMPLE, 'keys', [], ['List', DICTIONARY_EXAMPLE_KEY_TYPE])
+DictionaryValues   = standard_method_call(DICTIONARY_EXAMPLE, 'values', [], ['List', DICTIONARY_EXAMPLE_VALUE_TYPE])
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]

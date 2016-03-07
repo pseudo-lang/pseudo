@@ -91,7 +91,8 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     # Hash
     dictionary_length   = 'pointers.length'
     dictionary_contains = 'pointers.include?(s)'
-
+    dictionary_keys     = 'pointers.keys'
+    dictionary_values   = 'pointers.values'
 
     binary_op = 'ham + egg'
 

@@ -40,8 +40,6 @@ class CppTranslator(ApiTranslator):
             'length':       '#length',
             'substr':       '#substr'
 
-        },
-        'Enumerable': {
         }
     }
 

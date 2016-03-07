@@ -29,7 +29,9 @@ class JSTranslator(ApiTranslator):
             'remove':       '_.pull(%{self}, %{0})',
             'slice':        '#slice',
             'slice_from':   '#slice',
-            'slice_to':     '#slice(0, %{0})'
+            'slice_to':     '#slice(0, %{0})',
+            'map':          '_.map',
+            'filter':       '_.filter'
         },
         'Dictionary': {
             '@equivalent':  'Object',
@@ -37,12 +39,6 @@ class JSTranslator(ApiTranslator):
             'length':       '.length!',
             'keys':         'Object.keys',
             'values':       'Object.values'
-        },
-        'Enumerable': {
-            '@equivalent':  'Enumerable',
-
-            'map':          '_.map',
-            'filter':       '_.filter'
         },
         'String': {
             '@equivalent':  'String',

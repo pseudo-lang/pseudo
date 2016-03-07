@@ -20,13 +20,11 @@ class GolangTranslator(ApiTranslator):
             'insert':       expand_insert,
             'slice':        expand_slice,
             'slice_from':   expand_slice,
-            'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, None, to, pseudo_type)
+            'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, None, to, pseudo_type),
+            'map':          expand_map,
+            'filter':       expand_filter        
         },
         'Dictionary': {
-        },
-        'Enumerable': {
-            'map':          expand_map,
-            'filter':       expand_filter
         },
         'String': {
             '@equivalent':  'str',

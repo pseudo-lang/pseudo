@@ -143,6 +143,18 @@ Dictionary#length() -> Int
 Dictionary#contains?() -> Boolean
 ```
 
+### keys
+
+```javascript
+Dictionary#keys() -> List[K]
+```
+
+### values
+
+```javascript
+Dictionary#values() -> List[V]
+```
+
 # functions
 
 ## math

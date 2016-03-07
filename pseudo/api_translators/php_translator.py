@@ -16,17 +16,15 @@ class PHPTranslator(ApiTranslator):
             'length':       'array_length',
             'insert':       'array_insert',
             'remove_at':    None,
-            'remove':       'array_remove'
+            'remove':       'array_remove',
+            'map':          'array_map',
+            'filter':       'array_filter',
+            'reduce':       'array_reduce'
         },
         'Dictionary': {
             'length':       'array_length',
             'keys':         'array_keys',
             'values':       'array_values'
-        },
-        'Enumerable': {
-            'map':          'array_map',
-            'filter':       'array_filter',
-            'reduce':       'array_reduce'
         }
     }
 

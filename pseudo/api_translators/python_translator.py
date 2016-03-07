@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, call, to_node, local
-from pseudo.api_translators.python_api_handlers import contains, expand_map, expand_filter, expand_slice, expand_set_slice, to_py_generatorcomp, ReadFile, WriteFile
+from pseudo.api_translators.python_api_handlers import contains, expand_slice, expand_set_slice, to_py_generatorcomp, ReadFile, WriteFile
 
 class PythonTranslator(ApiTranslator):
     '''
@@ -58,15 +58,16 @@ class PythonTranslator(ApiTranslator):
             'length':       'len',
             'keys':         '#keys',
             'values':       '#values',
-            'contains?':    contains
+            'contains?':    contains,
+            'keys':         lambda receiver, pseudo_type: call(
+                                local('list', ['Function', 'Any', 'List']),
+                                [method_call(receiver, 'keys', [], ['dict_keys', pseudo_type[1]])],
+                                pseudo_type=pseudo_type),
+            'values':       lambda receiver, pseudo_type: call(
+                                local('list', ['Function', 'Any', 'List']),
+                                [method_call(receiver, 'values', [], ['dict_values', pseudo_type[1]])],
+                                pseudo_type=pseudo_type)
 
-        },
-        'Enumerable': {
-            '@equivalent':  'list',
-
-            'map':          expand_map,
-            'filter':       expand_filter,
-            'reduce':       'functools.reduce'
         },
         'String': {
             '@equivalent':  'str',
@@ -135,10 +136,6 @@ class PythonTranslator(ApiTranslator):
     }
     
     dependencies = {
-        'Enumerable': {
-            'map':  'functools'
-        },
-
         'Regexp': {
             '@all': 're'
         },
