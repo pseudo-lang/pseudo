@@ -226,6 +226,8 @@ class PythonGenerator(CodeGenerator):
 
         _py_generatorcomp = '(%<block> for %<iterators> in %<sequences>%<#test>)',
 
+        _py_in   = '%<value> in %<sequence>',
+
         regex    = "re.compile(r'%<value>')",
 
     )

@@ -1,6 +1,9 @@
 from pseudo.pseudo_tree import Node, call, method_call, local, assignment, to_node
 from pseudo.api_handlers import BizarreLeakingNode, NormalLeakingNode
 
+def contains(receiver, element, pseudo_type):
+    return Node('_py_in', value=element, sequence=receiver, pseudo_type='Boolean')
+
 def to_py_generatorcomp(method):
     def x(receiver, test, pseudo_type):
         return call(

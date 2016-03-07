@@ -138,7 +138,6 @@ class CodeGenerator:
         elif hasattr(self, 'generate_%s' % node.type):
             return getattr(self, 'generate_%s' % node.type)(node, depth)
         else:
-            print(node.y, node.__dict__)
             raise NotImplementedError("no action for %s" % node.type)
 
     def _generate_from_template(self, template, node, depth):

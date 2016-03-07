@@ -34,7 +34,8 @@ class RubyTranslator(ApiTranslator):
 
             'length':       '#length',
             'keys':         '#keys',
-            'values':       '#values'
+            'values':       '#values',
+            'contains?':    '#include?'
         },
         'Enumerable': {
             '@equivalent':  'Enumerable',

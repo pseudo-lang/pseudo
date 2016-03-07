@@ -1,7 +1,7 @@
 from pseudo.types import *
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, call, to_node, local, assignment_updated
-from pseudo.api_translators.python_api_handlers import expand_map, expand_filter, expand_slice, expand_set_slice, to_py_generatorcomp, ReadFile, WriteFile
+from pseudo.api_translators.python_api_handlers import contains, expand_map, expand_filter, expand_slice, expand_set_slice, to_py_generatorcomp, ReadFile, WriteFile
 
 class PythonTranslator(ApiTranslator):
     '''
@@ -58,7 +58,9 @@ class PythonTranslator(ApiTranslator):
 
             'length':       'len',
             'keys':         '#keys',
-            'values':       '#values'
+            'values':       '#values',
+            'contains?':    contains
+
         },
         'Enumerable': {
             '@equivalent':  'list',

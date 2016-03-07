@@ -92,6 +92,10 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     list_any            = 'any(len(value) == 0 for value in cpus)'
     list_all            = 'all(len(value) == 0 for value in cpus)'
 
+    #Dict
+    dictionary_length   = 'len(pointers)'
+    dictionary_contains = "s in pointers"
+
     binary_op = 'ham + egg'
 
     unary_op = '-a'

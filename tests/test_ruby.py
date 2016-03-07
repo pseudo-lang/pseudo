@@ -88,6 +88,11 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     list_any        = 'cpus.any? { |value| value.length == 0 }'
     list_all        = 'cpus.all? { |value| value.length == 0 }'
 
+    # Hash
+    dictionary_length   = 'pointers.length'
+    dictionary_contains = 'pointers.include?(s)'
+
+
     binary_op = 'ham + egg'
 
     unary_op = '-a'

@@ -14,7 +14,15 @@
     - [reduce](#reduce)
     - [any?](#any?)
   - [Dictionary[K, V]](#dictionary)
-    - [setitem](#setitem)
+  	- [length](#length)
+    - [contains?](#contains?)
+    - [keys](#keys)
+    - [values](#values)
+  - [Set[T]](#set)
+    - [length](#length)
+    - [contains?](#contains?)
+    - [union](#union)
+    - [intersection](#intersection)
 - [functions](#functions)
   - [math](#math)
     - [log](#log)
@@ -25,13 +33,13 @@
 
 ## List
 
-```ruby
+```javascript
 List[T]
 ```
 
 ### push
 
-```ruby
+```javascript
 List#push(element: T) -> Void
 ```
 
@@ -39,7 +47,7 @@ pushes an element at the end of the list
 
 ### pop
 
-```ruby
+```javascript
 List#pop() -> T
 ```
 
@@ -47,90 +55,93 @@ pops the last element of the list, undefined behavior for empty lists
 
 ### length
 
-```ruby
+```javascript
 List#length() -> Int
 ```
 
 ### insert
 
-```ruby
+```javascript
 List#insert(element: T, index: Int) -> Void
 ```
 
 ### remove
 
-```ruby
+```javascript
 List#remove(element: T) -> Void
 ```
 
 ### remove_at
 
-```ruby
+```javascript
 List#remove_at(index: Int) -> Void
 ```
 
 ### slice
 
-```ruby
+```javascript
 List#slice(from: Int, to: Int) -> List[T]
 ```
 
 ### slice_from
 
-```c#
+```javascript
 List#slice_from(from: Int) -> List[T]
 ```
 
 ### slice_to
 
-```c#
+```javascript
 List#slice_to(to: Int) -> List[T]
 ```
 
 ### map
 
-```c#
+```javascript
 List#map(f: Function[T, Z]) -> List[Z]
 ```
 
 ### filter
 
-```c#
+```javascript
 List#filter(f: Function[T, Boolean]) -> List[T]
 ```
 
 ### reduce
 
-```c#
+```javascript
 List#reduce(f: Function[T, Z, Z], initial: Z) -> Z
 ```
 
 ### any?
 
-```c#
+```javascript
 List#any?(f: Function[T, Boolean]) -> Boolean
 ```
 
 ### all?
 
-```c#
+```javascript
 List#all?(f: Function[T, Boolean]) -> Boolean
 ```
 
 
 ## Dictionary
 
-```ruby
+```javascript
 Dictionary[K, V]
 ```
 
-### setitem
+### length
 
-```ruby
-setitem(key: K, value: V) -> Void
+```javascript
+Dictionary#length() -> Int
 ```
+### contains?
 
-set/update the value corresponding to key, usually equivalent to `[key] = value`
+```javascript
+Dictionary#contains?() -> Boolean
+```
 
 # functions
 
@@ -138,7 +149,7 @@ set/update the value corresponding to key, usually equivalent to `[key] = value`
 
 ### log
 
-```ruby
+```javascript
 log(x: Number, base: Number) -> Float
 ```
 
@@ -148,7 +159,7 @@ the logarithm of x to the given base
 
 ### display
 
-```ruby
+```javascript
 display(*args: Any) -> Void
 ```
 

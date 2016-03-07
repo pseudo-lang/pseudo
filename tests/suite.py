@@ -138,6 +138,15 @@ COMBINER = Node('anonymous_function',
     pseudo_type=['Function', 'String', 'String'],
     return_type='String')
 
+# Node('dictionary',
+#     pairs=[Node('pair', key=to_node('s'), value=to_node(0))],
+#     pseudo_type=DICTIONARY_EXAMPLE_TYPE)
+
+DICTIONARY_EXAMPLE_TYPE = ['Dictionary', 'String', 'Int']
+DICTIONARY_EXAMPLE = local('pointers', DICTIONARY_EXAMPLE_TYPE)
+DICTIONARY_EXAMPLE_KEY_TYPE = 'String'
+DICTIONARY_EXAMPLE_VALUE_TYPE = 'Int'
+
 StandardMethodCall = [
     Node('standard_method_call', receiver=local('l', pseudo_type=['List', 'Int']), message='length', args=[], pseudo_type='Int'),
     Node('standard_method_call', receiver=to_node('l'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String'),
@@ -158,6 +167,10 @@ ListFilter      = standard_method_call(LIST_EXAMPLE, 'filter', [EMPTY], LIST_EXA
 ListReduce      = standard_method_call(LIST_EXAMPLE, 'reduce', [COMBINER, to_node('')], 'String')
 ListAny         = standard_method_call(LIST_EXAMPLE, 'any?', [EMPTY], 'Boolean')
 ListAll         = standard_method_call(LIST_EXAMPLE, 'all?', [EMPTY], 'Boolean')
+
+#Dictionary
+DictionaryLength   = standard_method_call(DICTIONARY_EXAMPLE, 'length', [], 'Int')
+DictionaryContains = standard_method_call(DICTIONARY_EXAMPLE, 'contains?', [LOCAL_STRING_EXAMPLE], 'Boolean')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]
