@@ -44,6 +44,16 @@ class RubyTranslator(ApiTranslator):
             'union':        to_op('|'),
             'intersection': '#intersection'
         },
+        'Tuple': {
+            '@equivalent':  'Array',
+
+            'length':       '#length'
+        },
+        'Array': {
+            '@equivalent':  'Array',
+
+            'length':       '#length'
+        },
         'String': {
             '@equivalent':  'String',
             'substr':       expand_slice,

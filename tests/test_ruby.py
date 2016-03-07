@@ -100,6 +100,12 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     set_union           = 'words | words'
     set_intersection    = 'words.intersection(words)'
 
+    # Tuple
+    tuple_length        = 'flowers.length'
+
+    # Array
+    array_length        = 'cars.length'
+
     binary_op = 'ham + egg'
 
     unary_op = '-a'

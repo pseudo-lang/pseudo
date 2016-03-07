@@ -23,6 +23,16 @@
     - [contains?](#contains?)
     - [union](#union)
     - [intersection](#intersection)
+  - [Tuple[T1, T2..]](#tuple)
+    - [length](#length)
+  - [Array[T, length]](#array)
+    - [length](#length)
+  - [String](#string)
+    - [substr](#substr)
+    - [substr_from](#substr_from)
+    - [substr_to](#substr_to)
+    - [length](#length)
+
 - [functions](#functions)
   - [math](#math)
     - [log](#log)
@@ -179,6 +189,42 @@ Set#union(right: Set[T]) -> Set[T]
 
 ```javascript
 Set#intersection(right: Set[T]) -> Set[T]
+```
+
+## Tuple[T1, T2..]
+
+### length
+
+```javascript
+Tuple#length() -> Int
+```
+
+## Array[T, length]
+
+### length
+
+```javascript
+Array#length() -> Int
+```
+
+## String
+
+### substr
+
+```javascript
+String#substr(from: Int, to: Int) -> String
+```
+
+```javascript
+String#substr_from(from: Int) -> String
+```
+
+```javascript
+String#substr_to(to: Int) -> String
+```
+
+```javascript
+String#length() -> Int
 ```
 
 # functions

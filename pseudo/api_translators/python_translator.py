@@ -92,10 +92,14 @@ class PythonTranslator(ApiTranslator):
             'intersection': to_op('-')
         },
         'Tuple': {
-            '@equivalent':  'tuple'
+            '@equivalent':  'tuple',
+
+            'length':       'len'
         },
         'Array': {
-            '@equivalent':  'tuple'
+            '@equivalent':  'tuple',
+
+            'length':       'len'
         },
         'Regexp': {
             '@equivalent':  '_sre.SRE_Pattern',

@@ -104,6 +104,12 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     set_union           = 'words | words'
     set_intersection    = 'words - words'
 
+    #Tuple
+    tuple_length        = 'len(flowers)'
+
+    #Array
+    array_length        = 'len(cars)'
+
 
     binary_op = 'ham + egg'
 

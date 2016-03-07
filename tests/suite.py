@@ -150,6 +150,11 @@ DICTIONARY_EXAMPLE_VALUE_TYPE = 'Int'
 SET_EXAMPLE_TYPE = ['Set', 'String']
 SET_EXAMPLE = local('words', SET_EXAMPLE_TYPE)
 
+TUPLE_EXAMPLE_TYPE = ['Tuple', 'String', 'Int']
+TUPLE_EXAMPLE = local('flowers', TUPLE_EXAMPLE_TYPE)
+
+ARRAY_EXAMPLE_TYPE = ['Array', 'Int', 10]
+ARRAY_EXAMPLE = local('cars', ARRAY_EXAMPLE_TYPE)
 StandardMethodCall = [
     Node('standard_method_call', receiver=local('l', pseudo_type=['List', 'Int']), message='length', args=[], pseudo_type='Int'),
     Node('standard_method_call', receiver=to_node('l'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String'),
@@ -182,6 +187,10 @@ SetLength          = standard_method_call(SET_EXAMPLE, 'length', [], 'Int')
 SetContains        = standard_method_call(SET_EXAMPLE, 'contains?', [LOCAL_STRING_EXAMPLE], 'Boolean')
 SetUnion           = standard_method_call(SET_EXAMPLE, 'union', [SET_EXAMPLE], SET_EXAMPLE_TYPE)
 SetIntersection    = standard_method_call(SET_EXAMPLE, 'intersection', [SET_EXAMPLE], SET_EXAMPLE_TYPE)
+
+TupleLength        = standard_method_call(TUPLE_EXAMPLE, 'length', [], 'Int')
+
+ArrayLength        = standard_method_call(ARRAY_EXAMPLE, 'length', [], 'Int')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]
