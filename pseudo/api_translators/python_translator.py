@@ -28,8 +28,12 @@ class PythonTranslator(ApiTranslator):
             'set_slice_from': expand_set_slice,
             'set_slice_to': lambda receiver, to, value, pseudo_type: expand_set_slice(receiver, None, to, value, pseudo_type),            
             'find':         '#find',
-            'join':         lambda receiver, delimiter, _: method_call(delimiter, 'join', [receiver], pseudo_type='String')
-
+            'join':         lambda receiver, delimiter, _: method_call(delimiter, 'join', [receiver], pseudo_type='String'),
+            'map':          lambda receiver, f, pseudo_type: Node('_py_listcomp', 
+                                sequences=Node('for_sequence', sequence=receiver),
+                                iterators=Node('for_iterator', iterator=local(f.params[0], f.pseudo_type[1])),
+                                block=f.block,
+                                pseudo_type=pseudo_type)
         },
         'Dictionary': {
             '@equivalent':  'dict',

@@ -8,9 +8,7 @@ Pseudo is a library for generating code in different high level languages and a 
 
 Pseudo achieves that with translation on two layers: it uses the target language syntax and it can express standard library methods/api of language X using language Y's native standard library
 
-Supporting full-blown X to Y auto translation is hard. 
-
-However Pseudo support a very clear and somehow limited subset of a language:
+Pseudo specifies an ast format corresponding to a very clear and somehow limited subset of a language:
 
   * basic types and collections and standard library methods for them
   
@@ -37,6 +35,9 @@ However Pseudo support a very clear and somehow limited subset of a language:
   * iteration (for-in-range / for-each / iterating over several collections / while)
   * conditionals (if / else if / else)
   * standard math/logical operations
+
+[ast reference](docs/ast.md)
+[standard library reference](docs/library_reference.md)
 
 
 Those constructs and entities have almost the same behavior and very same-spirited api in a lot of the languages which Pseudo would support.

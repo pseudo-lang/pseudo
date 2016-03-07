@@ -20,10 +20,54 @@ List[T]
 ### push
 
 ```ruby
-push(element: T) -> Void
+List#push(element: T) -> Void
 ```
 
-pushed an element at the end of the list
+pushes an element at the end of the list
+
+### pop
+
+```ruby
+List#pop() -> T
+```
+
+pops the last element of the list, undefined behavior for empty lists
+
+### length
+
+```ruby
+List#length() -> Int
+```
+
+### insert
+
+```ruby
+List#insert(element: T, index: Int) -> Void
+```
+
+### remove
+
+```ruby
+List#remove(element: T) -> Void
+```
+
+### remove_at
+
+```ruby
+List#remove_at(element: T, index: Int) -> Void
+```
+
+### slice
+
+```ruby
+List#slice(from: Int, to: Int) -> List[T]
+```
+
+### map
+
+```ruby
+List#map(f: Function[T, Z]) -> List[Z]
+```
 
 ## Dictionary
 
