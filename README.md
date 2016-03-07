@@ -4,6 +4,8 @@
 
 # pseudo
 
+[![Join the chat at https://gitter.im/alehander42/pseudo](https://badges.gitter.im/alehander42/pseudo.svg)](https://gitter.im/alehander42/pseudo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 Pseudo is a library for generating code in different high level languages and a system for language translation: its goal is to be able to translate any code expressed in a certain "pseudo-translateable" subset of each supported language or as a pseudo AST to readable and idiomatic code in any of the supported target languages. 
 
 Pseudo achieves that with translation on two layers: it uses the target language syntax and it can express standard library methods/api of language X using language Y's native standard library
