@@ -212,9 +212,7 @@ class PythonGenerator(CodeGenerator):
 
         index    = '%<sequence>[%<index>]',
 
-        _py_listcomp = '[%<block> for %<iterators> in %<sequences>%<.test>]',
-
-        _py_listcomp_test = (' if %<test>', ''),
+        _py_listcomp = '[%<block> for %<iterators> in %<sequences>%<#test>]',
 
         regex    = "re.compile(r'%<value>')",
 
@@ -273,3 +271,8 @@ class PythonGenerator(CodeGenerator):
         else:
             return base
 
+    def test(self, node, indent):
+        if node.test:
+            return ' if %s' % self._generate_node(node.test)
+        else:
+            return ''

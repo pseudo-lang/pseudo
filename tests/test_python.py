@@ -77,7 +77,8 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     list_slice          = 'cpus[2:-1]'
     list_slice_from     = 'cpus[2:]'
     list_slice_to       = 'cpus[:2]'
-    
+    list_filter         = '[value for value in cpus if len(value) == 0]'
+
     binary_op = 'ham + egg'
 
     unary_op = '-a'
