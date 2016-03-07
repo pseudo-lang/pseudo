@@ -79,8 +79,3 @@ def to_node(value):
     else:
         1/0
 
-def assignment_updated(assignment, **kwargs):
-    ass = Node(assignment.type)
-    ass.__dict__.update(assignment.__dict__)
-    ass.__dict__.update(kwargs)
-    return ass

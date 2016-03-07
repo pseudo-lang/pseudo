@@ -1,4 +1,3 @@
-from pseudo.types import *
 from pseudo.api_translator import ApiTranslator
 from pseudo.pseudo_tree import Node, method_call, call, to_node
 from pseudo.api_translators.cpp_api_handlers import Read, Slice, ReadFile

@@ -1,4 +1,3 @@
-from pseudo.types import *
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr
 from pseudo.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, Read

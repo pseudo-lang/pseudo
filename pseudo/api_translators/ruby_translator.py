@@ -1,4 +1,3 @@
-from pseudo.types import *
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, to_node
 from pseudo.api_translators.ruby_api_handlers import expand_slice, to_method_rb_block
