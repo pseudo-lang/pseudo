@@ -36,6 +36,14 @@ class RubyTranslator(ApiTranslator):
             'values':       '#values',
             'contains?':    '#include?'
         },
+        'Set': {
+            '@equivalent':  'Set',
+
+            'length':       '#length',
+            'contains?':    '#include?',
+            'union':        to_op('|'),
+            'intersection': '#intersection'
+        },
         'String': {
             '@equivalent':  'String',
             'substr':       expand_slice,

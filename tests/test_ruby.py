@@ -94,6 +94,12 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     dictionary_keys     = 'pointers.keys'
     dictionary_values   = 'pointers.values'
 
+    # Set
+    set_length          = 'words.length'
+    set_contains        = 'words.include?(s)'
+    set_union           = 'words | words'
+    set_intersection    = 'words.intersection(words)'
+
     binary_op = 'ham + egg'
 
     unary_op = '-a'

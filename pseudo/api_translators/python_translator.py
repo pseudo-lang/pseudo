@@ -86,8 +86,10 @@ class PythonTranslator(ApiTranslator):
         },
         'Set': {
             '@equivalent':  'set',
-            'union':        to_op('-'),
-            'intersection': to_op('&')
+            'length':       'len',
+            'contains?':    contains,
+            'union':        to_op('|'),
+            'intersection': to_op('-')
         },
         'Tuple': {
             '@equivalent':  'tuple'

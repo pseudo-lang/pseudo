@@ -98,6 +98,13 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     dictionary_keys     = 'list(pointers.keys())'  # list for compatibillity with pseudo api
     dictionary_values   = 'list(pointers.values())'
 
+    #Set
+    set_length          = 'len(words)'
+    set_contains        = 's in words'
+    set_union           = 'words | words'
+    set_intersection    = 'words - words'
+
+
     binary_op = 'ham + egg'
 
     unary_op = '-a'

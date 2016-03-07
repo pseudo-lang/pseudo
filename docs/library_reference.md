@@ -140,7 +140,7 @@ Dictionary#length() -> Int
 ### contains?
 
 ```javascript
-Dictionary#contains?() -> Boolean
+Dictionary#contains?(element: T) -> Boolean
 ```
 
 ### keys
@@ -153,6 +153,32 @@ Dictionary#keys() -> List[K]
 
 ```javascript
 Dictionary#values() -> List[V]
+```
+
+## Set[T]
+
+### length
+
+```javascript
+Set#length() -> Int
+```
+
+### contains?
+
+```javascript
+Set#contains?(element: T) -> Boolean
+```
+
+### union
+
+```javascript
+Set#union(right: Set[T]) -> Set[T]
+```
+
+### intersection
+
+```javascript
+Set#intersection(right: Set[T]) -> Set[T]
 ```
 
 # functions
