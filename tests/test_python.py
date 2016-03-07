@@ -89,6 +89,8 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                             functools.reduce(a_0, '')
 
                             '''))
+    list_any            = 'any(len(value) == 0 for value in cpus)'
+    list_all            = 'all(len(value) == 0 for value in cpus)'
 
     binary_op = 'ham + egg'
 

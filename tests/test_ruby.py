@@ -85,6 +85,8 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
                           result = value + other
                           result
                         end''')
+    list_any        = 'cpus.any? { |value| value.length == 0 }'
+    list_all        = 'cpus.all? { |value| value.length == 0 }'
 
     binary_op = 'ham + egg'
 

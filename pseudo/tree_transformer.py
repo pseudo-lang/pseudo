@@ -45,10 +45,7 @@ class TreeTransformer:
     def transform_default(self, tree):
         for field, child in tree.__dict__.items():
             if not field.endswith('type'):
-                print(field)
-                if isinstance(child, Node):
-                    print(getattr(child, 'value', None))
-                    print(getattr(child, 'name', None))
+                # print(field)
                 if isinstance(child, Node):
                     setattr(tree, field, self.transform(child, False, tree if tree.type[-10:] == 'assignment' else None))
                 elif isinstance(child, list) and field == 'block' or field == 'main':

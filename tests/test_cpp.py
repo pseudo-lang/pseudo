@@ -36,10 +36,7 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
             l += 2
 
         definitions = '\n'.join(lines[l:main_index]).lstrip()
-        if lines[l] == '':
-            print(l, imports, self._import)
-            # input(definitions)
-
+        
         if not definitions.strip():
             return imports, main
         else:

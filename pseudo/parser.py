@@ -138,4 +138,4 @@ s = '''
         def %<name>(%<args:join ','>):
             %<#body>
     '''
-print(yaml.dump(_parse_template(2, s, 'module')))
+# print(yaml.dump(_parse_template(2, s, 'module')))

@@ -156,6 +156,8 @@ ListSliceFrom   = standard_method_call(LIST_EXAMPLE, 'slice_from', [to_node(2)],
 ListSliceTo     = standard_method_call(LIST_EXAMPLE, 'slice_to', [to_node(2)], LIST_EXAMPLE_TYPE)
 ListFilter      = standard_method_call(LIST_EXAMPLE, 'filter', [EMPTY], LIST_EXAMPLE_TYPE)
 ListReduce      = standard_method_call(LIST_EXAMPLE, 'reduce', [COMBINER, to_node('')], 'String')
+ListAny         = standard_method_call(LIST_EXAMPLE, 'any?', [EMPTY], 'Boolean')
+ListAll         = standard_method_call(LIST_EXAMPLE, 'all?', [EMPTY], 'Boolean')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]

@@ -95,9 +95,17 @@ class PythonGenerator(CodeGenerator):
         _py_slice_to   = '%<sequence>[:%<to>]',
 
 
-        static_call = "%<receiver>.%<message>(%<args:join ', '>)",
-        call        = "%<function>(%<args:join ', '>)",
-        method_call = "%<receiver>.%<message>(%<args:join ', '>)",
+        static_call = switch(lambda s: len(s.args) == 1 and s.args[0].type == '_py_generatorcomp',
+                true       = '%<receiver>.%<message>%<args:first>',
+                _otherwise = "%<receiver>.%<message>(%<args:join ', '>)"),
+
+        call        = switch(lambda s: len(s.args) == 1 and s.args[0].type == '_py_generatorcomp',
+                true       = '%<function>%<args:first>',
+                _otherwise = "%<function>(%<args:join ', '>)"),
+
+        method_call = switch(lambda s: len(s.args) == 1 and s.args[0].type == '_py_generatorcomp',
+                true       = '%<receiver>.%<message>%<args:first>',
+                _otherwise = "%<receiver>.%<message>(%<args:join ', '>)"),
 
         block       = '%<block:lines>',
 
@@ -105,7 +113,9 @@ class PythonGenerator(CodeGenerator):
 
         instance_variable = 'self.%<name>',
 
-        this_method_call = "self.%<message>(%<args:join ', '>)",
+        this_method_call = switch(lambda s: len(s.args) == 1 and s.args[0].type == '_py_generatorcomp',
+                true        = 'self.%<message>%<args:first>',
+                _otherwise  = "self.%<message>(%<args:join ', '>)"),
 
         throw_statement = 'raise %<exception>(%<value>)',
 
@@ -169,19 +179,19 @@ class PythonGenerator(CodeGenerator):
 
         constant = '%<constant> = %<init>',
 
-        standard_iterable_call = switch('function',
-            map = '[%<.block>]',
-            filter_map = "[%<.block> if %<test:join ''>]",
-            _otherwise = '%<function>([%<.block>])'
-        ),
+        # standard_iterable_call = switch('function',
+        #     map = '[%<.block>]',
+        #     filter_map = "[%<.block> if %<test:join ''>]",
+        #     _otherwise = '%<function>([%<.block>])'
+        # ),
 
-        standard_iterable_call_range = "[%<block:join ''> for %<index> in range(%<.first>%<last>%<.step>)]",
+        # standard_iterable_call_range = "[%<block:join ''> for %<index> in range(%<.first>%<last>%<.step>)]",
 
-        standard_iterable_call_block = ("%<block:join ''> for %<iterators> in %<sequences>", ''),
+        # standard_iterable_call_block = ("%<block:join ''> for %<iterators> in %<sequences>", ''),
 
-        standard_iterable_call_first = ('%<first>, ', ''), 
+        # standard_iterable_call_first = ('%<first>, ', ''), 
 
-        standard_iterable_call_step = (', %<step>', ''),
+        # standard_iterable_call_step = (', %<step>', ''),
         
         for_iterator = '%<iterator>',
 
@@ -213,6 +223,8 @@ class PythonGenerator(CodeGenerator):
         index    = '%<sequence>[%<index>]',
 
         _py_listcomp = '[%<block> for %<iterators> in %<sequences>%<#test>]',
+
+        _py_generatorcomp = '(%<block> for %<iterators> in %<sequences>%<#test>)',
 
         regex    = "re.compile(r'%<value>')",
 
@@ -264,7 +276,6 @@ class PythonGenerator(CodeGenerator):
 
     def binary_side(self, field, op):
         base = self._generate_node(field)
-        print(field.pseudo_type)
         if (field.type == 'binary_op' or field.pseudo_type == 'comparison') and\
            PRIORITIES[field.op] < PRIORITIES[op]:
             return '(%s)' % base

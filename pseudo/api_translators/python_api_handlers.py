@@ -1,6 +1,19 @@
 from pseudo.pseudo_tree import Node, call, method_call, local, assignment, to_node
 from pseudo.api_handlers import BizarreLeakingNode, NormalLeakingNode
 
+def to_py_generatorcomp(method):
+    def x(receiver, test, pseudo_type):
+        return call(
+                   local(method, ['Function', test.pseudo_type, 'Boolean']),
+                   [Node('_py_generatorcomp',
+                        sequences=Node('for_sequence', sequence=receiver),
+                        iterators=Node('for_iterator', iterator=local(test.params[0], test.pseudo_type[1])),
+                        block=test.block[0],
+                        test=None,
+                        pseudo_type=['PyGenerator', 'Boolean'])],
+                    pseudo_type='Boolean')
+    return x
+
 def expand_map(receiver, func):
     if func.type == 'lambda':
         return Node(
@@ -81,3 +94,4 @@ class WriteFile(NormalLeakingNode):
             context='_f',
             block=[method_call(local('_f', 'File'), 'write', [self.args[1]], 'Void')],
             pseudo_type='Void')
+

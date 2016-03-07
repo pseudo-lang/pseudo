@@ -30,8 +30,8 @@ class NameMiddleware(Middleware):
                 if self.normal_name:
                     node.name = getattr(self, 'convert_to_%s' % self.normal_name)(node.name)
         elif self.normal_name:
-            print('NORM', node.name.y)
-            # input()
+            pass
+            # print('NORM', node.name.y)
         return node
     
     transform_local = transform_instance_variable = transform_normal_name

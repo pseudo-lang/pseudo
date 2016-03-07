@@ -19,7 +19,7 @@ class TypeEngine(TreeTransformer):
         return self.transform(tree)
 
     def transform_function(self, node):
-        print(node.__dict__)
+        # print(node.__dict__)
         self.env.values[node.name] = self.to_type(node.type_hint[-1])
         node.pseudo_type = [self.to_type(
             arg.type_hint) for arg in node.args] + [self.env.values[node.name]]
