@@ -1,6 +1,18 @@
 - [methods](#methods)
   - [List[T]](#list)
     - [push](#push)
+    - [pop](#pop)
+    - [length](#length)
+    - [insert](#insert)
+    - [remove](#remove)
+    - [remove_at](#remove_at)
+    - [slice](#slice)
+    - [slice_from](#slice_from)
+    - [slice_to](#slice_to)
+    - [map](#map)
+    - [filter](#filter)
+    - [reduce](#reduce)
+    - [any?](#any?)
   - [Dictionary[K, V]](#dictionary)
     - [setitem](#setitem)
 - [functions](#functions)
@@ -54,7 +66,7 @@ List#remove(element: T) -> Void
 ### remove_at
 
 ```ruby
-List#remove_at(element: T, index: Int) -> Void
+List#remove_at(index: Int) -> Void
 ```
 
 ### slice
@@ -63,11 +75,48 @@ List#remove_at(element: T, index: Int) -> Void
 List#slice(from: Int, to: Int) -> List[T]
 ```
 
+### slice_from
+
+```c#
+List#slice_from(from: Int) -> List[T]
+```
+
+### slice_to
+
+```c#
+List#slice_to(to: Int) -> List[T]
+```
+
 ### map
 
-```ruby
+```c#
 List#map(f: Function[T, Z]) -> List[Z]
 ```
+
+### filter
+
+```c#
+List#filter(f: Function[T, Boolean]) -> List[T]
+```
+
+### reduce
+
+```c#
+List#reduce(f: Function[T, Z, Z], initial: Z) -> Z
+```
+
+### any?
+
+```c#
+List#any?(f: Function[T, Boolean]) -> Boolean
+```
+
+### all?
+
+```c#
+List#all?(f: Function[T, Boolean]) -> Boolean
+```
+
 
 ## Dictionary
 

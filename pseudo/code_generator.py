@@ -153,7 +153,7 @@ class CodeGenerator:
             template = t
 
         expanded = []
-        print('T',depth, template)
+        # print('T',depth, template)
         # input()
         normal_depth = depth
         after_newline = False
@@ -174,7 +174,7 @@ class CodeGenerator:
                 else:
                     expanded.append(' ')
             elif isinstance(element, Newline):
-                print(' ',template[i-2] if i >= 2 else '', expanded[-3:])
+                # print(' ',template[i-2] if i >= 2 else '', expanded[-3:])
                 if expanded == ['', '\n'] or expanded == ['']:
                     expanded = []
                 elif len(expanded) >= 2 and not expanded[-1] and (i >= 2 and isinstance(template[i - 2], Whitespace) and template[i - 2].is_offset) and (not expanded[-2] or expanded[-2][0] == '\n' or expanded[-2][0] == self._symbol):
@@ -183,10 +183,8 @@ class CodeGenerator:
                     expanded.pop()
                     if not expanded[-1] or expanded[-1][0] == self._symbol:
                         expanded.pop()
-                    print(expanded[-3:])
                 elif expanded:
                     expanded.append('\n')
-                    print('l ', expanded)
                 after_newline = True
                 depth = normal_depth
 

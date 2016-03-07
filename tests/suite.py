@@ -4,6 +4,13 @@ from pseudo import generate
 
 SNAKE_CASE_REGEX = re.compile(r'(_\[a-z])')
 
+def standard_method_call(receiver, message, args, pseudo_type):
+    return Node('standard_method_call', 
+        receiver=receiver,
+        message=message,
+        args=args,
+        pseudo_type=pseudo_type)
+
 class TestLanguage(type):
 
     def __new__(cls, name, bases, namespace, **kwargs):
@@ -15,7 +22,11 @@ class TestLanguage(type):
                 else:
                     expected = expected_
 
-                for example, exp in zip(examples, expected):
+                if not isinstance(examples, list):
+                    examples_ = [examples]
+                else:
+                    examples_ = examples
+                for example, exp in zip(examples_, expected):
                     if isinstance(example, tuple) and example[0] == 'custom_exceptions':
                         custom_exceptions, example_ = example[1], example[2]
                         # import pdb;pdb.set_trace() #input(custom_exceptions)
@@ -89,10 +100,34 @@ StandardCall = [
         Node('standard_call', namespace='io', function='read_file', args=[to_node('f.py')], pseudo_type='String'))
 ]
 
+LIST_EXAMPLE_TYPE = ['List', 'String']
+LIST_EXAMPLE = local('cpus', LIST_EXAMPLE_TYPE)
+LIST_EXAMPLE_ELEMENT_TYPE = 'String'
+STRING_EXAMPLE = to_node('')
+LOCAL_STRING_EXAMPLE = local('s', 'String')
+
+ADD_A = Node('anonymous_function', 
+    params=['value'],
+    block=[standard_method_call(
+        local('value', 'String'),
+        'concat',
+        [to_node('a')],
+        'String')],
+    pseudo_type=['Function', 'String', 'String'],
+    return_type='String')
+
 StandardMethodCall = [
     Node('standard_method_call', receiver=local('l', pseudo_type=['List', 'Int']), message='length', args=[], pseudo_type='Int'),
-    Node('standard_method_call', receiver=to_node('l'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String')
+    Node('standard_method_call', receiver=to_node('l'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String'),
 ]
+
+#List
+ListPush        = standard_method_call(LIST_EXAMPLE, 'push', [STRING_EXAMPLE], 'Void')
+ListPop         = standard_method_call(LIST_EXAMPLE, 'pop',  [], LIST_EXAMPLE_ELEMENT_TYPE)
+ListLength      = standard_method_call(LIST_EXAMPLE, 'length', [], 'Int')
+ListMap         = standard_method_call(LIST_EXAMPLE, 'map', [ADD_A], LIST_EXAMPLE_TYPE)
+ListRemove      = standard_method_call(LIST_EXAMPLE, 'remove', [LOCAL_STRING_EXAMPLE], 'Void')
+ListRemoveAt    = standard_method_call(LIST_EXAMPLE, 'remove_at', [to_node(0)], 'Void')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]

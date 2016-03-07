@@ -18,7 +18,7 @@ class PythonTranslator(ApiTranslator):
             'pop':          '#pop',
             'length':       'len',
             'insert':       '#insert',
-            'remove_at':    lambda receiver, index, _: Node('_py_del', node=Node('index', z=receiver, index=index), pseudo_type='Void'),
+            'remove_at':    lambda receiver, index, _: Node('_py_del', value=Node('index', sequence=receiver, index=index), pseudo_type='Void'),
             'remove':       '#remove',
             'slice':        expand_slice,
             'slice_from':   expand_slice,
@@ -32,7 +32,20 @@ class PythonTranslator(ApiTranslator):
             'map':          lambda receiver, f, pseudo_type: Node('_py_listcomp', 
                                 sequences=Node('for_sequence', sequence=receiver),
                                 iterators=Node('for_iterator', iterator=local(f.params[0], f.pseudo_type[1])),
-                                block=f.block,
+                                block=f.block[0],
+                                test=None,
+                                pseudo_type=['List', f.pseudo_type[2]]),
+            'filter':       lambda receiver, test, pseudo_type: Node('_py_listcomp', 
+                                sequences=Node('for_sequence', sequence=receiver),
+                                iterators=Node('for_iterator', iterator=local(test.params[0], test.pseudo_type[1])),
+                                block=local(test.params[0], test.pseudo_type[1]),
+                                test=test.block[0],
+                                pseudo_type=['List', test.pseudo_type[1]]),
+
+            'reduce':       lambda receiver, aggegator, initial, pseudo_type: Node('static_call',
+                                receiver=local('functools', 'Library'),
+                                message='reduce',
+                                args=[aggegator, initial],
                                 pseudo_type=pseudo_type)
         },
         'Dictionary': {
@@ -122,6 +135,10 @@ class PythonTranslator(ApiTranslator):
 
         'Regexp': {
             '@all': 're'
+        },
+
+        'List': {
+            'reduce': 'functools'
         },
 
         'http': {

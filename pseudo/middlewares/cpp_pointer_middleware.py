@@ -1,7 +1,7 @@
 from pseudo.middlewares.middleware import Middleware
 from pseudo.pseudo_tree import Node, method_call
 
-BUILTIN_SIMPLE = {'Int', 'String', 'Void', 'Exception', 'Float', 'Boolean', 'CppIterator', 'ifstream', 'istreambuf_iterator<char>'}
+BUILTIN_SIMPLE = {'Int', 'String', 'Void', 'Exception', 'Float', 'Boolean', 'CppIterator', 'ifstream', 'istreambuf_iterator<char>', 'Library'}
 
 class CppPointerMiddleware(Middleware):
     '''

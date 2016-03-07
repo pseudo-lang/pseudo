@@ -6,7 +6,7 @@ import suite
 
 #v
 class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    
+
     _language = 'ruby'
     _import = 'require'
     _parse_import = lambda self, line: line[9:-1]
@@ -65,8 +65,14 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     standard_method_call = [
         'l.length',
-        "'l'[0...2]"
+        "'l'[0...2]",
     ]
+
+    # List
+    list_push       = "cpus.push('')"
+    list_pop        = "cpus.pop"
+    list_length     = "cpus.length"
+    list_map        = "cpus.map { |value| value + 'a' }"
 
     binary_op = 'ham + egg'
 

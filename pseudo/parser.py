@@ -19,7 +19,6 @@ def _parse_template(self, code, label):
       Offset(1),'e', INTERNAL_WHITESPACE, '=', NEWLINE,
       Placeholder('code2', 1), NEWLINE]
     '''
-    print(code, label)
                 
     lines = code.split('\n')
     parsed = []
@@ -53,7 +52,6 @@ def _parse_template(self, code, label):
         m = c
         placeholder = ''
         while m < len(line):
-            print(m, line[m], 'place:', in_placeholder, 'act:', in_action, 'a:', in_args, 's:', in_string_arg, yaml.dump(parsed))
             f = line[m]
             next_f = line[m + 1] if m < len(line) - 1 else None
             if f == '%' and not in_placeholder and next_f == '<':

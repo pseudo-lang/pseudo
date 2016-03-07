@@ -4,7 +4,7 @@ import suite
 
 #v
 class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
-    
+
     _language = 'python'
     _import = 'import'
     _parse_import = lambda self, line: line[7:]
@@ -63,8 +63,16 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     standard_method_call = [
         'len(l)',
-        "'l'[:2]"
+        "'l'[:2]",
     ]
+
+    #List
+    list_push           = "cpus.append('')"
+    list_pop            = "cpus.pop()"
+    list_length         = "len(cpus)"
+    list_map            = "[value + 'a' for value in cpus]"
+    list_remove         = 'cpus.remove(s)'
+    list_remove_at      = 'del cpus[0]'
 
     binary_op = 'ham + egg'
 
@@ -88,7 +96,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         textwrap.dedent('''\
              for j in range(0, 42, 2):
                  analyze(j)'''),
-    
+
 
         textwrap.dedent('''\
             for j, k in enumerate(z):
@@ -97,7 +105,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         textwrap.dedent('''\
             for j, k in z.items():
                 analyze(k, j)'''),
-    
+
         textwrap.dedent('''\
             for k, l in zip(z, zz):
                 a(k, l)''')
@@ -125,7 +133,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                 print(source)
                 return ves(len(source))
 
-            
+
 
             a_0
 

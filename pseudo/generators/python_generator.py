@@ -94,6 +94,7 @@ class PythonGenerator(CodeGenerator):
         _py_slice_from = '%<sequence>[%<from_>:]',
         _py_slice_to   = '%<sequence>[:%<to>]',
 
+
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
@@ -209,9 +210,14 @@ class PythonGenerator(CodeGenerator):
             'set()'
         ),
 
+        index    = '%<sequence>[%<index>]',
+
+        _py_listcomp = '[%<block> for %<iterators> in %<sequences>%<.test>]',
+
+        _py_listcomp_test = (' if %<test>', ''),
+
         regex    = "re.compile(r'%<value>')",
 
-        index    = '%<sequence>[%<index>]',
     )
     
     def to_boolean(self, node, indent):

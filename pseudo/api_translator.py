@@ -138,15 +138,18 @@ class ApiTranslator(TreeTransformer):
         if isinstance(l, list):
             l = l[0]
 
+
+        if not isinstance(node.args, list):
+            input(node.args.y)
         node.args = [self.transform(arg) for arg in node.args]
         node.receiver = self.transform(node.receiver)
         
         if l not in self.methods:
             raise PseudoStandardLibraryError(
-                'pseudo doesn\'t recognize %s as a standard type' % l)
+                '%s doesn\'t recognize %s as a standard type' % (type(self).__name__, l))
         elif node.message not in self.methods[l]:
             raise PseudoStandardLibraryError(
-                'pseudo doesn\'t have a %s#%s method' % (l, node.message))
+                '%s doesn\'t have a %s#%s method' % (type(self).__name__, l, node.message))
         
         x = self.methods[l][node.message]
         if isinstance(x, type) and issubclass(x, LeakingNode):

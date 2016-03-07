@@ -209,6 +209,15 @@ class RubyGenerator(CodeGenerator):
                             end'''
         ),
 
+        _rb_method_call_block = "%<receiver>.%<message>%<.args> %<f>",
+        _rb_method_call_block_args = call_args,
+        _rb_block = switch(lambda b: len(b.block) == 1,
+            true  = "{ |%<params:join ', '>| %<block:first> }",
+            _otherwise = '''
+                do |%<params:join ', '|
+                    %<block:line_join>
+                end'''),
+
         index           = '%<sequence>[%<index>]',
 
         tuple    = "[%<elements:join ', '>]",
@@ -217,7 +226,8 @@ class RubyGenerator(CodeGenerator):
 
         set      = "Set.new([%<elements:join ', '>])",
 
+        block           = '%<block:line_join>',
+
         regex    = "/%<value>/",
 
-        block           = '%<block:line_join>'
     )
