@@ -17,21 +17,6 @@ def to_py_generatorcomp(method):
                     pseudo_type='Boolean')
     return x
 
-def expand_map(receiver, func):
-    if func.type == 'lambda':
-        return Node(
-            '_py_list_comp',
-            sequence=receiver)
-    else:
-        return call('map', [func, receiver])
-
-def expand_filter(receiver, func):
-    if func.type == 'lambda':
-        return Node(
-            '_py_list_comp')
-    else:
-        return call('filter', [func, receiver])
-
 def expand_set_slice(receiver, from_=None, to=None, value=None, pseudo_type=None):
     s = expand_slice(receiver, from_, to, pseudo_type)
     return assignment(s, value)
