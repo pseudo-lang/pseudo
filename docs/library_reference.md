@@ -32,7 +32,8 @@
     - [substr_from](#substr_from)
     - [substr_to](#substr_to)
     - [length](#length)
-
+    - [find](#find)
+    - [count](#count)
 - [functions](#functions)
   - [math](#math)
     - [log](#log)
@@ -225,6 +226,18 @@ String#substr_to(to: Int) -> String
 
 ```javascript
 String#length() -> Int
+```
+
+### find
+
+```javascript
+String#find(element: String) -> Int
+```
+
+### count
+
+```javascript
+String#count(element: String) -> Int
 ```
 
 # functions

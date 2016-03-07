@@ -110,6 +110,13 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     #Array
     array_length        = 'len(cars)'
 
+    #String
+    string_substr       = 's[1:-1]'
+    string_substr_from  = 's[2:]'
+    string_substr_to    = 's[:-2]'
+    string_length       = 'len(s)'
+    string_find         = 's.index(t)'
+    string_count        = 's.count(t)'
 
     binary_op = 'ham + egg'
 

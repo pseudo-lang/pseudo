@@ -58,8 +58,11 @@ class RubyTranslator(ApiTranslator):
             '@equivalent':  'String',
             'substr':       expand_slice,
             'substr_from':  expand_slice,
+            'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, 'String'),
             'length':       '#length',
-            'concat':       to_op('+')
+            'concat':       to_op('+'),
+            'find':         '#find',
+            'count':        '#count'
         }
     }
 

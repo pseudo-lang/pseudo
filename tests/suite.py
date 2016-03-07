@@ -103,8 +103,10 @@ StandardCall = [
 LIST_EXAMPLE_TYPE = ['List', 'String']
 LIST_EXAMPLE = local('cpus', LIST_EXAMPLE_TYPE)
 LIST_EXAMPLE_ELEMENT_TYPE = 'String'
-STRING_EXAMPLE = to_node('')
-LOCAL_STRING_EXAMPLE = local('s', 'String')
+LITERAL_STRING_EXAMPLE = to_node('')
+STRING_EXAMPLE = local('s', 'String')
+OTHER_STRING_EXAMPLE = local('t', 'String')
+
 EMPTY = Node('anonymous_function',
     params=['value'],
     block=[Node('comparison',
@@ -160,12 +162,13 @@ StandardMethodCall = [
     Node('standard_method_call', receiver=to_node('l'), message='substr', args=[to_node(0), to_node(2)], pseudo_type='String'),
 ]
 
+
 #List
-ListPush        = standard_method_call(LIST_EXAMPLE, 'push', [STRING_EXAMPLE], 'Void')
+ListPush        = standard_method_call(LIST_EXAMPLE, 'push', [LITERAL_STRING_EXAMPLE], 'Void')
 ListPop         = standard_method_call(LIST_EXAMPLE, 'pop',  [], LIST_EXAMPLE_ELEMENT_TYPE)
 ListLength      = standard_method_call(LIST_EXAMPLE, 'length', [], 'Int')
 ListMap         = standard_method_call(LIST_EXAMPLE, 'map', [ADD_A], LIST_EXAMPLE_TYPE)
-ListRemove      = standard_method_call(LIST_EXAMPLE, 'remove', [LOCAL_STRING_EXAMPLE], 'Void')
+ListRemove      = standard_method_call(LIST_EXAMPLE, 'remove', [STRING_EXAMPLE], 'Void')
 ListRemoveAt    = standard_method_call(LIST_EXAMPLE, 'remove_at', [to_node(0)], 'Void')
 ListLength      = standard_method_call(LIST_EXAMPLE, 'length', [], 'Int')
 ListSlice       = standard_method_call(LIST_EXAMPLE, 'slice', [to_node(2), to_node(-1)], LIST_EXAMPLE_TYPE)
@@ -178,19 +181,27 @@ ListAll         = standard_method_call(LIST_EXAMPLE, 'all?', [EMPTY], 'Boolean')
 
 #Dictionary
 DictionaryLength   = standard_method_call(DICTIONARY_EXAMPLE, 'length', [], 'Int')
-DictionaryContains = standard_method_call(DICTIONARY_EXAMPLE, 'contains?', [LOCAL_STRING_EXAMPLE], 'Boolean')
+DictionaryContains = standard_method_call(DICTIONARY_EXAMPLE, 'contains?', [STRING_EXAMPLE], 'Boolean')
 DictionaryKeys     = standard_method_call(DICTIONARY_EXAMPLE, 'keys', [], ['List', DICTIONARY_EXAMPLE_KEY_TYPE])
 DictionaryValues   = standard_method_call(DICTIONARY_EXAMPLE, 'values', [], ['List', DICTIONARY_EXAMPLE_VALUE_TYPE])
 
 #Set
 SetLength          = standard_method_call(SET_EXAMPLE, 'length', [], 'Int')
-SetContains        = standard_method_call(SET_EXAMPLE, 'contains?', [LOCAL_STRING_EXAMPLE], 'Boolean')
+SetContains        = standard_method_call(SET_EXAMPLE, 'contains?', [STRING_EXAMPLE], 'Boolean')
 SetUnion           = standard_method_call(SET_EXAMPLE, 'union', [SET_EXAMPLE], SET_EXAMPLE_TYPE)
 SetIntersection    = standard_method_call(SET_EXAMPLE, 'intersection', [SET_EXAMPLE], SET_EXAMPLE_TYPE)
 
 TupleLength        = standard_method_call(TUPLE_EXAMPLE, 'length', [], 'Int')
 
 ArrayLength        = standard_method_call(ARRAY_EXAMPLE, 'length', [], 'Int')
+
+#String
+StringSubstr       = standard_method_call(STRING_EXAMPLE, 'substr', [to_node(1), to_node(-1)], 'String')
+StringSubstrFrom   = standard_method_call(STRING_EXAMPLE, 'substr_from', [to_node(2)], 'String')
+StringSubstrTo     = standard_method_call(STRING_EXAMPLE, 'substr_to', [to_node(-2)], 'String')
+StringLength       = standard_method_call(STRING_EXAMPLE, 'length', [], 'Int')
+StringFind         = standard_method_call(STRING_EXAMPLE, 'find', [OTHER_STRING_EXAMPLE], 'Int')
+StringCount        = standard_method_call(STRING_EXAMPLE, 'count', [OTHER_STRING_EXAMPLE], 'Int')
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]

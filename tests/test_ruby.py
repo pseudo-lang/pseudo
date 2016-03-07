@@ -106,6 +106,14 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     # Array
     array_length        = 'cars.length'
 
+    # String
+    string_substr       = 's[1...-1]'
+    string_substr_from  = 's[2..-1]'
+    string_substr_to    = 's[0...-2]'
+    string_length       = 's.length'
+    string_find         = 's.find(t)'
+    string_count        = 's.count(t)'
+
     binary_op = 'ham + egg'
 
     unary_op = '-a'

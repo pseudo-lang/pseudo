@@ -74,8 +74,8 @@ class PythonTranslator(ApiTranslator):
             'substr':       expand_slice,
             'substr_from':  expand_slice,
             'length':       'len',
-            'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, pseudo_type=pseudo_type),
-            'find':         '#find',
+            'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, 'String'),
+            'find':         '#index',
             'count':        '#count',
             'partition':    '#partition',
             'split':        '#split',
@@ -101,6 +101,7 @@ class PythonTranslator(ApiTranslator):
 
             'length':       'len'
         },
+
         'Regexp': {
             '@equivalent':  '_sre.SRE_Pattern',
             'match':        '#match'
