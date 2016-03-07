@@ -74,7 +74,10 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     list_remove         = 'cpus.remove(s)'
     list_remove_at      = 'del cpus[0]'
     list_length         = 'len(cpus)'
-
+    list_slice          = 'cpus[2:-1]'
+    list_slice_from     = 'cpus[2:]'
+    list_slice_to       = 'cpus[:2]'
+    
     binary_op = 'ham + egg'
 
     unary_op = '-a'

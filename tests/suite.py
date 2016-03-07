@@ -129,6 +129,9 @@ ListMap         = standard_method_call(LIST_EXAMPLE, 'map', [ADD_A], LIST_EXAMPL
 ListRemove      = standard_method_call(LIST_EXAMPLE, 'remove', [LOCAL_STRING_EXAMPLE], 'Void')
 ListRemoveAt    = standard_method_call(LIST_EXAMPLE, 'remove_at', [to_node(0)], 'Void')
 ListLength      = standard_method_call(LIST_EXAMPLE, 'length', [], 'Int')
+ListSlice       = standard_method_call(LIST_EXAMPLE, 'slice', [to_node(2), to_node(-1)], LIST_EXAMPLE_TYPE)
+ListSliceFrom   = standard_method_call(LIST_EXAMPLE, 'slice_from', [to_node(2)], LIST_EXAMPLE_TYPE)
+ListSliceTo     = standard_method_call(LIST_EXAMPLE, 'slice_to', [to_node(2)], LIST_EXAMPLE_TYPE)
 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]
