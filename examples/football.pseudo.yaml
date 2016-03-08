@@ -220,6 +220,225 @@ definitions:
   - String
   - [Array, Int, 2]
   type: function_definition
+- block:
+  - pseudo_type: Int
+    type: implicit_return
+    value:
+      args:
+      - block:
+        - left: {name: memo, pseudo_type: Int, type: local}
+          op: +
+          pseudo_type: Int
+          right:
+            args:
+            - {name: team, pseudo_type: String, type: local}
+            - index: {pseudo_type: Int, type: int, value: 0}
+              pseudo_type: String
+              sequence:
+                name: result
+                pseudo_type: [Tuple, String, String, Array, Int, 2]
+                type: local
+              type: index
+            - index: {pseudo_type: Int, type: int, value: 1}
+              pseudo_type: String
+              sequence:
+                name: result
+                pseudo_type: [Tuple, String, String, Array, Int, 2]
+                type: local
+              type: index
+            - index: {pseudo_type: Int, type: int, value: 2}
+              pseudo_type: [Array, Int, 2]
+              sequence:
+                name: result
+                pseudo_type: [Tuple, String, String, Array, Int, 2]
+                type: local
+              type: index
+            function:
+              name: result_points
+              pseudo_type:
+              - Function
+              - String
+              - String
+              - String
+              - [Array, Int, 2]
+              - Int
+              type: local
+            pseudo_type: Int
+            type: call
+          type: binary_op
+        params: [memo, result]
+        pseudo_type:
+        - Function
+        - Int
+        - - Tuple
+          - String
+          - String
+          - [Array, Int, 2]
+        - Int
+        return_type: Int
+        type: anonymous_function
+      - {pseudo_type: Int, type: int, value: 0}
+      message: reduce
+      pseudo_type: Int
+      receiver:
+        name: results
+        pseudo_type:
+        - List
+        - - Tuple
+          - String
+          - String
+          - [Array, Int, 2]
+        type: local
+      type: standard_method_call
+  name: calculate_points
+  params: [results, team]
+  pseudo_type:
+  - Function
+  - - List
+    - - Tuple
+      - String
+      - String
+      - [Array, Int, 2]
+  - String
+  - Int
+  return_type: Int
+  type: function_definition
+- block:
+  - block:
+    - pseudo_type: Int
+      type: implicit_return
+      value: {pseudo_type: Int, type: int, value: 3}
+    otherwise:
+      block:
+      - pseudo_type: Int
+        type: implicit_return
+        value: {pseudo_type: Int, type: int, value: 1}
+      otherwise:
+        block:
+        - pseudo_type: Int
+          type: implicit_return
+          value: {pseudo_type: Int, type: int, value: 0}
+        pseudo_type: Void
+        type: else_statement
+      pseudo_type: Void
+      test:
+        left:
+          left:
+            index: {pseudo_type: Int, type: int, value: 0}
+            pseudo_type: Int
+            sequence:
+              name: result
+              pseudo_type: [Array, Int, 2]
+              type: local
+            type: index
+          op: ==
+          pseudo_type: Boolean
+          right:
+            index: {pseudo_type: Int, type: int, value: 1}
+            pseudo_type: Int
+            sequence:
+              name: result
+              pseudo_type: [Array, Int, 2]
+              type: local
+            type: index
+          type: comparison
+        op: and
+        pseudo_type: Boolean
+        right:
+          left:
+            left: {name: host, pseudo_type: String, type: local}
+            op: ==
+            pseudo_type: Boolean
+            right: {name: team, pseudo_type: String, type: local}
+            type: comparison
+          op: or
+          pseudo_type: Boolean
+          right:
+            left: {name: away, pseudo_type: String, type: local}
+            op: ==
+            pseudo_type: Boolean
+            right: {name: team, pseudo_type: String, type: local}
+            type: comparison
+          type: binary_op
+        type: binary_op
+      type: elseif_statement
+    pseudo_type: Void
+    test:
+      left:
+        left:
+          left: {name: host, pseudo_type: String, type: local}
+          op: ==
+          pseudo_type: Boolean
+          right: {name: team, pseudo_type: String, type: local}
+          type: comparison
+        op: and
+        pseudo_type: Boolean
+        right:
+          left:
+            index: {pseudo_type: Int, type: int, value: 0}
+            pseudo_type: Int
+            sequence:
+              name: result
+              pseudo_type: [Array, Int, 2]
+              type: local
+            type: index
+          op: '>'
+          pseudo_type: Boolean
+          right:
+            index: {pseudo_type: Int, type: int, value: 1}
+            pseudo_type: Int
+            sequence:
+              name: result
+              pseudo_type: [Array, Int, 2]
+              type: local
+            type: index
+          type: comparison
+        type: binary_op
+      op: or
+      pseudo_type: Boolean
+      right:
+        left:
+          left: {name: away, pseudo_type: String, type: local}
+          op: ==
+          pseudo_type: Boolean
+          right: {name: team, pseudo_type: String, type: local}
+          type: comparison
+        op: and
+        pseudo_type: Boolean
+        right:
+          left:
+            index: {pseudo_type: Int, type: int, value: 0}
+            pseudo_type: Int
+            sequence:
+              name: result
+              pseudo_type: [Array, Int, 2]
+              type: local
+            type: index
+          op: <
+          pseudo_type: Boolean
+          right:
+            index: {pseudo_type: Int, type: int, value: 1}
+            pseudo_type: Int
+            sequence:
+              name: result
+              pseudo_type: [Array, Int, 2]
+              type: local
+            type: index
+          type: comparison
+        type: binary_op
+      type: binary_op
+    type: if_statement
+  name: result_points
+  params: [team, host, away, result]
+  pseudo_type:
+  - Function
+  - String
+  - String
+  - String
+  - [Array, Int, 2]
+  - Int
+  return_type: Int
+  type: function_definition
 dependencies: []
 main:
 - block:
@@ -268,6 +487,40 @@ main:
           - String
           - [Array, Int, 2]
         type: call
+    - args:
+      - args:
+        - name: results
+          pseudo_type:
+          - List
+          - - Tuple
+            - String
+            - String
+            - [Array, Int, 2]
+          type: local
+        - args:
+          - {pseudo_type: Int, type: int, value: 2}
+          function: index
+          namespace: system
+          pseudo_type: String
+          type: standard_call
+        function:
+          name: calculate_points
+          pseudo_type:
+          - Function
+          - - List
+            - - Tuple
+              - String
+              - String
+              - [Array, Int, 2]
+          - String
+          - Int
+          type: local
+        pseudo_type: Int
+        type: call
+      function: display
+      namespace: io
+      pseudo_type: Void
+      type: standard_call
     pseudo_type: Void
     type: else_statement
   pseudo_type: Void
@@ -281,6 +534,6 @@ main:
     op: <
     pseudo_type: Boolean
     right: {pseudo_type: Int, type: int, value: 3}
-    type: binary_op
+    type: comparison
   type: if_statement
 type: module

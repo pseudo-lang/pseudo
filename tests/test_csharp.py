@@ -28,7 +28,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             if lines[main_index - 2] == 'public class Program':
                 return imports, '\n'.join(lines[0:main_index - 2]).strip()
             else:
-                return imports, '\n'.join(lines[0:main_index - 1]) + '}'
+                return imports, '\n'.join(lines[0:main_index - 1]) + '\n}'
         else:
             return imports, source
 
@@ -198,7 +198,6 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                 this.ast = 0;
                 return new List<string> {source};
             }
-
         }''')
 
     anonymous_function = [
@@ -226,7 +225,6 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             {
                 return 42;
             }
-
         }''')]
 
     this = 'this'
@@ -242,7 +240,6 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                 this.a = a;
                 this.b = b;
             }
-
         }''')
 
     try_statement = [
@@ -266,7 +263,6 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                 }
             }
 
-
             public class Program
             {
                 public static void Main()
@@ -280,9 +276,6 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                     {
                         Console.WriteLine(e);
                     }
-
-
-
                 }
             }
             ''')
@@ -296,7 +289,6 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             {
             }
         }
-
 
         public class Program
         {

@@ -33,7 +33,9 @@ def method_call(receiver, message, args, pseudo_type=None):
 def call(function, args, pseudo_type=None):
     '''A shortcut for a call with an identifier callee'''
 
-    return Node('call', function=local(function), args=args, pseudo_type=pseudo_type)
+    if not isinstance(function, Node):
+        function = local(function)
+    return Node('call', function=function, args=args, pseudo_type=pseudo_type)
 
 def local(name, pseudo_type=None):
     return Node('local', name=name, pseudo_type=pseudo_type)

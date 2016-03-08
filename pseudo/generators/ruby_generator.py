@@ -81,7 +81,7 @@ class RubyGenerator(CodeGenerator):
         typename        = '%<name>',
         int             = '%<value>',
         float           = '%<value>',
-        string          = '%<#safe_single>',
+        string          = '%<#safe_single_except_nl>',
         boolean         = '%<value>',
         null            = 'nil',
 
@@ -93,14 +93,14 @@ class RubyGenerator(CodeGenerator):
         
         assignment = '%<target> = %<value>',
 
-        binary_op   = '%<left> %<op> %<right>',
+        binary_op   = '%<#binary_left> %<#op> %<#binary_right>',
         unary_op    = '%<#op>%<value>',
-        comparison  = '%<left> %<op> %<right>',
+        comparison  = '%<left> %<op> %<#right>',
 
         static_call = "%<receiver>.%<message>%<.args>",
         static_call_args = call_args,
         call        = switch(
-            lambda c: c.function.type == 'local' and c.function.name == 'puts' or len(c.args) == 0,
+            lambda c: c.function.type == 'local' and c.function.name in ['puts', 'p'] or len(c.args) == 0,
 
             true       = "%<function>%<args:join_lws ', '>",
             _otherwise = "%<function>(%<args:join ', '>)"
@@ -116,6 +116,8 @@ class RubyGenerator(CodeGenerator):
         throw_statement = 'throw %<exception>.new(%<value>)',
 
         new_instance    = "%<class_name>.new(%<args:join ', '>)",
+
+        standard_iterable_call = "%<sequences.sequence>.select { |%<iterators>| %<test:first> }.map { |%<iterators>| %<block:first> }",
 
         if_statement    = '''
             if %<test>
@@ -238,3 +240,27 @@ class RubyGenerator(CodeGenerator):
     
     def op(self, node, depth):
         return OPS.get(node.op, node.op)
+
+    def right(self, node, depth):
+        '''when compared with argv length, decrement'''
+        if node.left.type != 'attr' or node.left.object.type != 'local' or node.left.object.name != 'ARGV':
+            return self._generate_node(node.right)
+        else:
+            if node.right.type == 'int':
+                return str(node.right.value - 1)
+            else:
+                return '%s - 1' % self._generate_node(node.right)
+
+    def binary_left(self, node, indent):
+        return self.binary_side(node.left, node.op)
+
+    def binary_right(self, node, indent):
+        return self.binary_side(node.right, node.op)
+
+    def binary_side(self, field, op):
+        base = self._generate_node(field)
+        if (field.type == 'binary_op' or field.pseudo_type == 'comparison') and\
+           PRIORITIES[field.op] < PRIORITIES[op]:
+            return '(%s)' % base
+        else:
+            return base

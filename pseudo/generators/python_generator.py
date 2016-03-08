@@ -1,7 +1,7 @@
 from pseudo.code_generator import CodeGenerator, switch
 
 
-EXPRESSION_TYPES = ['call', 'implicit_return', 'method_call', 'explicit_return']
+EXPRESSION_TYPES = ['call', 'implicit_return', 'method_call', 'explicit_return', 'binary_op', 'int', 'float', 'local']
 
 PRIORITIES = {
     '**':   11,
@@ -28,17 +28,22 @@ class PythonGenerator(CodeGenerator):
     middlewares = []
 
     templates = dict(
-        module     = "%<dependencies:lines>%<constants:lines>%<custom_exceptions:lines>%<definitions:lines>%<main:lines>",
+        module     = '''
+            %<dependencies:lines>
+            %<constants:lines>
+            %<custom_exceptions:lines>
+            %<definitions:lines>
+            %<main:lines>''',
 
         function_definition   = '''
              def %<name>(%<params:join ','>):
-                 %<#block>''',
+                 %<block:line_join_pass>''',
 
         function_definition_block = ("%<block:line_join>", 'pass'),
 
         method_definition =     '''
             def %<name>(self%<params:each_lpad ', '>):
-                %<#block>''',
+                %<block:line_join_pass>''',
 
         method_definition_block = ('%<block:line_join>', 'pass'),
 
@@ -58,7 +63,7 @@ class PythonGenerator(CodeGenerator):
 
         constructor = '''
             def __init__(self%<.params>):
-                %<#block>''',
+                %<block:line_join_pass>''',
 
         constructor_params = ("%<params:each_lpad ', '>", ''),
 
@@ -124,44 +129,44 @@ class PythonGenerator(CodeGenerator):
 
         if_statement    = '''
             if %<test>:
-                %<#block>
+                %<block:line_join_pass>
             %<.otherwise>''',
 
         if_statement_otherwise = ('%<otherwise>', ''),
 
         elseif_statement = '''
             elif %<test>:
-                %<#block>
+                %<block:line_join_pass>
             %<.otherwise>''',
 
         elseif_statement_otherwise = ('%<otherwise>', ''),
 
         else_statement = '''
             else:
-                %<#block>''',
+                %<block:line_join_pass>''',
 
         while_statement = '''
             while %<test>:
-                %<#block>''',
+                %<block:line_join_pass>''',
 
         try_statement = '''
             try:
-                %<#block>
+                %<block:line_join_pass>
             %<handlers:lines>''',
 
         exception_handler = '''
             except %<.is_builtin> as %<instance>:
-                %<#block>''',
+                %<block:line_join_pass>''',
 
         exception_handler_is_builtin = ('Exception', '%<exception>'),
 
         for_statement = '''
             for %<iterators> in %<sequences>:
-                %<#block>''',
+                %<block:line_join_pass>''',
     
         for_range_statement = '''
             for %<index> in range(%<.first>%<last>%<.step>):
-                %<#block>''',
+                %<block:line_join_pass>''',
 
         for_range_statement_first = ('%<first>, ', ''), 
 
@@ -172,7 +177,7 @@ class PythonGenerator(CodeGenerator):
 
         _py_with = '''
             with %<call> as %<context>:
-                %<#block>''',
+                %<block:line_join_pass>''',
 
         custom_exception = '''
             class %<name>(%<.base>):
@@ -232,6 +237,8 @@ class PythonGenerator(CodeGenerator):
         _py_in   = '%<value> in %<sequence>',
 
         _py_step = '%<sequence>[::%<step>]',
+
+        standard_iterable_call = '[%<block:first> for %<iterators> in %<sequences> if %<test:first>]',
 
         regex    = "re.compile(r'%<value>')",
 

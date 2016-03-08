@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
-from pseudo.pseudo_tree import Node, to_node, method_call
-from pseudo.api_translators.ruby_api_handlers import expand_slice, to_method_rb_block
+from pseudo.pseudo_tree import Node, to_node, method_call, typename
+from pseudo.api_translators.ruby_api_handlers import expand_slice, to_method_rb_block, display
 
 class RubyTranslator(ApiTranslator):
     '''
@@ -102,7 +102,7 @@ class RubyTranslator(ApiTranslator):
         },
 
         'io': {
-            'display':      'puts',
+            'display':      display,
             'read':         'gets',
             'read_file':    'File.read',
             'write_file':   'File.write'

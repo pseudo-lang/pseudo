@@ -1,5 +1,5 @@
 from pseudo.api_translator import ApiTranslator, to_op
-from pseudo.pseudo_tree import Node, method_call, call, to_node, local
+from pseudo.pseudo_tree import Node, method_call, call, to_node, local, attr
 from pseudo.api_translators.python_api_handlers import contains, expand_slice, expand_set_slice, to_py_generatorcomp, ReadFile, WriteFile
 
 class PythonTranslator(ApiTranslator):
@@ -44,7 +44,7 @@ class PythonTranslator(ApiTranslator):
             'reduce':       lambda receiver, aggegator, initial, pseudo_type: Node('static_call',
                                 receiver=local('functools', 'Library'),
                                 message='reduce',
-                                args=[aggegator, initial],
+                                args=[aggegator, receiver, initial],
                                 pseudo_type=pseudo_type),
 
             'any?':         to_py_generatorcomp('any'),
@@ -186,6 +186,10 @@ class PythonTranslator(ApiTranslator):
 
         'regexp': {
             '@all': 're'
+        },
+
+        'system': {
+            '@all': 'sys'
         }
     }
 

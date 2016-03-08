@@ -42,7 +42,7 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
         else:
             # input(definitions)
             # input(definitions + '\n'.join(lines[main_index:]))
-            return imports, definitions + '\n'.join(lines[main_index:])
+            return imports, definitions + '\n' + '\n'.join(lines[main_index:])
 
     # make declarative style great again
 
@@ -175,8 +175,6 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
                 this->ast = 0;
                 return {source};
             }
-
-
         }
 
         int main() {
@@ -219,7 +217,6 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
                 this->a = a;
                 this->b = b;
             }
-
         }
 
         int main() {
@@ -249,9 +246,6 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
                 catch (NeptunError& e) {
                     cout << e.what() << endl;
                 }
-
-
-            
             }
             
             '''))

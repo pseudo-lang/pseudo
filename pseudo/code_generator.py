@@ -3,8 +3,9 @@ import re
 from pseudo.pseudo_tree import Node
 from pseudo.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, SubElement, PseudoType, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
 
-PASS_REGEX = re.compile(r'\n[ \t]*\n([ \t]*pass)')
 LINE_FIRS = re.compile(r'^( +)')
+TOO_MANY_ENDLINES = re.compile(r'(\n\n\n+)')
+CLOSING_CURLY_ENDLINES = re.compile(r'}\n(\n+)([ \t]*)}')
 
 class CodeGenerator:
     '''
@@ -45,7 +46,14 @@ class CodeGenerator:
             r = '\n'.join(p[:len(tree.dependencies)] + (['\n'] if tree.dependencies else []) + self.a + ['\n'] + p[len(tree.dependencies):]) + '\n'
         else:
             r = original
-        return re.sub(PASS_REGEX, r'\n\1', r)
+        r = re.sub(CLOSING_CURLY_ENDLINES, r'}\n\2}', r)
+        return re.sub(TOO_MANY_ENDLINES, r'\n\n', r)
+
+    def action_line_join_pass(self, expanded, _):
+        if expanded:
+            return '\n'.join(expanded)
+        else:
+            return 'pass'
 
     def action_join(self, expanded, separator, depth):
         return separator.join(expanded)
@@ -367,6 +375,12 @@ class CodeGenerator:
                 parsed.append(NEWLINE)
         return parsed
 
+
+    def safe_single_except_nl(self, node, indent):
+        if '\\n' in node.value:
+            return '"%s"' % node.value.replace('"', '\\"')
+        else:
+            return self.safe_single(node, indent)
 
     def safe_single(self, node, indent):
             if "'" in node.value:
