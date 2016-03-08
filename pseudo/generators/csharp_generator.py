@@ -49,6 +49,7 @@ class CSharpGenerator(CodeGenerator):
 
     templates = dict(
         module     = '''
+            using System;
             %<dependencies:lines>
             %<custom_exceptions:lines>
             %<#class_definitions>

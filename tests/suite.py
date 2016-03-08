@@ -567,5 +567,7 @@ class TestHelpers:
         source = '\n'.join(ls[l:])
         if not hasattr(self, '_no_strip'):
             source = source.strip()
+        if hasattr(self, '_ignore_import'):
+            imports.remove(self._ignore_import)
         return imports, source
 

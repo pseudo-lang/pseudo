@@ -16,16 +16,19 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
             custom_exceptions=custom_exceptions,
             constants=[],
             main=ast if isinstance(ast, list) else [ast]), self._language).rstrip()
-        if result.startswith("var _ = require('lodash')"):
-            lines = result.split('\n')
-            imports, source = ['lodash'], lines[2:]
-        else:
-            imports, source = [], result.split('\n')
+        l = 0
+        lines = result.split('\n')
+        imports = []
+        while l < len(lines) and lines[l].startswith("var ") and 'require' in lines[l]:
+            require_index = lines[l].index('require')
+            imports.append(lines[l][require_index + 9:-3])
+            l += 1
+        source = lines[l:]
 
         if len(source) == 1 and source[0][-1] == ';':
             return imports, source[0][:-1]
         else:
-            return imports, '\n'.join(source).rstrip()
+            return imports, '\n'.join(source).strip()
 
 
     _language = 'javascript'
@@ -68,14 +71,43 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     method_call = 'e.filter(42)'
 
     standard_call = [
-        'console.log(42)',
-        'console.read()'
+        'console.log(42)'
     ]
 
     standard_method_call = [
         'l.length',
         "'l'.slice(0, 2)"
     ]
+
+    # io
+    io_display          = "console.log(2, 'z')"
+    io_read_file        = (['fs'], "var source = fs.readFileSync('z.py')")
+    io_write_file       = (['fs'], "fs.writeFileSync('z.py', source)")
+
+    # math
+    math_ln             = 'Math.log(z)'
+    math_tan            = 'Math.tan(z)'
+    math_sin            = 'Math.sin(z)'
+    math_cos            = 'Math.cos(z)'
+
+    # regexp
+    regexp_compile      = 'new RegExp(s)'
+    regexp_escape       = (['lodash'], '_.escapeRegExp(s)')
+
+    # Regexp
+    regexp_match        = 'r.exec(s)'
+                            # hes = [r.exec(s)];
+                            # while (_matches[_matches.length - 1] != null) {
+                            #     _matches.push(r.exec(s));
+                            # }
+                            # _matches.pop()''')
+
+    # RegexpMatch   # result of s.scan is an array, fix regex in next versions
+    regexp_match_group  = 'm[3]'
+    regexp_match_has_match = 'm'
+
+    # Tuple
+    tuple_length        = 'flowers.length'
 
     binary_op = 'ham + egg'
 

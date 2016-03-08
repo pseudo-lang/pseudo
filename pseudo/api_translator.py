@@ -203,10 +203,10 @@ class ApiTranslator(TreeTransformer):
         node.args = [self.transform(arg) for arg in node.args]
         if namespace not in self.functions:
             raise PseudoStandardLibraryError(
-                'pseudo doesn\'t have a %s namespace' % namespace)
+                '%s doesn\'t have a %s namespace' % (type(self).__name__, namespace))
         elif node.function not in self.functions[namespace]:
             raise PseudoStandardLibraryError(
-                'pseudo doesn\'t have a %s:%s function' % (namespace, node.function))
+                '%s doesn\'t have a %s:%s function' % (type(self).__name__, namespace, node.function))
         
         x = self.functions[namespace][node.function]
         if isinstance(x, type) and issubclass(x, LeakingNode):

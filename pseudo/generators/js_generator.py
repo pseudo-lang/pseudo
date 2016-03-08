@@ -98,7 +98,7 @@ class JSGenerator(CodeGenerator):
 
         throw_statement = 'throw new %<exception>(%<value>)',
 
-        new_instance    = "new %<class_name>(%<args:join ', ')",
+        new_instance    = "new %<class_name>(%<args:join ', '>)",
 
         if_statement    = '''
             if (%<test>) {

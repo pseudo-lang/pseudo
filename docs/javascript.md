@@ -1,6 +1,6 @@
 # javascript
 
-* support
+* everything except `io:read` supported
 * [generator](../pseudo/generators/js_generator.py) [api translator](../pseudo/api_translators/js_translator.py) [tests](../tests/test_javascript.py)
 * target version: Ecmascript 5
 
@@ -27,3 +27,9 @@ In the future `pseudo` might add support for different JS api translators target
 Currently Ecmascript 5 is the most popular version, so that's what pseudo targets. Actually ES6/ES7/Coffeescript/Typescript are
 closer semantically and have a richer choice of builtin types/language structures, so they would be even easier to support in next versions.
 
+
+## future versions
+
+`io:read` is not currently supported, because it's typically equivalent
+to a callback for the `stdin` stream in Node. 
+Pseudo would support callback-based js api-s from v0.3 or v0.4
