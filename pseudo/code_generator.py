@@ -402,6 +402,35 @@ class CodeGenerator:
             s = '"%s"' % node.value
         return s
 
+    def binary_left(self, node, indent):
+        return self.binary_side(node.left, node.op)
+
+    def binary_right(self, node, indent):
+        return self.binary_side(node.right, node.op)
+
+    def binary_side(self, field, op):
+        base = self._generate_node(field)
+        if (field.type == 'binary_op' or field.pseudo_type == 'comparison') and\
+           self.priorities[field.op] < self.priorities[op]:
+            return '(%s)' % base
+        else:
+            return base
+
+    priorities = {
+        '**':   11,
+        '%':    11,
+        '/':    10,
+        '*':    10,
+        '+':    9,
+        '-':    9,
+        '>':    8,
+        '<':    8,
+        '>=':   8,
+        '<=':   8,
+        '==':   8,
+        'and':  7,
+        'or':   6,
+    }
     def render_type(self, type):
         return PseudoType(type).expand_type(type, self)
 

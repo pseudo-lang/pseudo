@@ -233,13 +233,15 @@ StringPartition    = standard_method_call(STRING_EXAMPLE, 'partition', [OTHER_ST
 StringSplit        = standard_method_call(STRING_EXAMPLE, 'split', [OTHER_STRING_EXAMPLE], ['List', 'String'])
 StringTrim         = standard_method_call(STRING_EXAMPLE, 'trim', [], 'String')
 StringReversed     = standard_method_call(STRING_EXAMPLE, 'reversed', [], 'String')
-StringJustify      = standard_method_call(STRING_EXAMPLE, 'justify', [local('z', 'Int'), OTHER_STRING_EXAMPLE], 'String')
+StringCenter       = standard_method_call(STRING_EXAMPLE, 'center', [local('z', 'Int'), OTHER_STRING_EXAMPLE], 'String')
 StringCFormat      = standard_method_call(STRING_EXAMPLE, 'c_format', [to_node('z'), to_node(0)], 'String')
 StringFormat       = standard_method_call(STRING_EXAMPLE, 'format', [to_node('z'), to_node(0)], 'String')
 StringPresent      = standard_method_call(STRING_EXAMPLE, 'present?', [], 'Boolean')
 StringEmpty        = standard_method_call(STRING_EXAMPLE, 'empty?', [], 'Boolean')
+StringContains     = standard_method_call(STRING_EXAMPLE, 'contains?', [OTHER_STRING_EXAMPLE], 'Boolean')
 StringToInt        = standard_method_call(STRING_EXAMPLE, 'to_int', [], 'Int')
-
+StringPadLeft      = standard_method_call(STRING_EXAMPLE, 'pad_left', [to_node(0), OTHER_STRING_EXAMPLE], 'String')
+StringPadRight     = standard_method_call(STRING_EXAMPLE, 'pad_right', [to_node(0), OTHER_STRING_EXAMPLE], 'String')
 #Regexp
 RegexpMatch           = standard_method_call(REGEXP_EXAMPLE, 'match', [STRING_EXAMPLE], 'RegexpMatch')
 

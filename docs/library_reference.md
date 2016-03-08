@@ -46,12 +46,15 @@
     - [split](#split)
     - [trim](#trim)
     - [reversed](#reversed)
-    - [justify](#justify)
+    - [center](#center)
     - [c_format](#c_format)
     - [format](#format)
     - [present?](#present?)
     - [empty?](#empty?)
+    - [contains?](#contains?)
     - [to_int](#to_int)
+    - [pad_left](#pad_left)
+    - [pad_right](#pad_right)
   - [Int](#int)
     - [to_int](#to_int)
     - [to_float](#to_float)
@@ -237,13 +240,19 @@ Array#length() -> Int
 String#substr(from: Int, to: Int) -> String
 ```
 
+### substr_from
+
 ```javascript
 String#substr_from(from: Int) -> String
 ```
 
+### substr_to
+
 ```javascript
 String#substr_to(to: Int) -> String
 ```
+
+### length
 
 ```javascript
 String#length() -> Int
@@ -291,10 +300,10 @@ String#trim() -> String
 String#reversed() -> String
 ```
 
-### justify
+### center
 
 ```javascript
-String#justify() -> String
+String#center() -> String
 ```
 
 ### c_format
@@ -329,6 +338,17 @@ String#empty?() -> Boolean
 String#to_int() -> Int
 ```
 
+### pad_left
+
+```javascript
+String#pad_left(count: Int, fill: String) -> String
+```
+
+### pad_right
+
+```javascript
+String#pad_right(count: Int, fill: String) -> String
+```
 
 ## Int
 

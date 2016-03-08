@@ -94,6 +94,66 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     regexp_compile      = 'new RegExp(s)'
     regexp_escape       = (['lodash'], '_.escapeRegExp(s)')
 
+    # # List
+    # list_push       = "cpus.push('')"
+    # list_pop        = 'cpus.pop'
+    # list_length     = 'cpus.length'
+    # list_map        = "cpus.map { |value| value + 'a' }"
+    # list_remove     = "cpus.delete(s)"
+    # list_remove_at  = "cpus.delete_at(0)"
+    # list_length     = 'cpus.length'
+    # list_slice      = 'cpus[2...-1]'
+    # list_slice_from = 'cpus[2..-1]'
+    # list_slice_to   = 'cpus[0...2]'
+    # list_filter     = 'cpus.select { |value| value.length == 0 }'
+    # list_reduce     = textwrap.dedent('''\
+    #                     cpus.reduce('') do |value, other|
+    #                       result = value + other
+    #                       result
+    #                     end''')
+    # list_any        = 'cpus.any? { |value| value.length == 0 }'
+    # list_all        = 'cpus.all? { |value| value.length == 0 }'
+
+    # # Hash
+    # dictionary_length   = 'pointers.length'
+    # dictionary_contains = 'pointers.include?(s)'
+    # dictionary_keys     = 'pointers.keys'
+    # dictionary_values   = 'pointers.values'
+
+    # Set
+    set_length          = 'words.length'
+    set_contains        = '_.contains(words, s)'
+    set_union           = '_.union(words, words)'
+    set_intersection    = '_.intersection(words, words)'
+
+    # Tuple
+    tuple_length        = 'flowers.length'
+
+    # Array
+    array_length        = 'cars.length'
+
+    # String
+    string_substr       = 's.slice(1, -1)'
+    string_substr_from  = 's.slice(2)'
+    string_substr_to    = 's.slice(0, -2)'
+    string_length       = 's.length'
+    string_find         = 's.search(t)'
+    string_find_from    = 's.slice(z).search(t)'
+    string_count        = '_.where(t).length'
+    string_concat       = 's + t'
+    string_partition    = '_.partition(t)[1]'
+    string_split        = 's.split(t)'
+    string_trim         = 's.trim()'
+    string_reversed     = "s.split('').reverse().join('')"
+    string_justify      = '_.pad(s, z, t)'
+    string_present      = 's'
+    string_empty        = '_.isEmpty(s)'
+    string_contains     = '_.contains(s, t)'
+    string_to_int       = 'parseInt(s)'
+    string_pad_left     = '_.padLeft(s, 0, t)'
+    string_pad_right    = '_.padRight(s, 0, t)'
+
+    
     # Regexp
     regexp_match        = 'r.exec(s)'
                             # hes = [r.exec(s)];
@@ -104,10 +164,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     # RegexpMatch   # result of s.scan is an array, fix regex in next versions
     regexp_match_group  = 'm[3]'
-    regexp_match_has_match = 'm'
-
-    # Tuple
-    tuple_length        = 'flowers.length'
+    regexp_match_has_match = 'm'    
 
     binary_op = 'ham + egg'
 

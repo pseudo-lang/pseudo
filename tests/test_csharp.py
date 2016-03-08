@@ -103,6 +103,64 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         'l.Count',
         '"l".Substring(0, 2)'
     ]
+    # # List
+    # list_push       = "cpus.push('')"
+    # list_pop        = 'cpus.pop'
+    # list_length     = 'cpus.length'
+    # list_map        = "cpus.map { |value| value + 'a' }"
+    # list_remove     = "cpus.delete(s)"
+    # list_remove_at  = "cpus.delete_at(0)"
+    # list_length     = 'cpus.length'
+    # list_slice      = 'cpus[2...-1]'
+    # list_slice_from = 'cpus[2..-1]'
+    # list_slice_to   = 'cpus[0...2]'
+    # list_filter     = 'cpus.select { |value| value.length == 0 }'
+    # list_reduce     = textwrap.dedent('''\
+    #                     cpus.reduce('') do |value, other|
+    #                       result = value + other
+    #                       result
+    #                     end''')
+    # list_any        = 'cpus.any? { |value| value.length == 0 }'
+    # list_all        = 'cpus.all? { |value| value.length == 0 }'
+
+    # # Hash
+    # dictionary_length   = 'pointers.length'
+    # dictionary_contains = 'pointers.include?(s)'
+    # dictionary_keys     = 'pointers.keys'
+    # dictionary_values   = 'pointers.values'
+
+    # # Set
+    # set_length          = 'words.length'
+    # set_contains        = 'words.include?(s)'
+    # set_union           = 'words | words'
+    # set_intersection    = 'words.intersection(words)'
+
+    # Tuple
+    tuple_length        = '2' # we know the size of a tuple at constant time, easiest for now
+
+    # Array
+    array_length        = '10'
+
+    # String
+    string_substr       = 's.Substring(1, s.Length - 2)'
+    string_substr_from  = 's.Substring(2)'
+    string_substr_to    = 's.Substring(0, s.Length - 2)'
+    string_length       = 's.Length'
+    string_find         = 's.IndexOf(t)'
+    string_find_from    = 's.IndexOf(t, z)'
+    string_count        = 's.Count(sub => sub == s)'
+    string_concat       = 's + t'
+    # string_partition    = 's.split(t)[0]' #FIXV3
+    string_split        = 's.Split(t)'
+    string_trim         = 's.Trim()'
+    # string_reversed     = 's.everse' #FIXV3
+    string_center       = 's.PadLeft((z - s.Length) / 2 + s.Length, t).PadRight(z, t)'
+    string_present      = 's.Length != 0'
+    string_empty        = 's.Length == 0'
+    string_contains     = 's.Contains(t)'
+    string_to_int       = 'Int32.Parse(s)'
+    string_pad_left     = 's.PadLeft(0, t)'
+    string_pad_right    = 's.PadRight(0, t)'
 
     # Regexp
     regexp_match        = 'r.Match(s)'
@@ -110,9 +168,6 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     # RegexpMatch   # result of s.scan is an array, fix regex in next versions
     regexp_match_group  = 'm.Groups[3].Captures[0]'
     regexp_match_has_match = 'm.Success'
-
-    # Tuple
-    tuple_length        = '2' # we know the size of a tuple at constant time, easiest for now
 
     binary_op = 'ham + egg'
 

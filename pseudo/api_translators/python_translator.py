@@ -85,14 +85,17 @@ class PythonTranslator(ApiTranslator):
             'format':       '#format',
             'concat':       to_op('+'),
             'c_format':     to_op('%'),
-            'justify':      '#center',
+            'center':       '#center',
             'reversed':     'reversed',
             'empty?':       lambda receiver, _: Node('unary_op',
                                 op='not',
                                 value=receiver,
                                 pseudo_type='Boolean'),
             'present?':     lambda receiver, _: receiver,
-            'to_int':       'int'
+            'contains?':    lambda receiver, element, _: Node('_py_in', sequence=receiver, value=element, pseudo_type='Boolean'),
+            'to_int':       'int',
+            'pad_left':     '#ljust',
+            'pad_right':    '#rjust'
         },
         'Set': {
             '@equivalent':  'set',

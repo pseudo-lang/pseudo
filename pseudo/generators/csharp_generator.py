@@ -122,7 +122,7 @@ class CSharpGenerator(CodeGenerator):
             _otherwise = '%<target> = %<value>'
         ),
 
-        binary_op   = '%<left> %<op> %<right>',
+        binary_op   = '%<#binary_left> %<op> %<#binary_right>',
         unary_op    = '%<op>%<value>',
         comparison  = '%<left> %<op> %<right>',
 

@@ -1,6 +1,8 @@
-from pseudo.api_translator import ApiTranslator
-from pseudo.pseudo_tree import Node, method_call, call, to_node
+from pseudo.api_translator import ApiTranslator, to_op
+from pseudo.pseudo_tree import Node, method_call, call, to_node, attr, local
 
+
+LODASH = local('_', 'Library')
 
 class JSTranslator(ApiTranslator):
     '''
@@ -45,7 +47,38 @@ class JSTranslator(ApiTranslator):
             'substr':       '#slice',
             'substr_from':  '#slice',
             'length':       '.length!',
-            'substr_to':    '#slice(0, %{0})'
+            'substr_to':    '#slice(0, %{0})',
+            'find':         '#search',
+            'find_from':    lambda f, value, index, _: method_call(
+                                method_call(f, 'slice', [index], 'String'),
+                                'search',
+                                [value],
+                                'Int'),
+            'count':        lambda f, count, _: attr(method_call(LODASH, 'where', [count], ['List', 'String']), 'length', 'Int'),
+            'concat':       to_op('+'),
+            'partition':    lambda f, delimiter, _: Node('index', sequence=method_call(LODASH, 'partition', [delimiter], 'String'), index=to_node(1), pseudo_type=['Tuple', 'String', 'String', 'String']),
+            'split':        '#split',
+            'trim':         '#trim',
+            'reversed':     lambda f, _: method_call(
+                                method_call(
+                                    method_call(
+                                        f,
+                                        'split',
+                                        [to_node('')],
+                                        ['List', 'String']),
+                                    'reverse',
+                                    [],
+                                    ['List', 'String']),
+                                'join',
+                                [to_node('')],
+                                'String'),
+            'center':      '_.pad(%{self}, %{0}, %{1})',
+            'present?':     lambda f, _: f,
+            'empty?':       '_.isEmpty(%{self})',
+            'contains?':    '_.contains(%{self}, %{0})',
+            'to_int':       'parseInt',
+            'pad_left':     '_.padLeft(%{self}, %{0}, %{1})',
+            'pad_right':    '_.padRight(%{self}, %{0}, %{1})'
         },
         'Tuple': {
             '@equivalent':  'Array',
@@ -53,7 +86,17 @@ class JSTranslator(ApiTranslator):
             'length':       '.length!'
         },
         'Array': {
-            '@equivalent':  'Array'
+            '@equivalent':  'Array',
+
+            'length':       '.length!'
+        },
+        'Set': {
+            '@equivalent': 'Object',
+
+            'length':       '.length!',
+            'contains?':    '_.contains(%{self}, %{0})',
+            'intersection': '_.intersection(%{self}, %{0})',
+            'union':        '_.union(%{self}, %{0})'
         },
         'RegexpMatch': {
             '@equivalent':  'Array',
@@ -69,11 +112,7 @@ class JSTranslator(ApiTranslator):
             '@equivalent':  'Regexp',
 
             'match':        '#exec'
-        },
-        'Set': {
-            '@equivalent': 'Object'
-        },
-
+        }
     }
 
     functions = {
@@ -82,6 +121,14 @@ class JSTranslator(ApiTranslator):
             'exit':         lambda status, _: call('exit', [status])
         },
 
+        'system': {
+            'args':         'process.argv!',
+            'arg_count':    lambda _: attr(attr(local('process', 'Library'), 'argv', ['List', 'String']), 'length', 'Int'),
+            'index':        lambda value, _: Node('index',
+                                sequence=attr(local('process', 'Library'), 'argv', ['List', 'String']),
+                                index=value,
+                                pseudo_type='String')                                
+        },
         'io': {
             'display':      'console.log',
             'read_file':    'fs.readFileSync',

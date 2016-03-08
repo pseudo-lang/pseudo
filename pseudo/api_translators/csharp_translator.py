@@ -1,6 +1,6 @@
-from pseudo.api_translator import ApiTranslator
-from pseudo.pseudo_tree import Node, method_call, call, attr, to_node
-from pseudo.api_translators.csharp_api_handlers import expand_slice, Display
+from pseudo.api_translator import ApiTranslator, to_op
+from pseudo.pseudo_tree import Node, method_call, attr, to_node, local, call
+from pseudo.api_translators.csharp_api_handlers import expand_slice, Display, normalize, pad
 
 class CSharpTranslator(ApiTranslator):
     '''
@@ -42,8 +42,47 @@ class CSharpTranslator(ApiTranslator):
             '@equivalent':  'String',
 
             'length':       '.Length!',
-            'substr':       '#Substring',
-            'find':         '#Find'
+            'substr':       lambda f, from_, to, pseudo_type: method_call(
+                                f, 'Substring', [from_, normalize(f, from_, to)], pseudo_type),
+
+            'substr_from':  '#Substring',
+            'substr_to':    lambda f, to, pseudo_type: method_call(
+                                f, 'Substring', [to_node(0), normalize(f, to_node(0), to)], pseudo_type),
+            'find_from':    '#IndexOf',
+            'find':         '#IndexOf',
+            'count':        lambda f, element, pseudo_type: method_call(
+                                    f,
+                                    'Count',
+                                    [Node('anonymous_function',
+                                        params=['sub'],
+                                        block=[
+                                            Node('comparison',
+                                                op='==',
+                                                left=local('sub', 'String'),
+                                                right=local('s', 'String'),
+                                                pseudo_type='Boolean')
+                                        ],
+                                        return_type='Boolean',
+                                        pseudo_type=['Function', 'String', 'Boolean'])],
+                                    pseudo_type='Int'),
+            'concat':       to_op('+'),
+            'split':        '#Split',
+            'trim':         '#Trim',
+            'center':       pad,
+            'present?':     lambda f, _: Node('comparison',
+                                op='!=',
+                                left=attr(f, 'Length', 'Int'),
+                                right=to_node(0),
+                                pseudo_type='Boolean'),
+            'empty?':       lambda f, _: Node('comparison',
+                                op='==',
+                                left=attr(f, 'Length', 'Int'),
+                                right=to_node(0),
+                                pseudo_type='Boolean'),
+            'contains?':    '#Contains',
+            'to_int':       'Int32.Parse(%{self})',
+            'pad_left':     '#PadLeft',
+            'pad_right':    '#PadRight'
         },
         'Set': {
             '@equivalent':  'Set'
@@ -72,14 +111,14 @@ class CSharpTranslator(ApiTranslator):
         'Array': {
             '@equivalent':  'Any[]',
 
-            'length':       lambda _, pseudo_type: to_node(pseudo_type[1])
+            'length':       lambda receiver, _: to_node(receiver.pseudo_type[2])
         },
         'Tuple': {
             '@equivalent': 'Tuple',
 
             'length':       lambda _, pseudo_type: to_node(len(pseudo_type) - 1)
         }
-    }
+    } 
 
     functions = {
         'io': {

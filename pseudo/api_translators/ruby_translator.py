@@ -68,13 +68,16 @@ class RubyTranslator(ApiTranslator):
             'split':        '#split',
             'trim':         '#trim',
             'reversed':     '#reverse',
-            'justify':      '#center',
+            'center':       '#center',
             'present?':     lambda receiver, _: Node('unary_op', 
                                 op='not',
                                 value=method_call(receiver, 'empty?', [], 'Boolean'),
                                 pseudo_type='Boolean'),
             'empty?':       '#empty?',
-            'to_int':       '#to_i'
+            'contains?':    '#include?',
+            'to_int':       '#to_i',
+            'pad_left':     '#ljust',
+            'pad_right':    '#rjust'
         },
         'Regexp': {
             '@equivalent':  'Regexp',

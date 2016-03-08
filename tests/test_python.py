@@ -144,7 +144,10 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     string_format       = "s.format('z', 0)"
     string_present      = 's'
     string_empty        = 'not s'
+    string_contains     = 't in s'
     string_to_int       = 'int(s)'
+    string_pad_left     = 's.ljust(0, t)'
+    string_pad_right    = 's.rjust(0, t)'
 
     #Regexp
     regexp_match        = (['re'], 'r.match(s)')

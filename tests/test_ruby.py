@@ -136,10 +136,13 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     string_split        = 's.split(t)'
     string_trim         = 's.trim'
     string_reversed     = 's.reverse'
-    string_justify      = 's.center(z, t)'
+    string_center       = 's.center(z, t)'
     string_present      = '!s.empty?'
     string_empty        = 's.empty?'
+    string_contains     = 's.include?(t)'
     string_to_int       = 's.to_i'
+    string_pad_left     = 's.ljust(0, t)'
+    string_pad_right    = 's.rjust(0, t)'
 
     # Regexp
     regexp_match        = 's.scan(r)'

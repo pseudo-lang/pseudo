@@ -2,23 +2,6 @@ from pseudo.code_generator import CodeGenerator, switch
 
 
 EXPRESSION_TYPES = ['call', 'implicit_return', 'method_call', 'explicit_return', 'binary_op', 'int', 'float', 'local']
-
-PRIORITIES = {
-    '**':   11,
-    '%':    11,
-    '/':    10,
-    '*':    10,
-    '+':    9,
-    '-':    9,
-    '>':    8,
-    '<':    8,
-    '>=':   8,
-    '<=':   8,
-    '==':   8,
-    'and':  7,
-    'or':   6,
-}
-
     
 class PythonGenerator(CodeGenerator):
     '''Python code generator'''
@@ -281,20 +264,6 @@ class PythonGenerator(CodeGenerator):
             return 'pass'
         else:
             return ''
-
-    def binary_left(self, node, indent):
-        return self.binary_side(node.left, node.op)
-
-    def binary_right(self, node, indent):
-        return self.binary_side(node.right, node.op)
-
-    def binary_side(self, field, op):
-        base = self._generate_node(field)
-        if (field.type == 'binary_op' or field.pseudo_type == 'comparison') and\
-           PRIORITIES[field.op] < PRIORITIES[op]:
-            return '(%s)' % base
-        else:
-            return base
 
     def test(self, node, indent):
         if node.test:
