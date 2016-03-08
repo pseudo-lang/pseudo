@@ -13,6 +13,13 @@
     - [filter](#filter)
     - [reduce](#reduce)
     - [any?](#any?)
+    - [all?](#all?)
+    - [find](#find)
+    - [present?](#present?)
+    - [empty?](#empty?)
+    - [push_many](#push_many)
+    - [repeat](#repeat)
+    - [concat](#concat)
   - [Dictionary[K, V]](#dictionary)
   	- [length](#length)
     - [contains?](#contains?)
@@ -42,7 +49,12 @@
     - [justify](#justify)
     - [c_format](#c_format)
     - [format](#format)
-
+    - [present?](#present?)
+    - [empty?](#empty?)
+    - [to_int](#to_int)
+  - [Int](#int)
+    - [to_int](#to_int)
+    - [to_float](#to_float)
 - [functions](#functions)
   - [math](#math)
     - [log](#log)
@@ -297,6 +309,39 @@ formats using c-style `%d`, `%f`, `%s` etc, function accepting a variable number
 
 ```javascript
 String#format(*args: Any) -> String
+```
+
+### present?
+
+```javascript
+String#present?() -> Boolean
+```
+
+### empty?
+
+```javascript
+String#empty?() -> Boolean
+```
+
+### to_int
+
+```javascript
+String#to_int() -> Int
+```
+
+
+## Int
+
+### to_int
+
+```javascript
+Int#to_int() -> Int
+```
+
+### to_float
+
+```javascript
+Int#to_float() -> Float
 ```
 
 # functions

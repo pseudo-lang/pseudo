@@ -134,6 +134,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     string_substr_to    = 's[:-2]'
     string_length       = 'len(s)'
     string_find         = 's.index(t)'
+    string_find_from    = 's.index(t, z)'
     string_count        = 's.count(t)'
     string_concat       = 's + t'
     string_partition    = 's.partition(t)'
@@ -143,6 +144,9 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     string_justify      = 's.center(z, t)'
     string_cformat      = "s % ('z', 0)"
     string_format       = "s.format('z', 0)"
+    string_present      = 's'
+    string_empty        = 'not s'
+    string_to_int       = 'int(s)'
 
     #Regexp
     regexp_match        = (['re'], 'r.match(s)')

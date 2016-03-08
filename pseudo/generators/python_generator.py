@@ -84,7 +84,10 @@ class PythonGenerator(CodeGenerator):
 
         binary_op   = '%<#binary_left> %<op> %<#binary_right>',
         
-        unary_op    = '%<op>%<value>',
+        unary_op    = switch(lambda u: u.op == 'not',
+            true       = 'not %<value>',
+            _otherwise = '%<op>%<value>'
+        ),
 
         comparison  = '%<#binary_left> %<op> %<#binary_right>',
 

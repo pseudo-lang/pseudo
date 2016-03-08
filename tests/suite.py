@@ -226,6 +226,7 @@ StringSubstrFrom   = standard_method_call(STRING_EXAMPLE, 'substr_from', [to_nod
 StringSubstrTo     = standard_method_call(STRING_EXAMPLE, 'substr_to', [to_node(-2)], 'String')
 StringLength       = standard_method_call(STRING_EXAMPLE, 'length', [], 'Int')
 StringFind         = standard_method_call(STRING_EXAMPLE, 'find', [OTHER_STRING_EXAMPLE], 'Int')
+StringFindFrom     = standard_method_call(STRING_EXAMPLE, 'find_from', [OTHER_STRING_EXAMPLE, INT_EXAMPLE], 'Int')
 StringCount        = standard_method_call(STRING_EXAMPLE, 'count', [OTHER_STRING_EXAMPLE], 'Int')
 StringConcat       = standard_method_call(STRING_EXAMPLE, 'concat', [OTHER_STRING_EXAMPLE], 'String')
 StringPartition    = standard_method_call(STRING_EXAMPLE, 'partition', [OTHER_STRING_EXAMPLE], ['Tuple', 'String', 'String', 'String'])
@@ -235,6 +236,9 @@ StringReversed     = standard_method_call(STRING_EXAMPLE, 'reversed', [], 'Strin
 StringJustify      = standard_method_call(STRING_EXAMPLE, 'justify', [local('z', 'Int'), OTHER_STRING_EXAMPLE], 'String')
 StringCFormat      = standard_method_call(STRING_EXAMPLE, 'c_format', [to_node('z'), to_node(0)], 'String')
 StringFormat       = standard_method_call(STRING_EXAMPLE, 'format', [to_node('z'), to_node(0)], 'String')
+StringPresent      = standard_method_call(STRING_EXAMPLE, 'present?', [], 'Boolean')
+StringEmpty        = standard_method_call(STRING_EXAMPLE, 'empty?', [], 'Boolean')
+StringToInt        = standard_method_call(STRING_EXAMPLE, 'to_int', [], 'Int')
 
 #Regexp
 RegexpMatch           = standard_method_call(REGEXP_EXAMPLE, 'match', [STRING_EXAMPLE], 'RegexpMatch')

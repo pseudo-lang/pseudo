@@ -128,7 +128,8 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     string_substr_from  = 's[2..-1]'
     string_substr_to    = 's[0...-2]'
     string_length       = 's.length'
-    string_find         = 's.find(t)'
+    string_find         = 's.index(t)'
+    string_find_from    = 's.index(t, z)'
     string_count        = 's.count(t)'
     string_concat       = 's + t'
     string_partition    = 's.partition(t)'
@@ -136,6 +137,9 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     string_trim         = 's.trim'
     string_reversed     = 's.reverse'
     string_justify      = 's.center(z, t)'
+    string_present      = '!s.empty?'
+    string_empty        = 's.empty?'
+    string_to_int       = 's.to_i'
 
     # Regexp
     regexp_match        = 's.scan(r)'

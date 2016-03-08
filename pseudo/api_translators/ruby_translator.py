@@ -61,13 +61,20 @@ class RubyTranslator(ApiTranslator):
             'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, 'String'),
             'length':       '#length',
             'concat':       to_op('+'),
-            'find':         '#find',
+            'find':         '#index',
+            'find_from':    '#index',
             'count':        '#count',
             'partition':    '#partition',
             'split':        '#split',
             'trim':         '#trim',
             'reversed':     '#reverse',
-            'justify':      '#center'
+            'justify':      '#center',
+            'present?':     lambda receiver, _: Node('unary_op', 
+                                op='not',
+                                value=method_call(receiver, 'empty?', [], 'Boolean'),
+                                pseudo_type='Boolean'),
+            'empty?':       '#empty?',
+            'to_int':       '#to_i'
         },
         'Regexp': {
             '@equivalent':  'Regexp',
@@ -116,6 +123,16 @@ class RubyTranslator(ApiTranslator):
         'regexp': {
             'compile':      lambda value, _: Node('_rb_regex_interpolation', value=value, pseudo_type='Regexp'),
             'escape':       'Regexp.escape'
+        },
+
+        'system': {
+            'args':         lambda _: typename('ARGV', ['List', 'String']),
+            'arg_count':    'ARGV.length!',
+            'index':        lambda value, _: Node('index',
+                                        sequence=typename('ARGV', ['List', 'String']),
+                                        index=to_node(value.value - 1) if value.type == 'int' else Node('binary_op', op='-', left=value, right=to_node(1), pseudo_type='Int'),
+                                        pseudo_type='String')
+            # in ruby args counting starts from 0, not 1
         }
     }
 

@@ -71,11 +71,13 @@ class PythonTranslator(ApiTranslator):
         },
         'String': {
             '@equivalent':  'str',
+
             'substr':       expand_slice,
             'substr_from':  expand_slice,
             'length':       'len',
             'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, 'String'),
             'find':         '#index',
+            'find_from':    '#index',
             'count':        '#count',
             'partition':    '#partition', 
             'split':        '#split',
@@ -84,10 +86,17 @@ class PythonTranslator(ApiTranslator):
             'concat':       to_op('+'),
             'c_format':     to_op('%'),
             'justify':      '#center',
-            'reversed':     'reversed'
+            'reversed':     'reversed',
+            'empty?':       lambda receiver, _: Node('unary_op',
+                                op='not',
+                                value=receiver,
+                                pseudo_type='Boolean'),
+            'present?':     lambda receiver, _: receiver,
+            'to_int':       'int'
         },
         'Set': {
             '@equivalent':  'set',
+
             'length':       'len',
             'contains?':    contains,
             'union':        to_op('|'),
@@ -126,6 +135,18 @@ class PythonTranslator(ApiTranslator):
             'read':         'input',
             'write_file':   WriteFile,
             'read_file':    ReadFile
+        },
+
+        'system': {
+            'args':         'sys.argv!',
+            'arg_count':    lambda _: call('len', [attr(local('sys', 'Library'), 'argv', ['List', 'String'])], 'Int'),
+            
+            'index':        lambda value, _: Node('index',
+                                                sequence=attr(local('sys', 'Library'),
+                                                              'argv',
+                                                              ['List', 'String']),
+                                                index=value,
+                                                pseudo_type='String')
         },
 
         'http': {

@@ -1,0 +1,286 @@
+constants: []
+custom_exceptions: []
+definitions:
+- block:
+  - pseudo_type: Void
+    target: {name: raw, pseudo_type: String, type: local}
+    type: assignment
+    value:
+      args:
+      - {name: filename, pseudo_type: String, type: local}
+      function: read_file
+      namespace: io
+      pseudo_type: String
+      type: standard_call
+  - pseudo_type: Void
+    target:
+      name: lines
+      pseudo_type: [List, String]
+      type: local
+    type: assignment
+    value:
+      args:
+      - {pseudo_type: String, type: string, value: \n}
+      message: split
+      pseudo_type: [List, String]
+      receiver: {name: raw, pseudo_type: String, type: local}
+      type: standard_method_call
+  - pseudo_type:
+    - List
+    - - Tuple
+      - String
+      - String
+      - [Array, Int, 2]
+    type: implicit_return
+    value:
+      block:
+      - args:
+        - {name: line, pseudo_type: String, type: local}
+        function:
+          name: parse_result
+          pseudo_type:
+          - Function
+          - String
+          - - Tuple
+            - String
+            - String
+            - [Array, Int, 2]
+          type: local
+        pseudo_type:
+        - Tuple
+        - String
+        - String
+        - [Array, Int, 2]
+        type: call
+      function: filter_map
+      iterators:
+        iterator: {name: line, pseudo_type: String, type: local}
+        type: for_iterator
+      pseudo_type:
+      - List
+      - - Tuple
+        - String
+        - String
+        - [Array, Int, 2]
+      sequences:
+        sequence:
+          name: lines
+          pseudo_type: [List, String]
+          type: local
+        type: for_sequence
+      test:
+      - args: []
+        message: present?
+        pseudo_type: Boolean
+        receiver: {name: line, pseudo_type: String, type: local}
+        type: standard_method_call
+      type: standard_iterable_call
+  name: load_results
+  params: [filename]
+  pseudo_type:
+  - Function
+  - String
+  - - List
+    - - Tuple
+      - String
+      - String
+      - [Array, Int, 2]
+  return_type:
+  - List
+  - - Tuple
+    - String
+    - String
+    - [Array, Int, 2]
+  type: function_definition
+- block:
+  - pseudo_type: Void
+    target: {name: away_index, pseudo_type: Int, type: local}
+    type: assignment
+    value:
+      left:
+        args:
+        - {pseudo_type: String, type: string, value: ' - '}
+        message: find
+        pseudo_type: Int
+        receiver: {name: line, pseudo_type: String, type: local}
+        type: standard_method_call
+      op: +
+      pseudo_type: Int
+      right: {pseudo_type: Int, type: int, value: 3}
+      type: binary_op
+  - pseudo_type: Void
+    target: {name: result_index, pseudo_type: Int, type: local}
+    type: assignment
+    value:
+      left:
+        args:
+        - {pseudo_type: String, type: string, value: ' '}
+        - {name: away_index, pseudo_type: Int, type: local}
+        message: find_from
+        pseudo_type: Int
+        receiver: {name: line, pseudo_type: String, type: local}
+        type: standard_method_call
+      op: +
+      pseudo_type: Int
+      right: {pseudo_type: Int, type: int, value: 1}
+      type: binary_op
+  - pseudo_type: Void
+    target:
+      name: goals
+      pseudo_type: [List, String]
+      type: local
+    type: assignment
+    value:
+      args:
+      - {pseudo_type: String, type: string, value: ':'}
+      message: split
+      pseudo_type: [List, String]
+      receiver:
+        args:
+        - {name: result_index, pseudo_type: Int, type: local}
+        message: substr_from
+        pseudo_type: String
+        receiver: {name: line, pseudo_type: String, type: local}
+        type: standard_method_call
+      type: standard_method_call
+  - pseudo_type:
+    - Tuple
+    - String
+    - String
+    - [Array, Int, 2]
+    type: implicit_return
+    value:
+      elements:
+      - args:
+        - left: {name: away_index, pseudo_type: Int, type: local}
+          op: '-'
+          pseudo_type: Int
+          right: {pseudo_type: Int, type: int, value: 3}
+          type: binary_op
+        message: substr_to
+        pseudo_type: String
+        receiver: {name: line, pseudo_type: String, type: local}
+        type: standard_method_call
+      - args:
+        - {name: away_index, pseudo_type: Int, type: local}
+        - left: {name: result_index, pseudo_type: Int, type: local}
+          op: '-'
+          pseudo_type: Int
+          right: {pseudo_type: Int, type: int, value: 1}
+          type: binary_op
+        message: substr
+        pseudo_type: String
+        receiver: {name: line, pseudo_type: String, type: local}
+        type: standard_method_call
+      - elements:
+        - args: []
+          message: to_int
+          pseudo_type: Int
+          receiver:
+            index: {pseudo_type: Int, type: int, value: 0}
+            pseudo_type: String
+            sequence:
+              name: goals
+              pseudo_type: [List, String]
+              type: local
+            type: index
+          type: standard_method_call
+        - args: []
+          message: to_int
+          pseudo_type: Int
+          receiver:
+            index: {pseudo_type: Int, type: int, value: 1}
+            pseudo_type: String
+            sequence:
+              name: goals
+              pseudo_type: [List, String]
+              type: local
+            type: index
+          type: standard_method_call
+        pseudo_type: [Array, Int, 2]
+        type: array
+      pseudo_type:
+      - Tuple
+      - String
+      - String
+      - [Array, Int, 2]
+      type: tuple
+  name: parse_result
+  params: [line]
+  pseudo_type:
+  - Function
+  - String
+  - - Tuple
+    - String
+    - String
+    - [Array, Int, 2]
+  return_type:
+  - Tuple
+  - String
+  - String
+  - [Array, Int, 2]
+  type: function_definition
+dependencies: []
+main:
+- block:
+  - args:
+    - {pseudo_type: String, type: string, value: 'usage: football <stats-file> <team>'}
+    function: display
+    namespace: io
+    pseudo_type: Void
+    type: standard_call
+  otherwise:
+    block:
+    - pseudo_type: Void
+      target:
+        name: results
+        pseudo_type:
+        - List
+        - - Tuple
+          - String
+          - String
+          - [Array, Int, 2]
+        type: local
+      type: assignment
+      value:
+        args:
+        - args:
+          - {pseudo_type: Int, type: int, value: 1}
+          function: index
+          namespace: system
+          pseudo_type: String
+          type: standard_call
+        function:
+          name: load_results
+          pseudo_type:
+          - Function
+          - String
+          - - List
+            - - Tuple
+              - String
+              - String
+              - [Array, Int, 2]
+          type: local
+        pseudo_type:
+        - List
+        - - Tuple
+          - String
+          - String
+          - [Array, Int, 2]
+        type: call
+    pseudo_type: Void
+    type: else_statement
+  pseudo_type: Void
+  test:
+    left:
+      args: []
+      function: arg_count
+      namespace: system
+      pseudo_type: Int
+      type: standard_call
+    op: <
+    pseudo_type: Boolean
+    right: {pseudo_type: Int, type: int, value: 3}
+    type: binary_op
+  type: if_statement
+type: module
