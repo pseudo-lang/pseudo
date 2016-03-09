@@ -76,7 +76,8 @@ definitions:
         type: standard_method_call
       type: standard_iterable_call
   name: load_results
-  params: [filename]
+  params:
+  - {name: filename, pseudo_type: Function, type: local}
   pseudo_type:
   - Function
   - String
@@ -206,7 +207,8 @@ definitions:
       - [Array, Int, 2]
       type: tuple
   name: parse_result
-  params: [line]
+  params:
+  - {name: line, pseudo_type: Function, type: local}
   pseudo_type:
   - Function
   - String
@@ -266,7 +268,15 @@ definitions:
             pseudo_type: Int
             type: call
           type: binary_op
-        params: [memo, result]
+        params:
+        - {name: memo, pseudo_type: Int, type: local}
+        - name: result
+          pseudo_type:
+          - Tuple
+          - String
+          - String
+          - [Array, Int, 2]
+          type: local
         pseudo_type:
         - Function
         - Int
@@ -291,7 +301,16 @@ definitions:
         type: local
       type: standard_method_call
   name: calculate_points
-  params: [results, team]
+  params:
+  - {name: results, pseudo_type: Function, type: local}
+  - name: team
+    pseudo_type:
+    - List
+    - - Tuple
+      - String
+      - String
+      - [Array, Int, 2]
+    type: local
   pseudo_type:
   - Function
   - - List
@@ -429,7 +448,11 @@ definitions:
       type: binary_op
     type: if_statement
   name: result_points
-  params: [team, host, away, result]
+  params:
+  - {name: team, pseudo_type: Function, type: local}
+  - {name: host, pseudo_type: String, type: local}
+  - {name: away, pseudo_type: String, type: local}
+  - {name: result, pseudo_type: String, type: local}
   pseudo_type:
   - Function
   - String

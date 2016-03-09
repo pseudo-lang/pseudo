@@ -10,8 +10,8 @@ def to_py_generatorcomp(method):
                    local(method, ['Function', test.pseudo_type, 'Boolean']),
                    [Node('_py_generatorcomp',
                         sequences=Node('for_sequence', sequence=receiver),
-                        iterators=Node('for_iterator', iterator=local(test.params[0], test.pseudo_type[1])),
-                        block=test.block[0],
+                        iterators=Node('for_iterator', iterator=local(test.params[0].name, test.pseudo_type[1])),
+                        block=test.block[0].value,
                         test=None,
                         pseudo_type=['PyGenerator', 'Boolean'])],
                     pseudo_type='Boolean')

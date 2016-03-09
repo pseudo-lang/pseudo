@@ -1,5 +1,5 @@
 from pseudo.api_translator import ApiTranslator, to_op
-from pseudo.pseudo_tree import Node, to_node, method_call, typename
+from pseudo.pseudo_tree import Node, to_node, method_call, typename, local
 from pseudo.api_translators.ruby_api_handlers import expand_slice, to_method_rb_block, display
 
 class RubyTranslator(ApiTranslator):
@@ -130,9 +130,9 @@ class RubyTranslator(ApiTranslator):
 
         'system': {
             'args':         lambda _: typename('ARGV', ['List', 'String']),
-            'arg_count':    'ARGV.length!',
+            'arg_count':    lambda _: Node('binary_op', op='+', left=method_call(local('ARGV', ['List', 'String']), 'length', [], 'Int'), right=to_node(1), pseudo_type='Int'),
             'index':        lambda value, _: Node('index',
-                                        sequence=typename('ARGV', ['List', 'String']),
+                                        sequence=local('ARGV', ['List', 'String']),
                                         index=to_node(value.value - 1) if value.type == 'int' else Node('binary_op', op='-', left=value, right=to_node(1), pseudo_type='Int'),
                                         pseudo_type='String')
             # in ruby args counting starts from 0, not 1

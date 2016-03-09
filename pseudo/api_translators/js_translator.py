@@ -25,14 +25,14 @@ class JSTranslator(ApiTranslator):
                                     'splice', 
                                     [index, 
                                       to_node(index.value + 1)
-                                      if node.type == 'int' else
+                                      if index.type == 'int' else
                                       Node('binary_op', op='+', left=index, right=to_node(1), pseudo_type='Int')],
                                     pseudo_type='Void'),
             'remove':       '_.pull(%{self}, %{0})',
             'slice':        '#slice',
             'slice_from':   '#slice',
             'slice_to':     '#slice(0, %{0})',
-            'map':          '_.map',
+            'map':          '_.map(%{self}, %{0})',
             'filter':       '_.filter'
         },
         'Dictionary': {

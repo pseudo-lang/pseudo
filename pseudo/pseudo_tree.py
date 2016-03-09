@@ -27,7 +27,9 @@ def node_representer(dumper, data):
 def method_call(receiver, message, args, pseudo_type=None):
     '''A shortcut for a method call, expands a str receiver to a identifier'''
 
-    return Node('method_call', receiver=local(receiver), message=message, args=args, pseudo_type=pseudo_type)
+    if not isinstance(receiver, Node):
+        receiver = local(receiver)
+    return Node('method_call', receiver=receiver, message=message, args=args, pseudo_type=pseudo_type)
 
 
 def call(function, args, pseudo_type=None):

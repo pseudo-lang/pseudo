@@ -127,6 +127,9 @@ class CodeGenerator:
                 semi.append(q + ';')
         return '\n'.join(semi)
 
+    def action_c_lines(self, expanded, depth):
+        return ',\n'.join(expanded)
+
     def action_line_join(self, expanded, depth):
         return '\n'.join(expanded)
 

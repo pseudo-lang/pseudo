@@ -47,7 +47,7 @@ class TestLanguage(type):
                     else:
                         # input(exp)
                         imports, source = self.gen_with_imports(custom_exceptions, example_)
-                        self.assertEqual(imports, exp[0])
+                        self.assertCountEqual(imports, exp[0])
                         self.assertEqual(source, exp[1])
             return test
 
@@ -97,7 +97,7 @@ Assignment = [
         value=to_node('String'))
 ]
 Call        = [call('map', [local('x')])]
-MethodCall  = [method_call(local('e'), 'filter', [to_node(42)])]
+MethodCall  = [method_call(local('e', 'E'), 'filter', [to_node(42)])]
 StandardCall = [
     Node('standard_call', namespace='io', function='display', args=[to_node(42)], pseudo_type='Void'),
     Node('standard_call', namespace='io', function='read', args=[], pseudo_type='String'),
@@ -133,34 +133,37 @@ RegexpCompile = standard_call('regexp', 'compile', [STRING_EXAMPLE], 'Regexp')
 RegexpEscape = standard_call('regexp', 'escape', [STRING_EXAMPLE], 'String')
 
 EMPTY = Node('anonymous_function',
-    params=['value'],
-    block=[Node('comparison',
+    params=[local('value', 'String')],
+    block=[Node('implicit_return', value=Node('comparison',
         op='==',
         left=standard_method_call(local('value', 'String'), 'length', [], 'Int'),
-        right=to_node(0))],
+        right=to_node(0)), pseudo_type='Boolean')],
     pseudo_type=['Function', 'String', 'Boolean'],
     return_type='Boolean')
 
 
 
 ADD_A = Node('anonymous_function', 
-    params=['value'],
-    block=[standard_method_call(
-        local('value', 'String'),
-        'concat',
-        [to_node('a')],
-        'String')],
+    params=[local('value', 'String')],
+    block=[Node('implicit_return',
+                value=standard_method_call(
+                    local('value', 'String'),
+                    'concat',
+                    [to_node('a')],
+                    'String'),
+                pseudo_type='String')],
     pseudo_type=['Function', 'String', 'String'],
     return_type='String')
 
 COMBINER = Node('anonymous_function',
-    params=['value', 'other'],
+    params=[local('value', 'String'), local('other', 'String')],
     block=[
-        assignment(local('result', 'String'), standard_method_call(
-        local('value', 'String'),
-        'concat',
-        [local('other', 'String')],
-        'String')),
+        assignment(local('result', 'String'), 
+            standard_method_call(
+                local('value', 'String'),
+                'concat',
+                [local('other', 'String')],
+                'String')),
         Node('implicit_return', value=local('result', 'String'), pseudo_type='String')],
     pseudo_type=['Function', 'String', 'String'],
     return_type='String')
@@ -404,7 +407,7 @@ AnonymousFunction = [
         pseudo_type=['Function', 'String', 'String'],
         return_type=['List', 'String'],
         block=[
-            Node('standard_call', namespace='io', function='display', args=[Node('local', name='source', pseudo_type='String')]),
+            Node('standard_call', namespace='io', function='display', args=[Node('local', name='source', pseudo_type='String')], pseudo_type='Void'),
             Node('implicit_return', value=call(local('ves'), [
                 Node('standard_method_call', 
                     receiver=Node('local', name='source', pseudo_type='String'),

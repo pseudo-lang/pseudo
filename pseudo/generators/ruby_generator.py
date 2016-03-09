@@ -1,4 +1,5 @@
 from pseudo.code_generator import CodeGenerator, switch
+
 import re
 
 SHORT_SYNTAX = re.compile(r'[a-zA-Z_][a-zA-Z0-9_]*')
@@ -79,7 +80,7 @@ class RubyGenerator(CodeGenerator):
 
         binary_op   = '%<#binary_left> %<#op> %<#binary_right>',
         unary_op    = '%<#op>%<value>',
-        comparison  = '%<left> %<op> %<#right>',
+        comparison  = '%<#right>',
 
         static_call = "%<receiver>.%<message>%<.args>",
         static_call_args = call_args,
@@ -227,10 +228,10 @@ class RubyGenerator(CodeGenerator):
 
     def right(self, node, depth):
         '''when compared with argv length, decrement'''
-        if node.left.type != 'attr' or node.left.object.type != 'local' or node.left.object.name != 'ARGV':
-            return self._generate_node(node.right)
+        if node.left.type != 'binary_op' or node.left.op != '+' or node.left.right.type != 'int' or node.right.type != 'int':# 'attr' or node.left.object.type != 'local' or node.left.object.name != 'ARGV':
+            print('woah')
         else:
-            if node.right.type == 'int':
-                return str(node.right.value - 1)
-            else:
-                return '%s - 1' % self._generate_node(node.right)
+            node.right.value -= node.left.right.value
+            node.left = node.left.left
+
+        return '%s %s %s' % (self.binary_left(node, depth), node.op, self.binary_right(node, depth))

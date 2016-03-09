@@ -82,7 +82,7 @@ class TestCpp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bit
 
     call = 'map(x)'
 
-    method_call = 'e.filter(42)'
+    method_call = 'e->filter(42)'
 
     standard_call = [
         'cout << 42 << endl',

@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, attr, to_node, local, call
-from pseudo.api_translators.csharp_api_handlers import expand_slice, Display, normalize, pad
+from pseudo.api_translators.csharp_api_handlers import expand_slice, Display, normalize, pad, split, linq
 
 class CSharpTranslator(ApiTranslator):
     '''
@@ -14,27 +14,25 @@ class CSharpTranslator(ApiTranslator):
             '@equivalent':  'List',
 
             'push':         '#Insert',
-
+            'pop':          lambda l, _: method_call(l, 'RemoveAt', [Node('binary_op', op='-', left=attr(l, 'Length', 'Int'), right=to_node(1), pseudo_type='Int')], pseudo_type='Void'),
             'insert':       '#Insert',
-
             'remove_at':    '#RemoveAt',
-
             'remove':       '#Remove',
-
-            'length':       '.Count!',
-
+            'length':       '.Length!',
             'slice':        expand_slice,
-
-            'slice_from':   '#Drop',
-
-            'slice_to':     '#Take',
-
-            'slice_':       '#Slice'
+            'slice_from':   lambda l, from_, pseudo_type: method_call(l, 'Drop', [Node('binary_op', op='-', left=attr(l, 'Length', 'Int'), right=to_node(-from_.value), pseudo_type='Int') if from_.type == 'int' and from_.value < 0 else from_], pseudo_type=pseudo_type),
+            'slice_to':     lambda l, to, pseudo_type: method_call(l, 'Take', [Node('binary_op', op='-', left=attr(l, 'Length', 'Int'), right=to_node(-to.value), pseudo_type='Int') if to.type == 'int' and to.value < 0 else to], pseudo_type=pseudo_type),
+            'slice_':       '#Slice',
+            'map':          linq('Select'),
+            'filter':       linq('Where'),
+            'reduce':       linq('Aggregate', False, swap=True),
+            'all?':         linq('All'),
+            'any?':         linq('Any')
         },
         'Dictionary': {
             '@equivalent':  'Dictionary',
 
-            'length':       '.Count!',
+            'length':       '.Length!',
             'keys':         '#Keys',
             'values':       '#Values'
         },
@@ -54,7 +52,7 @@ class CSharpTranslator(ApiTranslator):
                                     f,
                                     'Count',
                                     [Node('anonymous_function',
-                                        params=['sub'],
+                                        params=[local('sub', 'String')],
                                         block=[
                                             Node('comparison',
                                                 op='==',
@@ -66,7 +64,7 @@ class CSharpTranslator(ApiTranslator):
                                         pseudo_type=['Function', 'String', 'Boolean'])],
                                     pseudo_type='Int'),
             'concat':       to_op('+'),
-            'split':        '#Split',
+            'split':        split,
             'trim':         '#Trim',
             'center':       pad,
             'present?':     lambda f, _: Node('comparison',
@@ -85,7 +83,12 @@ class CSharpTranslator(ApiTranslator):
             'pad_right':    '#PadRight'
         },
         'Set': {
-            '@equivalent':  'Set'
+            '@equivalent':  'HashSet',
+
+            'length':       '.Count!',
+            'contains?':    '#Contains',
+            'union':        '#Union',
+            'intersection': '#Intersection'
         },
         'Regexp': {
             '@equivalent': 'Regexp',
@@ -137,7 +140,14 @@ class CSharpTranslator(ApiTranslator):
 
         'http': {
         },
-
+        'system': {
+            'args':         lambda _: local('args', ['List', 'String']),
+            'index':        lambda index, _: Node('index',
+                                    sequence=local('args', ['List', 'String']),
+                                    index=to_node(index.value - 1) if index.type == 'int' else Node('binary_op', op='-', left=index, right=to_node(1), pseudo_type='Int'),
+                                    pseudo_type='String'),
+            'arg_count':    lambda _: Node('binary_op', op='+', left=attr(local('args', ['List', 'String']), 'Length', 'Int'), right=to_node(1), pseudo_type='Int')
+        },            
         'regexp': {
             'compile':      lambda value, _: Node('new_instance', 
                                 class_name='Regex',
@@ -149,18 +159,23 @@ class CSharpTranslator(ApiTranslator):
 
     dependencies = {
         'List': {
-            '@all':     'System.Collections.Generic'
+            '@all':     'System.Collections.Generic',
+            'map':   'System.Linq',
+            'filter':    'System.Linq',
+            'any?':      'System.Linq',
+            'all?':      'System.Linq',
+            'reduce': 'System.Linq'
         },
-
+        'String': {
+            '@all':     'System.Text'
+        },
         'Dictionary': {
             '@all':     'System.Collections.Generic'
         },
-
         'io': {
             'read_file':    'System.IO',
             'write_file':   'System.IO'
         },
-
         'regexp': {
             '@all':     'System.Text.RegularExpressions'
         }

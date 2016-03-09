@@ -2,6 +2,8 @@ from pseudo.code_generator import CodeGenerator, switch
 from pseudo.middlewares import DeclarationMiddleware, NameMiddleware
 from pseudo.pseudo_tree import Node, local
 
+OPS = {'not': '!', 'and': '&&', 'or': '||'}
+
 class CSharpGenerator(CodeGenerator):
     '''CSharp code generator'''
 
@@ -19,7 +21,18 @@ class CSharpGenerator(CodeGenerator):
               self.render_type(node.pseudo_type[j + 1]), 
               self._generate_node(k)) for j, k in enumerate(node.params) )
 
+    def anon_params(self, node, indent):
+        if len(node.params) == 0:
+            return ''
+        else:
+            l, r  = ('(', ')') if len(node.params) > 1 else ('', '')
+            return '%s%s%s' % (l, ', '.join(param if isinstance(param, str) else self._generate_node(param) for param in node.params), r)
+
     def anon_block(self, node, indent):
+        # print(indent);input(node.params[0].y)     
+        if indent < 2:
+            indent = 2 # anon cant be before method lvl
+
         if len(node.block) == 1:
             if node.block[0].type == 'implicit_return' or node.block[0].type == 'explicit_return':
                 e = node.block[0].value
@@ -29,7 +42,7 @@ class CSharpGenerator(CodeGenerator):
             return ' ' + b
         else:
             b = ';\n'.join(self.offset(indent + 1) + self._generate_node(e, indent + 1) for e in node.block) + ';\n'
-            return '\n%s{\n%s%s}' % (self.offset(indent), b, self.offset(indent))
+            return ' {\n%s%s}' % (b, self.offset(indent))
 
     types = {
       'Int': 'int',
@@ -38,7 +51,7 @@ class CSharpGenerator(CodeGenerator):
       'String': 'string',
       'List': 'List<{0}>',
       'Dictionary': 'Dictionary<{0}, {1}>',
-      'Set': 'Set<{0}>',
+      'Set': 'HashSet<{0}>',
       'Tuple': lambda x: 'Tuple<{0}>'.format(', '.join(x)),
       'Array': '{0}[]', 
       # fixed-size buffers in c# are not widely used
@@ -57,7 +70,7 @@ class CSharpGenerator(CodeGenerator):
             {
                 %<constants:lines>
                 %<#function_definitions>
-                public static void Main()
+                public static void Main(string[] args)
                 {
                     %<main:semi>
                 }
@@ -91,7 +104,7 @@ class CSharpGenerator(CodeGenerator):
 
         class_attr_is_public = ('public ', 'private '),
         
-        anonymous_function = "%<params:join ', '> =>%<#anon_block>",
+        anonymous_function = "%<#anon_params> =>%<#anon_block>",
 
         constructor = '''
             %<this>(%<#params>)
@@ -110,7 +123,7 @@ class CSharpGenerator(CodeGenerator):
         boolean     = '%<value>',
         null        = 'null',
 
-        list        = "new %<@pseudo_type> {%<elements:join ', '>}",
+        list        = "new[] {%<elements:join ', '>}",
         dictionary  = "new %<@pseudo_type> { %<pairs:join ', '> }",
         pair        = "{%<key>, %<value>}",
         attr        = "%<object>.%<attr>",
@@ -122,9 +135,19 @@ class CSharpGenerator(CodeGenerator):
             _otherwise = '%<target> = %<value>'
         ),
 
-        binary_op   = '%<#binary_left> %<op> %<#binary_right>',
-        unary_op    = '%<op>%<value>',
-        comparison  = '%<left> %<op> %<right>',
+        tuple       = switch(lambda e: len(e.elements) <= 2,
+                        true = "Tuple.Create(%<elements:join ', '>)",
+                        _otherwise = '''
+                            Tuple.Create(
+                                %<elements:c_lines>
+                            )'''),
+
+        array       = "new[] { %<elements:join ', '> }",
+
+        char        = "%<#char>",
+        binary_op   = '%<#binary_left> %<#op> %<#binary_right>',
+        unary_op    = '%<#op>%<value>',
+        comparison  = '%<#comparison>',
 
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
@@ -198,7 +221,10 @@ class CSharpGenerator(CodeGenerator):
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
 
-        index            = '%<sequence>[%<index>]',
+        index            = switch(lambda s: isinstance(s.sequence.pseudo_type, list) and s.sequence.pseudo_type[0] == 'Tuple',
+            true             = '%<sequence>.Item%<#tuple_index>',
+            _otherwise       = '%<sequence>[%<index>]'
+        ),
 
         index_assignment = '%<sequence>[%<index>] = %<value>',
 
@@ -264,6 +290,13 @@ class CSharpGenerator(CodeGenerator):
                 }
             }''',
 
+        standard_iterable_call = '''
+                    %<sequences>.Where(
+                        %<iterators.iterator> => %<test:first>
+                    ).Select(
+                        %<iterators.iterator> => %<block:first>
+                    ).ToList()''',
+
         block = '%<block:semi>'
     )
     
@@ -302,3 +335,25 @@ class CSharpGenerator(CodeGenerator):
                         pseudo_type=node.sequences.sequences[j].pseudo_type[1])))
             for j, q 
             in enumerate(node.iterators.iterators))
+
+    def tuple_index(self, node, depth):
+        return str(node.index.value + 1)
+
+    def op(self, node, depth):
+        return OPS.get(node.op, node.op)
+
+    def char(self, node, depth):
+        if node.value == "'":
+            return "'\\''"
+        else:
+            return "'%s'" % node.value
+
+    def comparison(self, node, depth):
+        if node.left.type != 'binary_op' or node.left.op != '+' or node.left.right.type != 'int' or node.right.type != 'int':# 'attr' or node.left.object.type != 'local' or node.left.object.name != 'ARGV':
+            pass
+        else:
+            node.right.value -= node.left.right.value
+            node.left = node.left.left
+
+        return '%s %s %s' % (self.binary_left(node, depth), node.op, self.binary_right(node, depth))
+

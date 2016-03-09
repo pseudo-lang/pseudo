@@ -16,7 +16,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     def gen_with_imports(self, custom_exceptions, ast):
         imports, source = suite.TestHelpers.gen_with_imports(self, custom_exceptions, ast)
         lines = source.split('\n')
-        main_index = lines.index('    public static void Main()')
+        main_index = lines.index('    public static void Main(string[] args)')
         if main_index == 2:
             x = '\n'.join(l[8:] for l in lines[main_index + 2:-3]).strip()
             if x[-1] == ';':
@@ -51,7 +51,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     dictionary = 'new Dictionary<string, int> { {"la", 0} }'
 
-    list_ = 'new List<string> {"la"}'
+    list_ = 'new[] {"la"}'
 
     local = 'egg'
 
@@ -77,8 +77,8 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                             Console.WriteLine("z")''')
 
     io_read             = 'var source = Console.ReadLine()'
-    io_read_file        = (['System.IO'], 'var source = File.ReadAllText("z.py")')
-    io_write_file       = (['System.IO'], 'File.WriteAllText("z.py", source)')
+    io_read_file        = (['System.IO', 'System.Text'], 'var source = File.ReadAllText("z.py")')
+    io_write_file       = (['System.IO', 'System.Text'], 'File.WriteAllText("z.py", source)')
 
     # math
     math_ln             = 'Math.Log(z)'
@@ -87,8 +87,8 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     math_cos            = 'Math.Cos(z)'
 
     # regexp
-    regexp_compile      = (["System.Text.RegularExpressions"], 'new Regex(s)')
-    regexp_escape       = (["System.Text.RegularExpressions"], 'Regex.Escape(s)')
+    regexp_compile      = (["System.Text.RegularExpressions", "System.Text"], 'new Regex(s)')
+    regexp_escape       = (["System.Text.RegularExpressions", "System.Text"], 'Regex.Escape(s)')
 
 
 
@@ -100,40 +100,39 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     ]
 
     standard_method_call = [
-        'l.Count',
+        'l.Length',
         '"l".Substring(0, 2)'
     ]
-    # # List
-    # list_push       = "cpus.push('')"
-    # list_pop        = 'cpus.pop'
-    # list_length     = 'cpus.length'
-    # list_map        = "cpus.map { |value| value + 'a' }"
-    # list_remove     = "cpus.delete(s)"
-    # list_remove_at  = "cpus.delete_at(0)"
-    # list_length     = 'cpus.length'
-    # list_slice      = 'cpus[2...-1]'
-    # list_slice_from = 'cpus[2..-1]'
-    # list_slice_to   = 'cpus[0...2]'
-    # list_filter     = 'cpus.select { |value| value.length == 0 }'
-    # list_reduce     = textwrap.dedent('''\
-    #                     cpus.reduce('') do |value, other|
-    #                       result = value + other
-    #                       result
-    #                     end''')
-    # list_any        = 'cpus.any? { |value| value.length == 0 }'
-    # list_all        = 'cpus.all? { |value| value.length == 0 }'
+    # List
+    list_push       = 'cpus.Insert("")'
+    list_pop        = 'cpus.RemoveAt(cpus.Length - 1)'
+    list_length     = 'cpus.Length'
+    list_map        = 'cpus.Select(value => value + "a").ToList()' # v.4 support IEnumerable?
+    list_remove     = "cpus.Remove(s)"
+    list_remove_at  = "cpus.RemoveAt(0)"
+    list_slice      = 'cpus.Take(cpus.Length - 1).Drop(2)'
+    list_slice_from = 'cpus.Drop(2)'
+    list_slice_to   = 'cpus.Take(2)'
+    list_filter     = 'cpus.Where(value => value.Length == 0).ToList()'
+    list_reduce     = textwrap.dedent('''\
+                        cpus.Aggregate("", (value, other) => {
+                            var result = value + other;
+                            return result;
+                        })''')
+    list_any        = 'cpus.Any(value => value.Length == 0).ToList()'
+    list_all        = 'cpus.All(value => value.Length == 0).ToList()'
 
     # # Hash
-    # dictionary_length   = 'pointers.length'
-    # dictionary_contains = 'pointers.include?(s)'
-    # dictionary_keys     = 'pointers.keys'
-    # dictionary_values   = 'pointers.values'
+    dictionary_length   = 'pointers.length'
+    dictionary_contains = 'pointers.include?(s)'
+    dictionary_keys     = 'pointers.keys'
+    dictionary_values   = 'pointers.values'
 
     # # Set
-    # set_length          = 'words.length'
-    # set_contains        = 'words.include?(s)'
-    # set_union           = 'words | words'
-    # set_intersection    = 'words.intersection(words)'
+    set_length          = 'words.Length'
+    set_contains        = 'words.Contains(s)'
+    set_union           = 'words.Union(words)'
+    set_intersection    = 'words.Intersection(words)'
 
     # Tuple
     tuple_length        = '2' # we know the size of a tuple at constant time, easiest for now
@@ -151,7 +150,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     string_count        = 's.Count(sub => sub == s)'
     string_concat       = 's + t'
     # string_partition    = 's.split(t)[0]' #FIXV3
-    string_split        = 's.Split(t)'
+    string_split        = 's.Split(new[] { t }, StringSplitOptions.None)'
     string_trim         = 's.Trim()'
     # string_reversed     = 's.everse' #FIXV3
     string_center       = 's.PadLeft((z - s.Length) / 2 + s.Length, t).PadRight(z, t)'
@@ -204,7 +203,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             }'''),
 
         textwrap.dedent('''\
-            for (int j = 0; j < z.Count; j ++)
+            for (int j = 0; j < z.Length; j ++)
             {
                 var k = z[j];
                 analyze(j, k);
@@ -219,7 +218,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             }'''),
 
         textwrap.dedent('''\
-            for (int _index = 0; _index < z.Count; _index ++)
+            for (int _index = 0; _index < z.Length; _index ++)
             {
                 var k = z[_index];
                 var l = zz[_index];
@@ -251,7 +250,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             List<string> Parse(string source)
             {
                 this.ast = 0;
-                return new List<string> {source};
+                return new[] {source};
             }
         }''')
 
@@ -259,8 +258,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         'source => ves(source.Length)',
 
         textwrap.dedent('''\
-            source =>
-            {
+            source => {
                 Console.WriteLine(source);
                 return ves(source.Length);
             }''')
@@ -320,7 +318,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
             public class Program
             {
-                public static void Main()
+                public static void Main(string[] args)
                 {
                     try
                     {
@@ -347,7 +345,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
         public class Program
         {
-            public static void Main()
+            public static void Main(string[] args)
             {
                 throw new NeptunError("no tea");
             }

@@ -67,6 +67,10 @@ class Action(FragmentGenerator):
         if isinstance(content, Iterable):
             if content:
                 expanded = [generator._generate_node(content[0], depth)]
+                # print(content[0].y)
+                # print(self.field)
+                # print(node.y)
+                # input(self.action)
                 expanded += [generator.offset(depth) + generator._generate_node(a, depth) for a in content[1:]]
             else:
                 expanded = []

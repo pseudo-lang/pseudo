@@ -23,6 +23,8 @@ class CppPointerMiddleware(Middleware):
         if node.type == 'method_call':
             if not node.receiver.pseudo_type:
                 node.receiver = node.receiver.name
+        if node.type == 'method_call' and isinstance(node.receiver, str):
+            input(node.y)
         if node.type == 'method_call' and isinstance(node.receiver.pseudo_type, list) and node.receiver.pseudo_type[0] == 'Pointer':
             node.type = 'pointer_method_call'            
         return node

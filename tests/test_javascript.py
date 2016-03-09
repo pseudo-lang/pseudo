@@ -95,13 +95,17 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     regexp_escape       = (['lodash'], '_.escapeRegExp(s)')
 
     # # List
-    # list_push       = "cpus.push('')"
-    # list_pop        = 'cpus.pop'
-    # list_length     = 'cpus.length'
-    # list_map        = "cpus.map { |value| value + 'a' }"
-    # list_remove     = "cpus.delete(s)"
-    # list_remove_at  = "cpus.delete_at(0)"
-    # list_length     = 'cpus.length'
+    list_push       = "cpus.push('')"
+    list_pop        = 'cpus.pop()'
+    list_length     = 'cpus.length'
+    list_map        = textwrap.dedent('''\
+                        _.map(cpus, function (value) {
+                          return value + 'a';
+                        }
+                        );''')
+
+    list_remove     = '_.pull(cpus, s)'
+    list_remove_at  = 'cpus.splice(0, 1)'
     # list_slice      = 'cpus[2...-1]'
     # list_slice_from = 'cpus[2..-1]'
     # list_slice_to   = 'cpus[0...2]'
