@@ -1,8 +1,8 @@
 using System;
-using System.Text;
-using System.Collections.Generic;
-using System.Linq;
 using System.IO;
+using System.Collections.Generic;
+using System.Text;
+using System.Linq;
 
 public class Program
 {
@@ -17,7 +17,7 @@ public class Program
         ).ToList();
     }
 
-static Tuple<string, string, int[]> ParseResult(string line)
+    static Tuple<string, string, int[]> ParseResult(string line)
     {
         var awayIndex = line.IndexOf(" - ") + 3;
         var resultIndex = line.IndexOf(" ", awayIndex) + 1;
@@ -29,12 +29,12 @@ static Tuple<string, string, int[]> ParseResult(string line)
         );
     }
 
-static int CalculatePoints(List<Tuple<string, string, int[]>> results, string team)
+    static int CalculatePoints(List<Tuple<string, string, int[]>> results, string team)
     {
         return results.Aggregate(0, (memo, result) => memo + ResultPoints(team, result.Item1, result.Item2, result.Item3));
     }
 
-static int ResultPoints(string team, string host, string away, int[] result)
+    static int ResultPoints(string team, string host, string away, int[] result)
     {
         if (host == team && result[0] > result[1] || away == team && result[0] < result[1])
         {

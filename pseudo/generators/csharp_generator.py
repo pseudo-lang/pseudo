@@ -69,7 +69,7 @@ class CSharpGenerator(CodeGenerator):
             public class Program
             {
                 %<constants:lines>
-                %<#function_definitions>
+            %<#function_definitions>
                 public static void Main(string[] args)
                 {
                     %<main:semi>
@@ -308,7 +308,7 @@ class CSharpGenerator(CodeGenerator):
             return ''
 
     def function_definitions(self, node, depth):
-        result = '\n'.join(self._generate_node(f, 1) for f in node.definitions if f.type == 'function_definition')
+        result = '\n'.join(self.offset(1) + self._generate_node(f, 1) for f in node.definitions if f.type == 'function_definition')
         if result:
             return result + '\n'        
         else:
