@@ -123,10 +123,10 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     list_all        = 'cpus.All(value => value.Length == 0).ToList()'
 
     # # Hash
-    dictionary_length   = 'pointers.length'
-    dictionary_contains = 'pointers.include?(s)'
-    dictionary_keys     = 'pointers.keys'
-    dictionary_values   = 'pointers.values'
+    # dictionary_length   = 'pointers.length'
+    # dictionary_contains = 'pointers.include?(s)'
+    # dictionary_keys     = 'pointers.keys'
+    # dictionary_values   = 'pointers.values'
 
     # # Set
     set_length          = 'words.Length'

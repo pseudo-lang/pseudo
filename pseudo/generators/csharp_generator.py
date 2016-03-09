@@ -234,14 +234,14 @@ class CSharpGenerator(CodeGenerator):
 
         for_statement = switch(lambda f: f.iterators.type,
             for_iterator_with_index = '''
-                for (int %<iterators.index> = 0; %<iterators.index> < %<sequences.sequence>.Count; %<iterators.index> ++)
+                for (int %<iterators.index> = 0; %<iterators.index> < %<sequences.sequence>.Length; %<iterators.index> ++)
                 {
                     var %<iterators.iterator> = %<sequences.sequence>[%<iterators.index>];
                     %<block:semi>
                 }''',
 
             for_iterator_zip = '''
-                for (int _index = 0; _index < %<#first_sequence>.Count; _index ++)
+                for (int _index = 0; _index < %<#first_sequence>.Length; _index ++)
                 {
                     %<#zip_iterators>
                     %<block:semi>

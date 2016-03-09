@@ -85,7 +85,7 @@ class CSharpTranslator(ApiTranslator):
         'Set': {
             '@equivalent':  'HashSet',
 
-            'length':       '.Count!',
+            'length':       '.Length!',
             'contains?':    '#Contains',
             'union':        '#Union',
             'intersection': '#Intersection'
