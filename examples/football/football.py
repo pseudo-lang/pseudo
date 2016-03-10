@@ -1,5 +1,5 @@
-import functools
 import sys
+import functools
 
 def load_results(filename):
     with open(filename, 'r') as _f:

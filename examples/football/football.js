@@ -1,5 +1,5 @@
-var fs = require('fs');
 var _ = require('lodash');
+var fs = require('fs');
 function load_results(filename) {
   var raw = fs.readFileSync(filename, 'utf8');
   var lines = raw.split('\n');
