@@ -57,8 +57,11 @@ class RubyGenerator(CodeGenerator):
 
         class_definition     = '''
             class %<name>%<.base>
+              %<.constructor>
               %<methods:lines>
             end''',
+
+        class_definition_constructor = ('%<constructor>', ''),
 
         class_definition_base = ('< %<base>', ''),
 
@@ -91,8 +94,11 @@ class RubyGenerator(CodeGenerator):
             _otherwise = "%<function>(%<args:join ', '>)"
         ),
         call_args   = call_args,
-        method_call = "%<receiver>.%<message>%<.args>",
         method_call_args = call_args,
+        method_call = "%<receiver>.%<message>%<.args>",
+        this_method_call = "%<message>%<.args>",
+        this_method_call_args=call_args,
+        
 
         this            = 'self',
 
@@ -100,7 +106,9 @@ class RubyGenerator(CodeGenerator):
 
         throw_statement = 'throw %<exception>.new(%<value>)',
 
-        new_instance    = "%<class_name>.new(%<args:join ', '>)",
+        new_instance    = "%<class_name>.new%<args:join ', '>",
+
+        new_instance_args = call_args,
 
         standard_iterable_call = "%<sequences.sequence>.select { |%<iterators>| %<test:first> }.map { |%<iterators>| %<block:first> }",
 
@@ -210,6 +218,14 @@ class RubyGenerator(CodeGenerator):
         _rb_regex_interpolation = "/#{%<value>}/",
 
         index           = '%<sequence>[%<index>]',
+
+        interpolation = "\"%<args:join ''>\"",
+
+        interpolation_literal = '%<value>',
+
+        interpolation_placeholder = '#{%<value>}',
+
+        aug_assignment = '%<target> %<op>= %<value>',
 
         tuple    = "[%<elements:join ', '>]",
 

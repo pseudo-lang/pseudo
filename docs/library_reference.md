@@ -47,8 +47,6 @@
     - [trim](#trim)
     - [reversed](#reversed)
     - [center](#center)
-    - [c_format](#c_format)
-    - [format](#format)
     - [present?](#present?)
     - [empty?](#empty?)
     - [contains?](#contains?)
@@ -61,8 +59,17 @@
 - [functions](#functions)
   - [math](#math)
     - [log](#log)
+    - [cos](#cos)
   - [io](#io)
     - [display](#display)
+    - [read](#read)
+  - [system](#system)
+    - [args](#args)
+    - [arg_count](#arg_count)
+    - [index](#index)
+  - [regex](#regexp)
+    - [compile](#compile)
+    - [escape](#escape)
 
 # methods
 
@@ -306,20 +313,6 @@ String#reversed() -> String
 String#center(count: Int, fill: String) -> String
 ```
 
-### c_format
-
-```javascript
-String#c_format(*args: Any) -> String
-```
-
-formats using c-style `%d`, `%f`, `%s` etc, function accepting a variable number of args
-
-### format
-
-```javascript
-String#format(*args: Any) -> String
-```
-
 ### present?
 
 ```javascript
@@ -376,6 +369,14 @@ log(x: Number, base: Number) -> Float
 
 the logarithm of x to the given base
 
+### cos
+
+```javascript
+cos(x: Number) -> Float
+```
+
+the cosine of x
+
 ## io
 
 ### display
@@ -384,8 +385,39 @@ the logarithm of x to the given base
 display(*args: Any) -> Void
 ```
 
-displays the contents on the screen using the native print function. `display` is the only pseudo
+writes the contents to STDOUT using the native print function. `display` is the only pseudo
 function accepting a variable number of args
 
+### read
 
+```javascript
+read() -> String
+```
 
+reads a line from STDIN
+
+## system
+
+### args
+
+```javascript
+args() -> List[String]
+```
+
+returns a list with command line args
+
+### arg_count
+
+```javascript
+arg_count() -> Int
+```
+
+returns the number of command line args (including the filename)
+
+### index
+
+```javascript
+index(a: Int) -> String
+```
+
+a-th command arg, 1-based indexing(filename is 0)

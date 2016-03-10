@@ -80,38 +80,15 @@ You can also use the "lodash-with-babylon-fishes" metaphor: we use e.g. Python o
 ## progress
 
 close to v0.2, left: several fixes and finishing the api translation
-
-- [ ] python
-  - [x] syntax tests passing
-  - [ ] api tests passing
-- [ ] ruby
-  - [x] syntax tests passing
-  - [ ] api tests passing
-- [ ] javascript
-  - [x] syntax tests passing
-  - [ ] api tests passing
-- [ ] c#
-  - [x] syntax tests passing
-  - [ ] api tests passing
-- [ ] c++
-  - [x] syntax tests passing
-  - [ ] api tests passing
-- [ ] go
-  - [x] syntax tests passing
-  - [ ] api tests passing
-- [ ] php
-  - [ ] syntax tests passing
-  - [ ] api tests passing
  
 ## Target languages
 
 - [x] python
 - [x] ruby
-
-- [x] javascript
 - [x] c#
-- [x] c++
+- [x] javascript
 - [x] go
+- [ ] c++
 - [ ] php
 
 v0.3/v0.4:

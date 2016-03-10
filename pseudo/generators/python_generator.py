@@ -40,7 +40,7 @@ class PythonGenerator(CodeGenerator):
 
         class_definition_constructor = ('%<constructor>', ''),
 
-        new_instance = "%<class_name>(%<params:join ', '>)",
+        new_instance = "%<class_name>(%<args:join ', '>)",
 
         anonymous_function = '%<#anonymous_function>',
 
@@ -97,16 +97,16 @@ class PythonGenerator(CodeGenerator):
         method_call = switch(lambda s: len(s.args) == 1 and s.args[0].type == '_py_generatorcomp',
                 true       = '%<receiver>.%<message>%<args:first>',
                 _otherwise = "%<receiver>.%<message>(%<args:join ', '>)"),
+        
+        this_method_call = switch(lambda s: len(s.args) == 1 and s.args[0].type == '_py_generatorcomp',
+                true       = 'self.%<message>%<args:first>',
+                _otherwise = "self.%<message>(%<args:join ', '>)"),
 
         block       = '%<block:lines>',
 
         this        = 'self',
 
         instance_variable = 'self.%<name>',
-
-        this_method_call = switch(lambda s: len(s.args) == 1 and s.args[0].type == '_py_generatorcomp',
-                true        = 'self.%<message>%<args:first>',
-                _otherwise  = "self.%<message>(%<args:join ', '>)"),
 
         throw_statement = 'raise %<exception>(%<value>)',
 
@@ -213,6 +213,12 @@ class PythonGenerator(CodeGenerator):
 
         index    = '%<sequence>[%<index>]',
 
+        interpolation = "'%<args:join ''>'.format(%<#placeholders>)",
+
+        interpolation_literal = '%<value>',
+
+        interpolation_placeholder = '{%<index>}',
+
         _py_listcomp = '[%<block> for %<iterators> in %<sequences>%<#test>]',
 
         _py_generatorcomp = '(%<block> for %<iterators> in %<sequences>%<#test>)',
@@ -220,6 +226,8 @@ class PythonGenerator(CodeGenerator):
         _py_in   = '%<value> in %<sequence>',
 
         _py_step = '%<sequence>[::%<step>]',
+
+        aug_assignment = '%<target> %<op>= %<value>',
 
         standard_iterable_call = '[%<block:first> for %<iterators> in %<sequences> if %<test:first>]',
 
@@ -270,3 +278,6 @@ class PythonGenerator(CodeGenerator):
             return ' if %s' % self._generate_node(node.test)
         else:
             return ''
+
+    def placeholders(self, node, indent):
+        return ', '.join(self._generate_node(placeholder.value) for placeholder in node.args[1::2])

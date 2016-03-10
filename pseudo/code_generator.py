@@ -2,11 +2,14 @@
 import re
 from pseudo.pseudo_tree import Node
 from pseudo.code_generator_dsl import Placeholder, Newline, Action, Function, SubTemplate, SubElement, PseudoType, Whitespace, Offset, INTERNAL_WHITESPACE, NEWLINE
-
+from pseudo.middlewares import AugAssignmentMiddleware
 LINE_FIRS = re.compile(r'^( +)')
 TOO_MANY_ENDLINES = re.compile(r'(\n\n\n+)')
 CLOSING_CURLY_ENDLINES = re.compile(r'}\n(\n+)([ \t]*)}')
 JS_BRACKET = re.compile(r'}\n *([,\)])')
+
+# for all!
+DEFAULT_MIDDLEWARES = [AugAssignmentMiddleware]
 
 class CodeGenerator:
     '''
@@ -36,7 +39,7 @@ class CodeGenerator:
         generates code based on templates and gen functions
         defined in the <x> lang generator
         '''
-        for middleware in self.middlewares:
+        for middleware in DEFAULT_MIDDLEWARES + self.middlewares:
             tree = middleware.process(tree) # changed in place!!
         original = self._generate_node(tree)
         # first n lines n dependencies

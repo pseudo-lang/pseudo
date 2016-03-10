@@ -160,6 +160,7 @@ class CSharpGenerator(CodeGenerator):
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
+        this_method_call = "this.%<receiver>.%<message>(%<args:join ', '>)",
 
         this        = 'this',
 

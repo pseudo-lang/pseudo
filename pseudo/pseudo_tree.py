@@ -13,11 +13,15 @@ class Node:
         if 'pseudo_type' not in fields:
             self.pseudo_type = 'Void'
 
+    # debugging
     # and no, __dict__ is not good enough
     @property
     def y(self):
         result = yaml.dump(self)
         return result.replace('!python/object:pseudo.pseudo_tree.', '')
+
+    def __eq__(self, a):
+        return all(getattr(self, f) == getattr(a, f, None) for f in self.__dict__)
 
 def node_representer(dumper, data):
     return dumper.represent_scalar('!%s' % type(data).__name__, )

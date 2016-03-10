@@ -162,6 +162,8 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     comparison = 'egg > ham'
 
+    interpolation = "'{0}la{1}'.format(s, 4)"
+
     if_statement = textwrap.dedent('''\
         if egg == ham:
             l[:2]

@@ -86,6 +86,7 @@ class JSGenerator(CodeGenerator):
         static_call = "%<receiver>.%<message>(%<#args_join>)",
         call        = "%<function>(%<#args_join>)",
         method_call = "%<receiver>.%<message>(%<#args_join>)",
+        this_method_call = "%<receiver>.%<message>(%<#args_join>)",
 
         this        = 'this',
 
@@ -184,6 +185,8 @@ class JSGenerator(CodeGenerator):
         ),
 
         constant = '%<constant> = %<init>',
+
+        aug_assignment = '%<target> += %<value>',
 
         standard_iterable_call = '''
             _.filter(%<sequences.sequence>, function (%<iterators>) {

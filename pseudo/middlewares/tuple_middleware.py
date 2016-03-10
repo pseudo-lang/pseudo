@@ -7,20 +7,25 @@ class TupleMiddleware(Middleware):
     '''
     middleware for expressing tuples with structs
 
-    currently used only with go (surprisingly)
-    (rationale: arrays/lists are capable enough in dynamic languages
-     and c++/c# support generic types)
-    if Tuple[A, B] is used, create a struct like that and convert the tuple to a struct
-    values to {} initializers
-    translate constructors starting with nodes like
-      newA(b int, x int) ..
-        this.z = b + x
-        this.z2 = b
-        other
-    to nodes like
-      newA(b int, x int) ..
-        this = A{b + x, b}
-        other
+    currently used with go(to translate all tuples, because no generics)
+    and with c#/c++
+    (in the future we can also generate NamedTuples for python,
+     but for now arrays/lists are capable enough in dynamic languages)
+    if Tuple[A, B] is used, create a class/struct with immutable
+    fields with those types, convert the tuple to a struct/class initialize
+
+    It works by:
+      
+      detecting meaningful names corresponding to a tuple
+      in function/method params and call args,
+
+      detecting meaningful names for its fields if it sees a 
+      call(..t[0], t[1]..t[-1]) kind of use and convert index accesses
+      and tuples for that tuple type to the class equivalents 
+
+    If it can't find a good name, it uses tuples for C#/C++ and
+    it uses
+    an auto-generated ugly name for Go
     '''
 
     def process(self, tree):

@@ -237,8 +237,6 @@ StringSplit        = standard_method_call(STRING_EXAMPLE, 'split', [OTHER_STRING
 StringTrim         = standard_method_call(STRING_EXAMPLE, 'trim', [], 'String')
 StringReversed     = standard_method_call(STRING_EXAMPLE, 'reversed', [], 'String')
 StringCenter       = standard_method_call(STRING_EXAMPLE, 'center', [local('z', 'Int'), OTHER_STRING_EXAMPLE], 'String')
-StringCFormat      = standard_method_call(STRING_EXAMPLE, 'c_format', [to_node('z'), to_node(0)], 'String')
-StringFormat       = standard_method_call(STRING_EXAMPLE, 'format', [to_node('z'), to_node(0)], 'String')
 StringPresent      = standard_method_call(STRING_EXAMPLE, 'present?', [], 'Boolean')
 StringEmpty        = standard_method_call(STRING_EXAMPLE, 'empty?', [], 'Boolean')
 StringContains     = standard_method_call(STRING_EXAMPLE, 'contains?', [OTHER_STRING_EXAMPLE], 'Boolean')
@@ -255,6 +253,21 @@ RegexpMatchHasMatch   = standard_method_call(REGEXP_MATCH_EXAMPLE, 'has_match', 
 BinaryOp = [Node('binary_op', op='+', left=local('ham', pseudo_type='Int'), right=local('egg', pseudo_type='Int'))]
 UnaryOp = [Node('unary_op', op='-', value=local('a', 'Int'))]
 Comparison = [Node('comparison', op='>', left=local('egg', 'Float'), right=local('ham', 'Float'))]
+Interpolation = [Node('interpolation', args=[Node('interpolation_literal', 
+            value='',
+            pseudo_type='String'),
+        Node('interpolation_placeholder',
+            value=STRING_EXAMPLE,
+            index=0,
+            pseudo_type='String'),
+        Node('interpolation_literal',
+            value='la',
+            pseudo_type='String'), 
+        Node('interpolation_placeholder',
+            value=to_node(4),
+            index=1,
+            pseudo_type='Int')], pseudo_type='String')]
+
 
 IfStatement = [
     Node('if_statement', 

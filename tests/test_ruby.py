@@ -157,6 +157,8 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     comparison = 'egg > ham'
 
+    interpolation = '"#{s}la#{4}"'
+
     if_statement = textwrap.dedent('''\
         if egg == ham
           l[0...2]
