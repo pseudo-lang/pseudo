@@ -6,6 +6,7 @@ from pseudo.code_generator_dsl import Placeholder, Newline, Action, Function, Su
 LINE_FIRS = re.compile(r'^( +)')
 TOO_MANY_ENDLINES = re.compile(r'(\n\n\n+)')
 CLOSING_CURLY_ENDLINES = re.compile(r'}\n(\n+)([ \t]*)}')
+JS_BRACKET = re.compile(r'}\n *([,\)])')
 
 class CodeGenerator:
     '''
@@ -47,6 +48,7 @@ class CodeGenerator:
         else:
             r = original
         r = re.sub(CLOSING_CURLY_ENDLINES, r'}\n\2}', r)
+        r = re.sub(JS_BRACKET, r'}\1', r)
         return re.sub(TOO_MANY_ENDLINES, r'\n\n', r)
 
     def action_line_join_pass(self, expanded, _):

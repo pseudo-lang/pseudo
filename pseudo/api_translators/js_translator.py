@@ -33,7 +33,10 @@ class JSTranslator(ApiTranslator):
             'slice_from':   '#slice',
             'slice_to':     '#slice(0, %{0})',
             'map':          '_.map(%{self}, %{0})',
-            'filter':       '_.filter'
+            'filter':       '_.filter(%{self}, %{0})',
+            'reduce':       '_.reduce(%{self}, %{0}, %{1})',
+            'any?':         '_.any(%{self}, %{0})',
+            'all?':         '_.all(%{self}, %{0})'
         },
         'Dictionary': {
             '@equivalent':  'Object',

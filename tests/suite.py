@@ -67,7 +67,7 @@ class TestLanguage(type):
             namespace['gen'] = TestHelpers.gen
         if 'gen_with_imports' not in namespace:
             namespace['gen_with_imports'] = TestHelpers.gen_with_imports
-
+        namespace['maxDiff'] = None
         return super().__new__(cls, name, bases, namespace)
 
 Module      = [Node('module', constants=[], code=[])]

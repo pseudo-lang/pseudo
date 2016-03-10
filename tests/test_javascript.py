@@ -101,22 +101,30 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     list_map        = textwrap.dedent('''\
                         _.map(cpus, function (value) {
                           return value + 'a';
-                        }
-                        );''')
+                        });''')
 
     list_remove     = '_.pull(cpus, s)'
     list_remove_at  = 'cpus.splice(0, 1)'
-    # list_slice      = 'cpus[2...-1]'
-    # list_slice_from = 'cpus[2..-1]'
-    # list_slice_to   = 'cpus[0...2]'
-    # list_filter     = 'cpus.select { |value| value.length == 0 }'
-    # list_reduce     = textwrap.dedent('''\
-    #                     cpus.reduce('') do |value, other|
-    #                       result = value + other
-    #                       result
-    #                     end''')
-    # list_any        = 'cpus.any? { |value| value.length == 0 }'
-    # list_all        = 'cpus.all? { |value| value.length == 0 }'
+    list_slice      = 'cpus.slice(2, -1)'
+    list_slice_from = 'cpus.slice(2)'
+    list_slice_to   = 'cpus.slice(0, 2)'
+    list_filter     = textwrap.dedent('''\
+                        _.filter(cpus, function (value) {
+                          return value.length == 0;
+                        });''')
+    list_reduce     = textwrap.dedent('''\
+                        _.reduce(cpus, function (value, other) {
+                          var result = value + other;
+                          return result;
+                        }, '');''')
+    list_any        = textwrap.dedent('''\
+                        _.any(cpus, function (value) {
+                          return value.length == 0;
+                        });''')
+    list_all        = textwrap.dedent('''\
+                        _.all(cpus, function (value) {
+                          return value.length == 0;
+                        });''')
 
     # # Hash
     # dictionary_length   = 'pointers.length'
