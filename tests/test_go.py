@@ -83,8 +83,18 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     standard_method_call = [
         'len(l)',
-        '"l"[0:2]',
+        '"l"[0:2]'
+    ]
 
+    # io
+    io_display          = ({'fmt'}, 'fmt.Println(2, "z")')
+    io_read             = ({'bufio', 'os'}, dedent_with_tabs('''\
+                                reader, err := bufio.NewReader(os.Stdin)
+                                source := reader.ReadString("\\n")'''))
+    io_read_file        = 'source := ioutil.ReadFile("z.py")'
+    io_write_file       = 'ioutil.WriteFile("z.py", source)'
+
+    math_ln             = ({'math'}, 'Math.Log(z)')
         # #
 
         # 'cpus = append(cpus, planet)', #cpus.push(planet)
@@ -188,7 +198,6 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         #     ''')), # _, separator, b = s.partition(help)
         #            # sh(separator, b)
 
-    ]
 
     binary_op = 'ham + egg'
 

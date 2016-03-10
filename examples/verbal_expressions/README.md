@@ -10,7 +10,7 @@ It defines a DSL for more readable definition of regular expressions and uses it
 
 It demonstrates 
 
-* suitabillity for writing/porting little libraries and DSL-s
+* suitability for writing/porting little libraries and DSL-s
 
 * native standard library use: Pseudo uses the target language
 standard library string/regex methods/functions

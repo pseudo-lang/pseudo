@@ -89,7 +89,7 @@ class Read(BizarreLeakingNode):
                     pseudo_type='String')], None
 
     def as_assignment(self, target):
-        expression = self.as_expression()
+        expression = self.as_expression()[0]
         expression[1] = assignment(target, expression[1])
         return expression
 
