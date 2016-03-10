@@ -238,21 +238,33 @@ definitions:
               pseudo_type: String
               sequence:
                 name: result
-                pseudo_type: [Tuple, String, String, Array, Int, 2]
+                pseudo_type:
+                - Tuple
+                - String
+                - String
+                - [Array, Int, 2]
                 type: local
               type: index
             - index: {pseudo_type: Int, type: int, value: 1}
               pseudo_type: String
               sequence:
                 name: result
-                pseudo_type: [Tuple, String, String, Array, Int, 2]
+                pseudo_type:
+                - Tuple
+                - String
+                - String
+                - [Array, Int, 2]
                 type: local
               type: index
             - index: {pseudo_type: Int, type: int, value: 2}
               pseudo_type: [Array, Int, 2]
               sequence:
                 name: result
-                pseudo_type: [Tuple, String, String, Array, Int, 2]
+                pseudo_type:
+                - Tuple
+                - String
+                - String
+                - [Array, Int, 2]
                 type: local
               type: index
             function:
@@ -346,7 +358,7 @@ definitions:
             index: {pseudo_type: Int, type: int, value: 0}
             pseudo_type: Int
             sequence:
-              name: result
+              name: goals
               pseudo_type: [Array, Int, 2]
               type: local
             type: index
@@ -356,7 +368,7 @@ definitions:
             index: {pseudo_type: Int, type: int, value: 1}
             pseudo_type: Int
             sequence:
-              name: result
+              name: goals
               pseudo_type: [Array, Int, 2]
               type: local
             type: index
@@ -397,7 +409,7 @@ definitions:
             index: {pseudo_type: Int, type: int, value: 0}
             pseudo_type: Int
             sequence:
-              name: result
+              name: goals
               pseudo_type: [Array, Int, 2]
               type: local
             type: index
@@ -407,7 +419,7 @@ definitions:
             index: {pseudo_type: Int, type: int, value: 1}
             pseudo_type: Int
             sequence:
-              name: result
+              name: goals
               pseudo_type: [Array, Int, 2]
               type: local
             type: index
@@ -429,7 +441,7 @@ definitions:
             index: {pseudo_type: Int, type: int, value: 0}
             pseudo_type: Int
             sequence:
-              name: result
+              name: goals
               pseudo_type: [Array, Int, 2]
               type: local
             type: index
@@ -439,7 +451,7 @@ definitions:
             index: {pseudo_type: Int, type: int, value: 1}
             pseudo_type: Int
             sequence:
-              name: result
+              name: goals
               pseudo_type: [Array, Int, 2]
               type: local
             type: index
@@ -452,7 +464,7 @@ definitions:
   - {name: team, pseudo_type: Function, type: local}
   - {name: host, pseudo_type: String, type: local}
   - {name: away, pseudo_type: String, type: local}
-  - {name: result, pseudo_type: String, type: local}
+  - {name: goals, pseudo_type: String, type: local}
   pseudo_type:
   - Function
   - String

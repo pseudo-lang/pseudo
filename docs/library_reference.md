@@ -303,7 +303,7 @@ String#reversed() -> String
 ### center
 
 ```javascript
-String#center() -> String
+String#center(count: Int, fill: String) -> String
 ```
 
 ### c_format

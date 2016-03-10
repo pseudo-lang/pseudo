@@ -269,7 +269,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         {
             public int a;
 
-            A(int a)
+            public A(int a)
             {
                 this.a = a;
             }
@@ -288,7 +288,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
             private int a;
             private int b;
 
-            A(int a, int b)
+            public A(int a, int b)
             {
                 this.a = a;
                 this.b = b;

@@ -9,7 +9,7 @@ class GolangGenerator(CodeGenerator):
     indent = 1
     use_spaces = False
 
-    middlewares = [TupleMiddleware, GoConstructorMiddleware, DeclarationMiddleware] # GoErrorHandlingMiddleware
+    middlewares = [TupleMiddleware(True), GoConstructorMiddleware, DeclarationMiddleware] # GoErrorHandlingMiddleware
     
     types = {
       'Int': 'int',

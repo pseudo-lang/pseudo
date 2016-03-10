@@ -1,5 +1,5 @@
 from pseudo.code_generator import CodeGenerator, switch
-from pseudo.middlewares import DeclarationMiddleware, NameMiddleware
+from pseudo.middlewares import DeclarationMiddleware, NameMiddleware, TupleMiddleware
 from pseudo.pseudo_tree import Node, local
 
 OPS = {'not': '!', 'and': '&&', 'or': '||'}
@@ -9,7 +9,8 @@ class CSharpGenerator(CodeGenerator):
 
     indent = 4
     use_spaces = True
-    middlewares = [DeclarationMiddleware, 
+    middlewares = [TupleMiddleware(all=False),
+                   DeclarationMiddleware,
                    NameMiddleware(
                        normal_name='camel_case', 
                        method_name='pascal_case',
@@ -65,6 +66,7 @@ class CSharpGenerator(CodeGenerator):
             using System;
             %<dependencies:lines>
             %<custom_exceptions:lines>
+            %<tuple_definitions:lines>
             %<#class_definitions>
             public class Program
             {
@@ -103,11 +105,15 @@ class CSharpGenerator(CodeGenerator):
         class_attr = '%<.is_public>%<@pseudo_type> %<name>;',
 
         class_attr_is_public = ('public ', 'private '),
-        
+            
+        immutable_class_attr = '''
+            private readonly %<@pseudo_type> %<name>;
+            public %<@pseudo_type> %<name:camel_case> { get { return %<name>; } }''',
+
         anonymous_function = "%<#anon_params> =>%<#anon_block>",
 
         constructor = '''
-            %<this>(%<#params>)
+            public %<this>(%<#params>)
             {
                 %<block:semi>
             }''',
@@ -123,6 +129,7 @@ class CSharpGenerator(CodeGenerator):
         boolean     = '%<value>',
         null        = 'null',
 
+        simple_initializer = "new %<name>(%<args:join ', '>)",
         list        = "new[] {%<elements:join ', '>}",
         dictionary  = "new %<@pseudo_type> { %<pairs:join ', '> }",
         pair        = "{%<key>, %<value>}",
@@ -130,6 +137,7 @@ class CSharpGenerator(CodeGenerator):
 
         new_instance = "new %<class_name>(%<args:join ', '>)",
 
+        # assignment  = '%<#z>',
         assignment  = switch('first_mention',
             true       = 'var %<target> = %<value>', # in v0.3 add config/use var only for generic types
             _otherwise = '%<target> = %<value>'
@@ -291,11 +299,10 @@ class CSharpGenerator(CodeGenerator):
             }''',
 
         standard_iterable_call = '''
-                    %<sequences>.Where(
-                        %<iterators.iterator> => %<test:first>
-                    ).Select(
-                        %<iterators.iterator> => %<block:first>
-                    ).ToList()''',
+                    %<sequences>
+                        .Where(%<iterators.iterator> => %<test:first>)
+                        .Select(%<iterators.iterator> => %<block:first>)
+                        .ToList()''',
 
         block = '%<block:semi>'
     )
@@ -357,3 +364,7 @@ class CSharpGenerator(CodeGenerator):
 
         return '%s %s %s' % (self.binary_left(node, depth), node.op, self.binary_right(node, depth))
 
+    def z(self, node, depth):
+        print(node.y)
+        input()
+        return '!!!'

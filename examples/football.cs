@@ -1,46 +1,60 @@
 using System;
-using System.IO;
-using System.Collections.Generic;
 using System.Text;
+using System.IO;
 using System.Linq;
+using System.Collections.Generic;
+
+public class Result
+{
+    private readonly string host;
+    public string Host { get { return host; } }
+
+    private readonly string away;
+    public string Away { get { return away; } }
+
+    private readonly int[] goals;
+    public int[] Goals { get { return goals; } }
+
+    public Result(string host, string away, int[] goals)
+    {
+        this.host = host;
+        this.away = away;
+        this.goals = goals;
+    }
+}
 
 public class Program
 {
-    static List<Tuple<string, string, int[]>> LoadResults(string filename)
+    static List<Result> LoadResults(string filename)
     {
         var raw = File.ReadAllText(filename);
         var lines = raw.Split('\n');
-        return lines.Where(
-            line => line.Length != 0
-        ).Select(
-            line => ParseResult(line)
-        ).ToList();
+        return lines
+            .Where(line => line.Length != 0)
+            .Select(line => ParseResult(line))
+            .ToList();
     }
 
-    static Tuple<string, string, int[]> ParseResult(string line)
+    static Result ParseResult(string line)
     {
         var awayIndex = line.IndexOf(" - ") + 3;
         var resultIndex = line.IndexOf(" ", awayIndex) + 1;
         var goals = line.Substring(resultIndex).Split(':');
-        return Tuple.Create(
-            line.Substring(0, awayIndex - 3),
-            line.Substring(awayIndex, resultIndex - 1 - awayIndex),
-            new[] { Int32.Parse(goals[0]), Int32.Parse(goals[1]) }
-        );
+        return new Result(line.Substring(0, awayIndex - 3), line.Substring(awayIndex, resultIndex - 1 - awayIndex), new[] { Int32.Parse(goals[0]), Int32.Parse(goals[1]) });
     }
 
-    static int CalculatePoints(List<Tuple<string, string, int[]>> results, string team)
+    static int CalculatePoints(List<Result> results, string team)
     {
-        return results.Aggregate(0, (memo, result) => memo + ResultPoints(team, result.Item1, result.Item2, result.Item3));
+        return results.Aggregate(0, (memo, result) => memo + ResultPoints(team, result));
     }
 
-    static int ResultPoints(string team, string host, string away, int[] result)
+    static int ResultPoints(string team, Result result)
     {
-        if (host == team && result[0] > result[1] || away == team && result[0] < result[1])
+        if (result.Host == team && result.Goals[0] > result.Goals[1] || result.Away == team && result.Goals[0] < result.Goals[1])
         {
             return 3;
         }
-        else if (result[0] == result[1] && (host == team || away == team))
+        else if (result.Goals[0] == result.Goals[1] && (result.Host == team || result.Away == team))
         {
             return 1;
         }
