@@ -34,7 +34,8 @@ class CSharpTranslator(ApiTranslator):
 
             'length':       '.Length!',
             'keys':         '#Keys',
-            'values':       '#Values'
+            'values':       '#Values',
+            'contains?':    '#Contains'
         },
         'String': {
             '@equivalent':  'String',

@@ -42,8 +42,9 @@ class JSTranslator(ApiTranslator):
             '@equivalent':  'Object',
 
             'length':       '.length!',
-            'keys':         'Object.keys',
-            'values':       'Object.values'
+            'keys':         'Object.keys(%{self})',
+            'values':       'Object.values(%{self})',
+            'contains?':    '#hasOwnProperty'
         },
         'String': {
             '@equivalent':  'String',

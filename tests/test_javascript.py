@@ -127,10 +127,10 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
                         });''')
 
     # # Hash
-    # dictionary_length   = 'pointers.length'
-    # dictionary_contains = 'pointers.include?(s)'
-    # dictionary_keys     = 'pointers.keys'
-    # dictionary_values   = 'pointers.values'
+    dictionary_length   = 'pointers.length'
+    dictionary_contains = 'pointers.hasOwnProperty(s)'
+    dictionary_keys     = 'Object.keys(pointers)'
+    dictionary_values   = 'Object.values(pointers)'
 
     # Set
     set_length          = 'words.length'
