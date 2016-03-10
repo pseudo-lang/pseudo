@@ -44,6 +44,10 @@ Pseudo specifies an ast format corresponding to a very clear and somehow limited
 
 Those constructs and entities have almost the same behavior and very same-spirited api in a lot of the languages which Pseudo would support.
 
+## examples
+
+[a football results processing command line tool](docs/examples/football)
+
 ## use cases
 
   * generate code for the same task/algorithm in different languages (parser generators etc)
