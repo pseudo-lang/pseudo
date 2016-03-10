@@ -449,6 +449,7 @@ ClassDefinition = [Node('class_definition',
                 this=typename('A'),
                 pseudo_type=['Function', 'Int'],
                 return_type='Int',
+                is_public=False,
                 block=[
                     Node('implicit_return', value=to_node(42))
                 ])

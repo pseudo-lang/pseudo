@@ -226,7 +226,7 @@ main:
   type: assignment
   value:
     args: []
-    class_name: {name: VerbalExpression, type: typename}
+    class_name: VerbalExpression
     pseudo_type: VerbalExpression
     type: new_instance
 - pseudo_type: Void

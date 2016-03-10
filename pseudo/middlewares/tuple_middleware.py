@@ -187,6 +187,8 @@ class ArgWalker(TreeTransformer):
             return n
 
         
+        if hasattr(namespace, 'y'):
+            input(namespace.y)
         if namespace not in self.tuple_definition.function_index or name not in self.tuple_definition.function_index[namespace]:
             return n
 

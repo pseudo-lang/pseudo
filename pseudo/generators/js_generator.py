@@ -32,7 +32,7 @@ class JSGenerator(CodeGenerator):
 
         class_definition_base = ('%<name>.prototype = _.create(%<base>.prototype, {constructor: %<name>})', ''),
 
-        class_definiton_constructor = ('%<constructor>', ''),
+        class_definition_constructor = ('%<constructor>', ''),
 
         dependency = switch('name',
             lodash = "var _ = require('%<name>');",
@@ -86,7 +86,7 @@ class JSGenerator(CodeGenerator):
         static_call = "%<receiver>.%<message>(%<#args_join>)",
         call        = "%<function>(%<#args_join>)",
         method_call = "%<receiver>.%<message>(%<#args_join>)",
-        this_method_call = "%<receiver>.%<message>(%<#args_join>)",
+        this_method_call = "this.%<message>(%<#args_join>)",
 
         this        = 'this',
 
@@ -183,6 +183,12 @@ class JSGenerator(CodeGenerator):
               true       = '%<sequence>.%<index.value>',
               _otherwise = '%<sequence>[%<index>]'
         ),
+
+        interpolation = "%<args:join ' + '>",
+
+        interpolation_literal = '%<#safe_single>',
+
+        interpolation_placeholder = '%<value>',
 
         constant = '%<constant> = %<init>',
 

@@ -138,8 +138,8 @@ class CodeGenerator:
     def action_line_join(self, expanded, depth):
         return '\n'.join(expanded)
 
-    def action_camel_case(self, expanded, depth):
-        return expanded.title().replace('_', '')
+    def action_camel_case(self, expanded, case, depth):
+        return getattr(expanded.title().replace('_', '')[0], case)() + expanded.title().replace('_', '')[1:]
 
     def action_lines_before(self, expanded, depth):
         if expanded:

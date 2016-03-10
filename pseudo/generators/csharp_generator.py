@@ -16,35 +16,6 @@ class CSharpGenerator(CodeGenerator):
                        method_name='pascal_case',
                        function_name='pascal_case')]
 
-    def params(self, node, indent):
-        return ', '.join(
-            '%s %s' % (
-              self.render_type(node.pseudo_type[j + 1]), 
-              self._generate_node(k)) for j, k in enumerate(node.params) )
-
-    def anon_params(self, node, indent):
-        if len(node.params) == 0:
-            return ''
-        else:
-            l, r  = ('(', ')') if len(node.params) > 1 else ('', '')
-            return '%s%s%s' % (l, ', '.join(param if isinstance(param, str) else self._generate_node(param) for param in node.params), r)
-
-    def anon_block(self, node, indent):
-        # print(indent);input(node.params[0].y)     
-        if indent < 2:
-            indent = 2 # anon cant be before method lvl
-
-        if len(node.block) == 1:
-            if node.block[0].type == 'implicit_return' or node.block[0].type == 'explicit_return':
-                e = node.block[0].value
-            else:
-                e = node.block[0]    
-            b = self._generate_node(e)
-            return ' ' + b
-        else:
-            b = ';\n'.join(self.offset(indent + 1) + self._generate_node(e, indent + 1) for e in node.block) + ';\n'
-            return ' {\n%s%s}' % (b, self.offset(indent))
-
     types = {
       'Int': 'int',
       'Float': 'float',
@@ -58,7 +29,9 @@ class CSharpGenerator(CodeGenerator):
       # fixed-size buffers in c# are not widely used
       # they require a struct and an unsafe annotation
       # we can a unsafe-fixed-size-buffer option to config
-      'Void': 'void'
+      'Void': 'void',
+      'Regexp': 'Regex',
+      'RegexpMatch': 'Match'
     }
 
     templates = dict(
@@ -85,10 +58,12 @@ class CSharpGenerator(CodeGenerator):
             }''',
 
         method_definition =     '''
-            %<@return_type> %<name>(%<#params>)
+            %<.is_public> %<@return_type> %<name>(%<#params>)
             {
                 %<block:semi>
             }''',
+
+        method_definition_is_public = ('public', 'private'),
 
         class_definition = '''
             public class %<name>%<.base>
@@ -102,13 +77,13 @@ class CSharpGenerator(CodeGenerator):
 
         class_definition_constructor = ('%<constructor>', ''),
 
-        class_attr = '%<.is_public>%<@pseudo_type> %<name>;',
+        class_attr = "%<.is_public>%<@pseudo_type> %<name:camel_case 'lower'>;",
 
         class_attr_is_public = ('public ', 'private '),
             
         immutable_class_attr = '''
             private readonly %<@pseudo_type> %<name>;
-            public %<@pseudo_type> %<name:camel_case> { get { return %<name>; } }''',
+            public %<@pseudo_type> %<name:camel_case 'title'> { get { return %<name>; } }''',
 
         anonymous_function = "%<#anon_params> =>%<#anon_block>",
 
@@ -160,7 +135,7 @@ class CSharpGenerator(CodeGenerator):
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
-        this_method_call = "this.%<receiver>.%<message>(%<args:join ', '>)",
+        this_method_call = "this.%<message:camel_case 'title'>(%<args:join ', '>)",
 
         this        = 'this',
 
@@ -235,11 +210,15 @@ class CSharpGenerator(CodeGenerator):
             _otherwise       = '%<sequence>[%<index>]'
         ),
 
+        interpolation = "string.Format(\"%<args:join ''>\",  %<#placeholders>)",
+
+        interpolation_placeholder = "{%<index>}",
+
+        interpolation_literal = "%<value>",
+
         index_assignment = '%<sequence>[%<index>] = %<value>',
 
         constant = '%<constant> = %<init>',
-
-        regex = '@"%<value>',
 
         for_statement = switch(lambda f: f.iterators.type,
             for_iterator_with_index = '''
@@ -305,9 +284,42 @@ class CSharpGenerator(CodeGenerator):
                         .Select(%<iterators.iterator> => %<block:first>)
                         .ToList()''',
 
-        block = '%<block:semi>'
+        aug_assignment = '%<target> %<op>= %<value>',
+
+        block = '%<block:semi>',
+
+        regex = '@"%<value>'
     )
-    
+
+    def params(self, node, indent):
+        return ', '.join(
+            '%s %s' % (
+              self.render_type(node.pseudo_type[j + 1]), 
+              self._generate_node(k)) for j, k in enumerate(node.params) )
+
+    def anon_params(self, node, indent):
+        if len(node.params) == 0:
+            return ''
+        else:
+            l, r  = ('(', ')') if len(node.params) > 1 else ('', '')
+            return '%s%s%s' % (l, ', '.join(param if isinstance(param, str) else self._generate_node(param) for param in node.params), r)
+
+    def anon_block(self, node, indent):
+        # print(indent);input(node.params[0].y)     
+        if indent < 2:
+            indent = 2 # anon cant be before method lvl
+
+        if len(node.block) == 1:
+            if node.block[0].type == 'implicit_return' or node.block[0].type == 'explicit_return':
+                e = node.block[0].value
+            else:
+                e = node.block[0]    
+            b = self._generate_node(e)
+            return ' ' + b
+        else:
+            b = ';\n'.join(self.offset(indent + 1) + self._generate_node(e, indent + 1) for e in node.block) + ';\n'
+            return ' {\n%s%s}' % (b, self.offset(indent))
+
     def class_definitions(self, node, depth):
         result = '\n'.join(self._generate_node(k) for k in node.definitions if k.type == 'class_definition')
         if result:
@@ -370,3 +382,6 @@ class CSharpGenerator(CodeGenerator):
         print(node.y)
         input()
         return '!!!'
+
+    def placeholders(self, node, depth):
+        return ', '.join(self._generate_node(child.value) for child in node.args[1::2])

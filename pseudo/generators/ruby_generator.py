@@ -96,7 +96,7 @@ class RubyGenerator(CodeGenerator):
         call_args   = call_args,
         method_call_args = call_args,
         method_call = "%<receiver>.%<message>%<.args>",
-        this_method_call = "%<message>%<.args>",
+        this_method_call = "%<message:camel_case 'title'>%<.args>",
         this_method_call_args=call_args,
         
 

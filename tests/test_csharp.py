@@ -247,7 +247,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
         {
             private int ast;
 
-            List<string> Parse(string source)
+            public List<string> Parse(string source)
             {
                 this.ast = 0;
                 return new[] {source};
@@ -274,7 +274,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                 this.a = a;
             }
 
-            int Parse()
+            private int Parse()
             {
                 return 42;
             }
