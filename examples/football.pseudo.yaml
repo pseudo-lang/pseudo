@@ -228,58 +228,61 @@ definitions:
     value:
       args:
       - block:
-        - left: {name: memo, pseudo_type: Int, type: local}
-          op: +
-          pseudo_type: Int
-          right:
-            args:
-            - {name: team, pseudo_type: String, type: local}
-            - index: {pseudo_type: Int, type: int, value: 0}
-              pseudo_type: String
-              sequence:
-                name: result
-                pseudo_type:
-                - Tuple
-                - String
-                - String
-                - [Array, Int, 2]
-                type: local
-              type: index
-            - index: {pseudo_type: Int, type: int, value: 1}
-              pseudo_type: String
-              sequence:
-                name: result
-                pseudo_type:
-                - Tuple
-                - String
-                - String
-                - [Array, Int, 2]
-                type: local
-              type: index
-            - index: {pseudo_type: Int, type: int, value: 2}
-              pseudo_type: [Array, Int, 2]
-              sequence:
-                name: result
-                pseudo_type:
-                - Tuple
-                - String
-                - String
-                - [Array, Int, 2]
-                type: local
-              type: index
-            function:
-              name: result_points
-              pseudo_type:
-              - Function
-              - String
-              - String
-              - String
-              - [Array, Int, 2]
-              - Int
-              type: local
+        - pseudo_type: Int
+          type: implicit_return
+          value:
+            left: {name: memo, pseudo_type: Int, type: local}
+            op: +
             pseudo_type: Int
-            type: call
-          type: binary_op
+            right:
+              args:
+              - {name: team, pseudo_type: String, type: local}
+              - index: {pseudo_type: Int, type: int, value: 0}
+                pseudo_type: String
+                sequence:
+                  name: result
+                  pseudo_type:
+                  - Tuple
+                  - String
+                  - String
+                  - [Array, Int, 2]
+                  type: local
+                type: index
+              - index: {pseudo_type: Int, type: int, value: 1}
+                pseudo_type: String
+                sequence:
+                  name: result
+                  pseudo_type:
+                  - Tuple
+                  - String
+                  - String
+                  - [Array, Int, 2]
+                  type: local
+                type: index
+              - index: {pseudo_type: Int, type: int, value: 2}
+                pseudo_type: [Array, Int, 2]
+                sequence:
+                  name: result
+                  pseudo_type:
+                  - Tuple
+                  - String
+                  - String
+                  - [Array, Int, 2]
+                  type: local
+                type: index
+              function:
+                name: result_points
+                pseudo_type:
+                - Function
+                - String
+                - String
+                - String
+                - [Array, Int, 2]
+                - Int
+                type: local
+              pseudo_type: Int
+              type: call
+            type: binary_op
         params:
         - {name: memo, pseudo_type: Int, type: local}
         - name: result

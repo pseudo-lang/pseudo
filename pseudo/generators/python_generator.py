@@ -19,7 +19,7 @@ class PythonGenerator(CodeGenerator):
             %<main:lines>''',
 
         function_definition   = '''
-             def %<name>(%<params:join ','>):
+             def %<name>(%<params:join ', '>):
                  %<block:line_join_pass>''',
 
         function_definition_block = ("%<block:line_join>", 'pass'),

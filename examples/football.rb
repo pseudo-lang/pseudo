@@ -15,10 +15,10 @@ def calculate_points(results, team)
   results.reduce(0) { |memo, result| memo + result_points(team, result[0], result[1], result[2]) }
 end
 
-def result_points(team, host, away, result)
-  if host == team && result[0] > result[1] || away == team && result[0] < result[1]
+def result_points(team, host, away, goals)
+  if host == team && goals[0] > goals[1] || away == team && goals[0] < goals[1]
     3
-  elsif result[0] == result[1] && (host == team || away == team)
+  elsif goals[0] == goals[1] && (host == team || away == team)
     1
   else
     0

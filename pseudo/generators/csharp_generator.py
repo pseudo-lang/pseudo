@@ -355,6 +355,7 @@ class CSharpGenerator(CodeGenerator):
         else:
             return "'%s'" % node.value
 
+    # args starting from 0
     def comparison(self, node, depth):
         if node.left.type != 'binary_op' or node.left.op != '+' or node.left.right.type != 'int' or node.right.type != 'int':# 'attr' or node.left.object.type != 'local' or node.left.object.name != 'ARGV':
             pass

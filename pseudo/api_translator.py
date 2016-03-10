@@ -113,9 +113,9 @@ class ApiTranslator(TreeTransformer):
         if node and hasattr(node, 'params'):
             self.update_used(node.pseudo_type)
 
-        if node and node.type == 'call':
-            if node.function.type == 'attr' and node.function.object.type == 'local' and hasattr(self, 'js_dependencies') and node.function.object.name in self.js_dependencies:
-                self.standard_dependencies.add(self.js_dependencies[node.function.object.name])                
+        if node and node.type == 'static_call':
+            if node.receiver.type == 'local' and hasattr(self, 'js_dependencies') and node.receiver.name in self.js_dependencies:
+                self.standard_dependencies.add(self.js_dependencies[node.receiver.name])                
 
         if in_block:
             results = [ass for ass in self.leaked_nodes]

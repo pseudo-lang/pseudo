@@ -87,7 +87,6 @@ class TupleMiddleware(Middleware):
                 name=camel_case(self.tuple_definitions[name][0]),
                 args=node.elements)
         else:
-            # input(name)
             if self.all: # go: we have to change all tuples
                 self.tuple_definitions[name] = Node('class_definition',
                     name=name,
@@ -156,10 +155,9 @@ class ArgWalker(TreeTransformer):
             else:
                 n.args[j] = self.transform(n.args[j])
                 continue
-            s = safe_serialize_type(pseudo_type)
-            # input(s)
-            if s not in self.tuple_definition.tuple_definitions:
-                self.tuple_definition.tuple_definitions[s] = name, Node('class_definition',
+            z = safe_serialize_type(pseudo_type)
+            if z not in self.tuple_definition.tuple_definitions:
+                self.tuple_definition.tuple_definitions[z] = name, Node('class_definition',
                             name=name,
                             base=None,
                             constructor=None,
@@ -167,7 +165,7 @@ class ArgWalker(TreeTransformer):
                             attrs=[Node('immutable_class_attr', name='item%d' % k, pseudo_type=t) for k, t in enumerate(pseudo_type[1:])],
                             methods=[])
             else:
-                self.tuple_definition.tuple_definitions[s] = name, self.tuple_definition.tuple_definitions[s][1]
+                self.tuple_definition.tuple_definitions[z] = name, self.tuple_definition.tuple_definitions[z][1]
             for l in self.tuple_definition.params:
                 l.name = name
     
@@ -190,8 +188,7 @@ class ArgWalker(TreeTransformer):
         if self.tuple_index(n):
             pseudo_type = n.args[-1].sequence.pseudo_type
             sequence = n.args[-1].sequence
-            print(all(self.successive(sequence, j, a) for j, a in enumerate(n.args[-len(pseudo_type) + 1:])))
-                        
+            
             if len(n.args) >= len(pseudo_type) - 1 and all(self.successive(sequence, j, a) for j, a in enumerate(n.args[-len(pseudo_type) + 1:])):
                 # s(a, b[0], b[1]) -> s(a, b) and def s(a, x, y) -> s(a, k_name)
                 t = safe_serialize_type(pseudo_type)

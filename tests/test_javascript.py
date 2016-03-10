@@ -81,8 +81,8 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     # io
     io_display          = "console.log(2, 'z')"
-    io_read_file        = (['fs'], "var source = fs.readFileSync('z.py')")
-    io_write_file       = (['fs'], "fs.writeFileSync('z.py', source)")
+    io_read_file        = (['fs'], "var source = fs.readFileSync('z.py', 'utf8')")
+    io_write_file       = (['fs'], "fs.writeFileSync('z.py', source, 'utf8')")
 
     # math
     math_ln             = 'Math.log(z)'
@@ -150,7 +150,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     string_substr_to    = 's.slice(0, -2)'
     string_length       = 's.length'
     string_find         = 's.search(t)'
-    string_find_from    = 's.slice(z).search(t)'
+    string_find_from    = 'z + s.slice(z).search(t)'
     string_count        = '_.where(t).length'
     string_concat       = 's + t'
     string_partition    = '_.partition(t)[1]'

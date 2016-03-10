@@ -3,6 +3,7 @@ from pseudo.code_generator import CodeGenerator, switch
 from pseudo.middlewares import DeclarationMiddleware
 
 JS_NAME = re.compile(r'[a-zA-Z][a-zA-Z_0-9]*')
+OPS = {'not': '!', 'and': '&&', 'or': '||'}
 
 class JSGenerator(CodeGenerator):
     '''JS generator'''
@@ -11,17 +12,11 @@ class JSGenerator(CodeGenerator):
     use_spaces = True
     middlewares = [DeclarationMiddleware]
 
-    def handler_(self, node, indent):
-        if node.handlers:
-            return node.handlers[0].instance
-        else:
-            return '_e'
-
     templates = dict(
         module     = "%<dependencies:lines>%<constants:lines>%<custom_exceptions:lines>%<definitions:lines>%<main:semi>",
 
         function_definition   = '''
-            function %<name>(%<params:join ','>) {
+            function %<name>(%<params:join ', '>) {
               %<block:semi>
             }''',
 
@@ -84,13 +79,13 @@ class JSGenerator(CodeGenerator):
             _otherwise = '%<target> = %<value>'
         ),
 
-        binary_op   = '%<left> %<op> %<right>',
-        unary_op    = '%<op>%<value>',
-        comparison  = '%<left> %<op> %<right>',
+        binary_op   = '%<#binary_left> %<#op> %<#binary_right>',
+        unary_op    = '%<#op>%<value>',
+        comparison  = '%<#comparison>',
 
-        static_call = "%<receiver>.%<message>(%<args:join ', '>)",
-        call        = "%<function>(%<args:join ', '>)",
-        method_call = "%<receiver>.%<message>(%<args:join ', '>)",
+        static_call = "%<receiver>.%<message>(%<#args_join>)",
+        call        = "%<function>(%<#args_join>)",
+        method_call = "%<receiver>.%<message>(%<#args_join>)",
 
         this        = 'this',
 
@@ -179,8 +174,6 @@ class JSGenerator(CodeGenerator):
 
         set_elements = ("%<elements:join ': true, '>: true", ''),
 
-        regex = '/%<value>/',
-
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
 
@@ -192,5 +185,35 @@ class JSGenerator(CodeGenerator):
 
         constant = '%<constant> = %<init>',
 
-        block = '%<block:semi>'
+        standard_iterable_call = '''
+            _.filter(%<sequences.sequence>, function (%<iterators>) {
+              return %<test:first>;
+            }).map(function (%<iterators>) {
+              return %<block:first>;
+            })''',
+
+        block = '%<block:semi>',
+
+        regex = '/%<value>/',
     )
+    
+    def handler_(self, node, indent):
+        if node.handlers:
+            return node.handlers[0].instance
+        else:
+            return '_e'
+    def op(self, node, depth):
+        return OPS.get(node.op, node.op)
+
+    def args_join(self, node, depth):
+        return ', '.join(
+            self._generate_node(n, depth).lstrip() 
+            for n
+            in node.args)
+    def comparison(self, node, depth):
+        if node.left.type == 'binary_op' and node.left.op == '-' and node.left.right.type == 'int' and node.right.type == 'int':
+            node.right.value += node.left.right.value
+            node.left = node.left.left
+
+        return '%s %s %s' % (self.binary_left(node, depth), node.op, self.binary_right(node, depth))
+

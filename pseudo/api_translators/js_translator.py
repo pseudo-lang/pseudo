@@ -53,11 +53,11 @@ class JSTranslator(ApiTranslator):
             'length':       '.length!',
             'substr_to':    '#slice(0, %{0})',
             'find':         '#search',
-            'find_from':    lambda f, value, index, _: method_call(
+            'find_from':    lambda f, value, index, _: Node('binary_op', op='+', pseudo_type='Int', left=index, right=method_call(
                                 method_call(f, 'slice', [index], 'String'),
                                 'search',
                                 [value],
-                                'Int'),
+                                'Int')),
             'count':        lambda f, count, _: attr(method_call(LODASH, 'where', [count], ['List', 'String']), 'length', 'Int'),
             'concat':       to_op('+'),
             'partition':    lambda f, delimiter, _: Node('index', sequence=method_call(LODASH, 'partition', [delimiter], 'String'), index=to_node(1), pseudo_type=['Tuple', 'String', 'String', 'String']),
@@ -127,16 +127,25 @@ class JSTranslator(ApiTranslator):
 
         'system': {
             'args':         'process.argv!',
-            'arg_count':    lambda _: attr(attr(local('process', 'Library'), 'argv', ['List', 'String']), 'length', 'Int'),
+            'arg_count':    lambda _: Node('binary_op',
+                                op='-',
+                                left=attr(
+                                    attr(local('process', 'Library'), 
+                                    'argv', 
+                                    ['List', 'String']), 
+                                    'length', 
+                                    'Int'),
+                                right=to_node(1),
+                                pseudo_type='Int'),
             'index':        lambda value, _: Node('index',
                                 sequence=attr(local('process', 'Library'), 'argv', ['List', 'String']),
-                                index=value,
+                                index=to_node(value.value + 1) if value.type == 'int' else Node('binary_op', op='+', left=value, right=value, pseudo_type='Int'),
                                 pseudo_type='String')                                
         },
         'io': {
             'display':      'console.log',
-            'read_file':    'fs.readFileSync',
-            'write_file':   'fs.writeFileSync'
+            'read_file':    "fs.readFileSync(%{0}, 'utf8')",
+            'write_file':   "fs.writeFileSync(%{0}, %{1}, 'utf8')",
         },
 
         'http': {
