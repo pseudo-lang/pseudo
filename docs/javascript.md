@@ -1,6 +1,6 @@
 # javascript
 
-* everything except `io:read` supported
+* full support
 * [generator](../pseudo/generators/js_generator.py) [api translator](../pseudo/api_translators/js_translator.py) [tests](../tests/test_javascript.py)
 * target version: Ecmascript 5
 
@@ -13,8 +13,14 @@ JavaScript equivalents used for pseudo types and concepts:
 | Dictionary[K, V] | Object 			     |
 | Set[T]           | Object with boolean values|
 | Tuple[T1, T2..]  | Array                   |
+| Array            | Array                   |
 | Int              | Number                  |
 | Float            | Number                  |
+| String 		   | String                  |
+| for-loops        | for, _.each             |
+| classes          | objects and prototypical inheritance  |
+| methods          | prototype functions     |
+| functions        | functions               |
 
 ## standard library
 

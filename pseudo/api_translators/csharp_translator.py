@@ -27,7 +27,13 @@ class CSharpTranslator(ApiTranslator):
             'filter':       linq('Where'),
             'reduce':       linq('Aggregate', False, swap=True),
             'all?':         linq('All'),
-            'any?':         linq('Any')
+            'any?':         linq('Any'),
+            'concat':       '#AddRange',
+            'present?':     '#Any',
+            'empty?':       lambda l, _: Node('unary_op', op='not', pseudo_type='Boolean', value=method_call(l, 'Any', [], 'Boolean')),
+            'find':         '#IndexOf',
+            'contains?':    '#Contains',
+            'sort':         '#Sort'
         },
         'Dictionary': {
             '@equivalent':  'Dictionary',

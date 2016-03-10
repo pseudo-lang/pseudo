@@ -107,6 +107,11 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     list_any            = 'any(len(value) == 0 for value in cpus)'
     list_all            = 'all(len(value) == 0 for value in cpus)'
+    list_find           = 'cpus.index(s)'
+    list_present        = 'cpus'
+    list_empty          = 'not cpus'
+    list_contains       = 's in cpus'
+    list_sort           = 'cpus.sort()'
 
     #Dict
     dictionary_length   = 'len(pointers)'

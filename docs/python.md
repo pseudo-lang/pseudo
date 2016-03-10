@@ -1,7 +1,7 @@
 # python
 
 * full support
-* [generator](https://github.com/alehander42/pseudo/tree/master/pseudo/generators/python_generator.py) [api translator](https://github.com/alehander42/pseudo/tree/master/pseudo/api_translators/python_translator.py) [tests](https://github.com/alehander42/pseudo/tree/master/tests/test_python.py)
+* [generator](../pseudo/generators/python_generator.py) [api translator](../pseudo/api_translators/python_translator.py) [tests](../tests/test_python.py)
 * target version: Python3.2+
 
 Currently `pseudo` targets Python3.2+ . It's easy to add Python2.7+ support too,
@@ -14,6 +14,15 @@ Python equivalents used for pseudo types and concepts:
 | List[T]          | list   |
 | Dictionary[K, V] | dict   |
 | Set[T]           | set    |
+| Tuple[T1, T2..]  | tuple  |
+| Array            | tuple  |
+| Int              | int    |
+| Float            | float  |
+| String 		   | str    |
+| for-loops        | for    |
+| classes          | classes|
+| methods          | methods|
+| functions        | funcs  | 
 
 
 # niceties

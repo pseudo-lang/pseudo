@@ -206,6 +206,11 @@ ListFilter      = standard_method_call(LIST_EXAMPLE, 'filter', [EMPTY], LIST_EXA
 ListReduce      = standard_method_call(LIST_EXAMPLE, 'reduce', [COMBINER, to_node('')], 'String')
 ListAny         = standard_method_call(LIST_EXAMPLE, 'any?', [EMPTY], 'Boolean')
 ListAll         = standard_method_call(LIST_EXAMPLE, 'all?', [EMPTY], 'Boolean')
+ListFind        = standard_method_call(LIST_EXAMPLE, 'find', [STRING_EXAMPLE], 'Int')
+ListSort        = standard_method_call(LIST_EXAMPLE, 'sort', [], 'Void')
+ListPresent     = standard_method_call(LIST_EXAMPLE, 'present?', [], 'Boolean')
+ListEmpty       = standard_method_call(LIST_EXAMPLE, 'empty?', [], 'Boolean')
+ListContains    = standard_method_call(LIST_EXAMPLE, 'contains?', [STRING_EXAMPLE], 'Boolean')
 
 #Dictionary
 DictionaryLength   = standard_method_call(DICTIONARY_EXAMPLE, 'length', [], 'Int')

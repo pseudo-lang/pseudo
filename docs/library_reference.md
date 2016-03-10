@@ -15,11 +15,11 @@
     - [any?](#any?)
     - [all?](#all?)
     - [find](#find)
+    - [contains](#contains?)
     - [present?](#present?)
     - [empty?](#empty?)
-    - [push_many](#push_many)
-    - [repeat](#repeat)
     - [concat](#concat)
+    - [sort](#sort)
   - [Dictionary[K, V]](#dictionary)
   	- [length](#length)
     - [contains?](#contains?)
@@ -166,6 +166,14 @@ List#any?(f: Function[T, Boolean]) -> Boolean
 ```javascript
 List#all?(f: Function[T, Boolean]) -> Boolean
 ```
+
+### sort
+
+```javascript
+List#sort() -> Void
+```
+
+sorts in place
 
 
 ## Dictionary

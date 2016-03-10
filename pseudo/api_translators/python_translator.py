@@ -26,7 +26,7 @@ class PythonTranslator(ApiTranslator):
             'set_slice':    expand_set_slice,
             'set_slice_from': expand_set_slice,
             'set_slice_to': lambda receiver, to, value, pseudo_type: expand_set_slice(receiver, None, to, value, pseudo_type),            
-            'find':         '#find',
+            'find':         '#index',
             'join':         lambda receiver, delimiter, _: method_call(delimiter, 'join', [receiver], pseudo_type='String'),
             # map and filter have implicit or explicit return because otherwise they wouldnt type check
             'map':          lambda receiver, f, pseudo_type: Node('_py_listcomp', 
@@ -41,17 +41,17 @@ class PythonTranslator(ApiTranslator):
                                 block=local(test.params[0].name, test.pseudo_type[1]),
                                 test=test.block[0].value,
                                 pseudo_type=['List', test.pseudo_type[1]]),
-
             'reduce':       lambda receiver, aggregator, initial, pseudo_type: Node('static_call',
                                 receiver=local('functools', 'Library'),
                                 message='reduce',
                                 args=[aggregator, receiver, initial],
                                 pseudo_type=pseudo_type),
-
             'any?':         to_py_generatorcomp('any'),
-
-            'all?':         to_py_generatorcomp('all')
-
+            'all?':         to_py_generatorcomp('all'),
+            'sort':         '#sort',
+            'present?':     lambda receiver, _: receiver,
+            'empty?':       lambda receiver, _: Node('unary_op', op='not', value=receiver, pseudo_type='Boolean'),
+            'contains?':    contains
         },
         'Dictionary': {
             '@equivalent':  'dict',

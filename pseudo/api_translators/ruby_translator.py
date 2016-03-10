@@ -26,7 +26,15 @@ class RubyTranslator(ApiTranslator):
             'filter':       to_method_rb_block('select'),
             'reduce':       to_method_rb_block('reduce'),
             'any?':         to_method_rb_block('any?'),
-            'all?':         to_method_rb_block('all?')
+            'all?':         to_method_rb_block('all?'),
+            'sort':         '#sort!',
+            'present?':     lambda receiver, _: Node('unary_op', 
+                                op='not',
+                                value=method_call(receiver, 'empty?', [], 'Boolean'),
+                                pseudo_type='Boolean'),
+            'empty?':       '#empty?',
+            'find':         '#index',
+            'contains?':    '#include?'
         },
         'Dictionary': {
             '@equivalent':  'Hash',

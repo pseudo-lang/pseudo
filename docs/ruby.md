@@ -1,7 +1,7 @@
 # ruby
 
-* support
-* [generator](pseudo/generators/ruby_generator.py) [api translator](pseudo/api_translators/ruby_translator.py) [tests](tests/test_ruby.py)
+* full support
+* [generator](../pseudo/generators/ruby_generator.py) [api translator](../pseudo/api_translators/ruby_translator.py) [tests](../tests/test_ruby.py)
 * target version: Ruby 2+
 
 Ruby equivalents used for pseudo types and concepts:
@@ -16,7 +16,11 @@ Ruby equivalents used for pseudo types and concepts:
 | Array            | Array                |
 | Int              | Int                  |
 | Float            | Float                |
-| String 		   | String               |
+| String 		   | String, Symbol       |
+| for-loops        | .each, .each_with_index         |
+| classes          | classes              |
+| methods          | methods              |
+| functions        | methods in global scope|
 
 # niceties
 

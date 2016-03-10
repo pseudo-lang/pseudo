@@ -36,7 +36,12 @@ class JSTranslator(ApiTranslator):
             'filter':       '_.filter(%{self}, %{0})',
             'reduce':       '_.reduce(%{self}, %{0}, %{1})',
             'any?':         '_.any(%{self}, %{0})',
-            'all?':         '_.all(%{self}, %{0})'
+            'all?':         '_.all(%{self}, %{0})',
+            'sort':         '#sort',
+            'empty?':       '_.isEmpty(%{self})',
+            'present?':     lambda receiver, _: receiver,
+            'find':         '#indexOf',
+            'contains?':    '_.contains(%{self}, %{0})'
         },
         'Dictionary': {
             '@equivalent':  'Object',

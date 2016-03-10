@@ -2,6 +2,7 @@ from pseudo.code_generator import CodeGenerator, switch
 from pseudo.middlewares import GoConstructorMiddleware, TupleMiddleware, DeclarationMiddleware # GoErrorHandlingMiddleware #, GoTupleMiddleware
 from pseudo.code_generator_dsl import PseudoType
 from pseudo.pseudo_tree import Node, local
+from pseudo.helpers import general_type
 
 class GolangGenerator(CodeGenerator):
     '''Go generator'''
@@ -75,6 +76,8 @@ class GolangGenerator(CodeGenerator):
             }''',
 
         new_instance = "new%<class_name>(%<args:join ', '>)",
+
+        _go_make_slice = 'make(%<@slice_type>, %<#initial>, %<length>)',
 
         _go_simple_initializer = "%<name>{%<args:join ', '>}",
 
@@ -200,19 +203,23 @@ class GolangGenerator(CodeGenerator):
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
 
+        aug_assignment =  '%<target> %<op>= %<value>',
+
         index            = '%<sequence>[%<index>]',
+
 
         index_assignment = '%<sequence>[%<index>] = %<value>',
 
         constant = '%<constant> = %<init>',
 
-        regex = '@"%<value>',
 
         custom_exception = '''
             class %<name> : Exception
         ''',
 
-        block = '%<block:line_join>'
+        block = '%<block:line_join>',
+
+        regex = '"%<value>"',
     )
     
     def params(self, node, depth):
@@ -226,6 +233,11 @@ class GolangGenerator(CodeGenerator):
         else:
             return ''
 
+    # keys in pseudo can be only string or int float bool
+    def initial(self, node, _):
+        '''initial value for make'''
+        return {'Int': '0', 'Float': '0.0', 'String': '""', 'Bool': 'true'}.get(node.pseudo_type[1], 'nil')
+
     def zip_iterators(self, node, depth):
         return '\n'.join(
             '%s%s := %s' % (
@@ -238,3 +250,4 @@ class GolangGenerator(CodeGenerator):
                         pseudo_type=node.sequences.sequences[j].pseudo_type[1])))
             for j, q 
             in enumerate(node.iterators.iterators))
+

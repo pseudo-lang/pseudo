@@ -125,6 +125,11 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
                         _.all(cpus, function (value) {
                           return value.length == 0;
                         });''')
+    list_find       = 'cpus.indexOf(s)'
+    list_present    = 'cpus'
+    list_empty      = '_.isEmpty(cpus)'
+    list_contains   = '_.contains(cpus, s)'
+    list_sort       = 'cpus.sort()'
 
     # # Hash
     dictionary_length   = 'pointers.length'

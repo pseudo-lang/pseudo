@@ -104,6 +104,11 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
                         end''')
     list_any        = 'cpus.any? { |value| value.length == 0 }'
     list_all        = 'cpus.all? { |value| value.length == 0 }'
+    list_find       = 'cpus.index(s)'
+    list_present    = '!cpus.empty?'
+    list_empty      = 'cpus.empty?'
+    list_contains   = 'cpus.include?(s)'
+    list_sort       = 'cpus.sort!'
 
     # Hash
     dictionary_length   = 'pointers.length'

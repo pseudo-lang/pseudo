@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
-from pseudo.pseudo_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr
-from pseudo.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, Read
+from pseudo.pseudo_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr, to_node
+from pseudo.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, DictKeys, DictValues, Contains, Read
 
 class GolangTranslator(ApiTranslator):
     '''
@@ -25,9 +25,16 @@ class GolangTranslator(ApiTranslator):
             'filter':       expand_filter        
         },
         'Dictionary': {
+            '@equivalent':  'map',
+
+            'length':       'len',
+            'contains?':     Contains,
+            'keys':          DictKeys,
+            'values':        DictValues
         },
         'String': {
             '@equivalent':  'str',
+
             'substr':       expand_slice,
             'substr_from':  expand_slice,
             'length':       'len',
@@ -40,6 +47,22 @@ class GolangTranslator(ApiTranslator):
             'format':       '#format',
             'concat':       to_op('+'),
             'c_format':     to_op('%')
+        },
+        'Set': {
+            '@equivalent':  'map[bool]struct{}',
+
+            'length':       'len',
+            'contains?':    Contains
+        },
+        'Tuple': {
+            '@equivalent':  'L',
+
+            'length':       lambda receiver, _: to_node(len(receiver.pseudo_type) - 1)
+        },
+        'Array': {
+            '@equivalent':  'int[]',
+
+            'length':       lambda receiver, _: to_node(receiver.pseudo_type[2])
         }
     }
 
@@ -56,7 +79,9 @@ class GolangTranslator(ApiTranslator):
         },
         'math': {
             'ln':       'Math.Log',
-            'tan':      'Math.Tan' 
+            'tan':      'Math.Tan',
+            'sin':      'Math.Sin',
+            'cos':      'Math.Cos'
         }
     }
 

@@ -1,7 +1,7 @@
 C#
 ---
 
-* support
+* full support
 * [generator](../pseudo/generators/csharp_generator.py) [api translator](../pseudo/api_translators/csharp_translator.py) [tests](../tests/test_csharp.py)
 * target version: C# 4+
 
@@ -18,7 +18,6 @@ C# equivalents used for pseudo types and concepts:
 | Int              | int                                    |
 | Float            | float                                  |
 | String           | string                                 |
-| Boolean          | bool                                   |
 | for-loops        | foreach, for                           |
 | classes          | classes                                |
 | methods          | methods                                |

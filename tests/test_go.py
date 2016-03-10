@@ -95,8 +95,49 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     io_write_file       = 'ioutil.WriteFile("z.py", source)'
 
     math_ln             = ({'math'}, 'Math.Log(z)')
-        # #
+    math_tan            = ({'math'}, 'Math.Tan(z)')
+    math_sin            = ({'math'}, 'Math.Sin(z)')
+    math_cos            = ({'math'}, 'Math.Cos(z)')
+    
+    # regexp    
+    regexp_compile      = ({'regexp'}, 'regexp.Compile(s)')
+    regexp_escape       = ({'regexp'}, 'regexp.QuoteMeta(s)')
 
+    set_length          = 'len(words)'
+    set_contains        = dedent_with_tabs('''\
+                            _, _contains := words[s]
+                            _contains''')
+
+    # dictionary_length   = 'len(pointers)'
+    dictionary_contains = dedent_with_tabs('''\
+                            _, _contains := pointers[s]
+                            _contains''')
+
+    dictionary_keys     =  dedent_with_tabs('''\
+                            _pointers_keys := make([]string, "", len(pointers))
+                            _pointers_index := 0
+                            for _pointers_key, _ := range pointers {
+                                _pointers_keys[_pointers_index] = _pointers_key
+                                _pointers_index += 1
+                            }
+                            
+                            _pointers_keys''')
+    dictionary_values   = dedent_with_tabs('''\
+                            _pointers_values := make([]int, 0, len(pointers))
+                            _pointers_index := 0
+                            for _, _pointers_value := range pointers {
+                                _pointers_values[_pointers_index] = _pointers_value
+                                _pointers_index += 1
+                            }
+
+                            _pointers_values''')
+
+    tuple_length        = '2'
+
+    array_length        = '10'
+
+
+    
         # 'cpus = append(cpus, planet)', #cpus.push(planet)
         # 'planet, cpus = cpus[len(cpus) - 1], cpus[:len(cpus) - 1]' # planet = cpus.pop()
         # 'len(cpus)', # cpu.length

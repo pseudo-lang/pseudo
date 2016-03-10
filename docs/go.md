@@ -8,12 +8,17 @@ Go equivalents used for pseudo types and concepts:
 
 | Pseudo     | Go                   |
 |------------|----------------------|
-| List       | slice                |
-| Dictionary | map                  |
-| Set        | map[bool]struct{}    |
-| Tuple      | struct with .first   |
-|            |    .second .third etc|
-
+| List[T]          | slice[T]                             |
+| Dictionary[K, V] | map[K]V                              |
+| Set[T]           | map[bool]struct{}                    |
+| Tuple[T1, T2..]  | a custom struct                      |
+| Array[T, count]  | T[count]                             |
+| Int              | int                                  |
+| Float            | float                                |
+| String           | string                               |
+| for-loops        | for                                  |
+| classes          | structs                              |
+| methods          | struct methods                       |
 
 ## error handling
 

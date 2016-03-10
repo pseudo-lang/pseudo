@@ -121,6 +121,11 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
                         })''')
     list_any        = 'cpus.Any(value => value.Length == 0).ToList()'
     list_all        = 'cpus.All(value => value.Length == 0).ToList()'
+    list_find       = 'cpus.IndexOf(s)'
+    list_present    = 'cpus.Any()'
+    list_empty      = '!cpus.Any()'
+    list_contains   = 'cpus.Contains(s)'
+    list_sort       = 'cpus.Sort()'
 
     # # Hash
     dictionary_length   = 'pointers.Length'
