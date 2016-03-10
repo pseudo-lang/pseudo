@@ -46,8 +46,8 @@ Those constructs and entities have almost the same behavior and very same-spirit
 
 ## examples
 
-[a football results processing command line tool](docs/examples/football)
-
+[a football results processing command line tool](examples/football)
+[a verbal expressions-like library ported to all the target languages](examples/verbal_expressions)
 ## use cases
 
   * generate code for the same task/algorithm in different languages (parser generators etc)
