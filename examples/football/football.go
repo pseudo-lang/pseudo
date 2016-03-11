@@ -2,10 +2,10 @@ package main
 
 import (
 	"io/ioutil"
-	"strconv"
-	"strings"
 	"os"
+	"strconv"
 	"fmt"
+	"strings"
 )
 
 func LoadResults(filename string) []Result {

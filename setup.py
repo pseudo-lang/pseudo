@@ -8,8 +8,8 @@ setup(
     author_email='alehander42@gmail.com',
     url='https://github.com/alehander42/pseudo',
     download_url='https://github.com/alehander42/pseudo/archive/v0.2.tar.gz',
-    keywords=['compiler', 'generation', 'c++', 'ruby', 'c#', 'javascript', 'go', 'python', 'transpiler'],
-    packages=['pseudo', 'pseudo.api_translators', 'pseudo.middlewares', 'pseudo.generators', 'bin'],
+    keywords=['compiler', 'generation', 'c++', 'ruby', 'c#', 'javascript', 'go', 'python', 'alexander'],
+    packages=['pseudo', 'pseudo.api_translators', 'pseudo.middlewares', 'pseudo.generators'],
     license='MIT',
     install_requires=[
         'PyYAML'
