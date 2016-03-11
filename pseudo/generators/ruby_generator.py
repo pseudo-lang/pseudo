@@ -245,7 +245,8 @@ class RubyGenerator(CodeGenerator):
     def right(self, node, depth):
         '''when compared with argv length, decrement'''
         if node.left.type != 'binary_op' or node.left.op != '+' or node.left.right.type != 'int' or node.right.type != 'int':# 'attr' or node.left.object.type != 'local' or node.left.object.name != 'ARGV':
-            print('woah')
+        #     print('woah')
+            pass
         else:
             node.right.value -= node.left.right.value
             node.left = node.left.left

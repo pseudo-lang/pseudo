@@ -93,6 +93,8 @@ class RubyTranslator(ApiTranslator):
 
             'match':        '%{0}#scan(%{self})'
         },
+        'Int': {'to_float': '#to_f'},
+        'Float': {'to_int': '#to_i'},
         'RegexpMatch': {
             '@equivalent':  'Regexp_',
 

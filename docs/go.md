@@ -1,6 +1,6 @@
 # go
 
-* experimental support: everything except for error handling
+* experimental support: almost everything except for error handling and several methods
 * [generator](../pseudo/generators/golang_generator.py) [api translator](../pseudo/api_translators/golang_translator.py) [tests](../tests/test_go.py)
 * target version: Go 1.2+
 

@@ -98,6 +98,12 @@ class PythonTranslator(ApiTranslator):
             'pad_left':     '#ljust',
             'pad_right':    '#rjust'
         },
+        'Int': {
+            'to_float':     'float(%{self})'
+        },
+        'Float': {
+            'to_int':       'int(%{self})'
+        },
         'Set': {
             '@equivalent':  'set',
 
