@@ -98,7 +98,7 @@ class TupleMiddleware(Middleware):
                     name=name,
                     base=None,
                     constructor=None,
-                    attrs=[Node('immutable_class_attr', name='item%d' % j, pseudo_type=q) for j, q in enumerate(node.pseudo_type[1:])],
+                    attrs=[Node('immutable_class_attr', name='item%d' % j, is_public=True, pseudo_type=q) for j, q in enumerate(node.pseudo_type[1:])],
                     methods=[])
             else: # c#: we can just use tuples
                 return node
@@ -119,7 +119,7 @@ class TupleMiddleware(Middleware):
                     self.tuple_definitions[s] = a, Node('class_definition',
                         name=a.name,
                         base=None,
-                        attrs=[Node('immutable_class_attr', name='item%d' % j, pseudo_type=q) for j, q in enumerate(a.pseudo_type[1:])],
+                        attrs=[Node('immutable_class_attr', name='item%d' % j, is_public=True, pseudo_type=q) for j, q in enumerate(a.pseudo_type[1:])],
                         constructor=None,
                         methods=[])
         if n.type == 'constructor':
@@ -168,7 +168,7 @@ class ArgWalker(TreeTransformer):
                             base=None,
                             constructor=None,
                             this=typename(name),
-                            attrs=[Node('immutable_class_attr', name='item%d' % k, pseudo_type=t) for k, t in enumerate(pseudo_type[1:])],
+                            attrs=[Node('immutable_class_attr', name='item%d' % k, is_public=True, pseudo_type=t) for k, t in enumerate(pseudo_type[1:])],
                             methods=[])
             else:
                 self.tuple_definition.tuple_definitions[z] = name, self.tuple_definition.tuple_definitions[z][1]

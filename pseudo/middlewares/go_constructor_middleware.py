@@ -1,5 +1,5 @@
 from pseudo.middlewares.middleware import Middleware
-from pseudo.pseudo_tree import Node, assignment
+from pseudo.pseudo_tree import Node, assignment as assi, typename, local
 from pseudo.tree_transformer import TreeTransformer
 
 class GoConstructorMiddleware(Middleware):
@@ -37,7 +37,7 @@ class GoConstructorMiddleware(Middleware):
             return node
 
 class ConstructorTransformer(TreeTransformer):
-    whitelist = {'class_definition', 'constructor'}
+    whitelist = {'module', 'class_definition', 'constructor'}
     
     def __init__(self):
         self.classes_with_simple_initializers = set()
@@ -59,9 +59,19 @@ class ConstructorTransformer(TreeTransformer):
             return []
         
         else:
-            ass = assignment(Node('this', pseudo_type=self.current_class.name), 
-                Node('_go_simple_initializer', name=typename(self.current_class.name, self.current_class), args=simple_args))
-            node.block = [ass] + node.block[len(simple_args):]
+            if len(simple_args) < len(node.block):
+                ass = assi(Node('this', pseudo_type=node.this.name), 
+                    Node('simple_initializer', name=typename(node.this.name, node.this.name), args=simple_args, pseudo_type=node.this.name))
+                node.block = [ass] + node.block[len(simple_args):] + [Node('implicit_return', value=Node('_go_ref', value=
+                        local('this', node.this.name), 
+                        pseudo_type=node.this.name),
+                    pseudo_type=node.this.name)]
+            else:
+                node.block = [Node('implicit_return',
+                        value=Node('_go_ref', value=
+                            Node('simple_initializer', name=typename(node.this.name, node.this.name), args=simple_args, pseudo_type=node.this.name),
+                        pseudo_type=node.this.name),
+                    pseudo_type=node.this.name)]
             return node
 
 # go is a really simple language and one of its 

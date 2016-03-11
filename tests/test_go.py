@@ -105,7 +105,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     math_cos            = ({'math'}, 'Math.Cos(z)')
     
     # regexp    
-    regexp_compile      = ({'regexp'}, 'regexp.Compile(s)')
+    regexp_compile      = ({'regexp'}, 'regexp.MustCompile(s)')
     regexp_escape       = ({'regexp'}, 'regexp.QuoteMeta(s)')
 
     set_length          = 'len(words)'
@@ -312,7 +312,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     method_definition = (
         dedent_with_tabs('''\
-            func Parse(this *A, source string) []string {
+            func (this *A) Parse(source string) []string {
                 this.ast = 0
                 return []string {source}
             }'''))

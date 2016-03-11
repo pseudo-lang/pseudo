@@ -33,7 +33,9 @@ class GolangGenerator(CodeGenerator):
       'Tuple': lambda x: safe_serialize_type(['Tuple'] + x),
       # uh yea, in next version we'll add some kind of smart-name / config option
       'Array': '[{1}]{0}', 
-      'Void': 'void'
+      'Void': 'void',
+      'Regexp': '*regexp.Regexp',
+      'RegexpMatch': '[][][]byte'
     }
 
     templates = dict(
@@ -50,12 +52,12 @@ class GolangGenerator(CodeGenerator):
           }''',
 
         function_definition   = '''
-            func %<name>(%<#params>) %<@return_type> {
+            func %<name>(%<#params>) %<#return_type> {
                 %<block:line_join>
             }''',
 
         method_definition =     '''
-            func %<name>(this *%<this>, %<#params>) %<@return_type> {
+            func (this *%<this>) %<name>(%<#params>) %<#return_type> {
                 %<block:line_join>
             }''',
 
@@ -73,8 +75,8 @@ class GolangGenerator(CodeGenerator):
         class_definition_constructor = ('%<constructor>', ''),
 
         class_attr = switch('is_public',
-            true         = "%<name:camel_case 'title'> %<@pseudo_type>",
-            _otherwise   = "%<name:camel_case 'lower'> %<@pseudo_type>"),
+            true         = "%<name> %<@pseudo_type>",
+            _otherwise   = "%<name> %<@pseudo_type>"),
 
         immutable_class_attr = "%<name:camel_case 'title'> %<@pseudo_type>",
 
@@ -92,6 +94,8 @@ class GolangGenerator(CodeGenerator):
             }''',
 
         new_instance = "new%<class_name>(%<args:join ', '>)",
+
+        _go_bytes = '[]byte(%<value>)',
 
         _go_make_slice = 'make(%<@slice_type>, %<#initial>, %<length>)',
 
@@ -120,7 +124,6 @@ class GolangGenerator(CodeGenerator):
         _go_slice      = '%<sequence>[%<from_>:%<to>]',
         _go_slice_from = '%<sequence>[%<from_>:]',
         _go_slice_to   = '%<sequence>[:%<to>]',
-        _go_slice_     = '%<sequence>[:]',
 
         assignment  = switch('first_mention',
             true       = '%<target> := %<value>',
@@ -132,6 +135,8 @@ class GolangGenerator(CodeGenerator):
             _otherwise = "%<targets:join ', '> = %<values:join ', '>"
         ),
 
+        _go_ref     = '&%<value>',
+
         binary_op   = '%<#binary_left> %<#op> %<#binary_right>',
         unary_op    = '%<#op>%<value>',
         comparison  = '%<#binary_left> %<op> %<#binary_right>',
@@ -139,6 +144,7 @@ class GolangGenerator(CodeGenerator):
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
+        this_method_call = "this.%<message>(%<args:join ', '>)",
 
         this        = 'this',
 
@@ -227,6 +233,13 @@ class GolangGenerator(CodeGenerator):
 
         index            = '%<sequence>[%<index>]',
 
+        interpolation =     "fmt.Sprintf(\"%<args:join ''>\", %<#placeholderz>)",
+
+        interpolation_literal = '%<value>',
+        
+        interpolation_placeholder = switch(lambda i: i.pseudo_type == 'Int',
+            true        = '%d',
+            _otherwise  = '%s'),
 
         index_assignment = '%<sequence>[%<index>] = %<value>',
 
@@ -268,8 +281,6 @@ class GolangGenerator(CodeGenerator):
               self._generate_node(k),
               self.render_type(node.pseudo_type[j + 1]))
               for j, k in enumerate(node.params))
-              
-
 
     def dependencies(self, node, depth):
         if len(node.dependencies) == 1:
@@ -303,3 +314,12 @@ class GolangGenerator(CodeGenerator):
             for j, q 
             in enumerate(node.iterators.iterators))
 
+    def placeholderz(self, node, _):
+        return ', '.join(self._generate_node(placeholder.value) for placeholder in node.args[1::2])
+
+    def return_type(self, node, depth):
+        format = self.render_type(node.return_type)
+        if isinstance(node.return_type, list) or node.return_type in self.types:
+            return format
+        else:
+            return '*%s' % format

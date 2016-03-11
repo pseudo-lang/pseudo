@@ -78,6 +78,30 @@ class GolangTranslator(ApiTranslator):
                                     pseudo_type='Int')),
             'to_int':       Int
         },
+        'Regexp': {
+            '@equivalent':   'Regexp',
+
+            'match':        lambda receiver, word, _: method_call(
+                                receiver,
+                                'FindAllSubmatch',
+                                [Node('_go_bytes', value=word, pseudo_type='Bytes'),
+                                 to_node(-1)],
+                                 pseudo_type='RegexpMatch')
+        },
+        'RegexpMatch': {
+            '@equivalent':  'R',
+
+            'group':        lambda receiver, index, _: Node('index',
+                                    sequence=receiver,
+                                    index=Node('binary_op', op='+', left=index, right=to_node(1), pseudo_type='Int'),
+                                    pseudo_type='String'),
+
+            'has_match':    lambda receiver, _: Node('comparison',
+                                    op='!=',
+                                    left=receiver,
+                                    right=Node('null', pseudo_type='None'),
+                                    pseudo_type='Boolean')
+        },
         'Set': {
             '@equivalent':  'map[bool]struct{}',
 
@@ -98,7 +122,7 @@ class GolangTranslator(ApiTranslator):
 
     functions = {
         'regexp':  {
-            'compile':      'regexp.Compile',
+            'compile':      'regexp.MustCompile',
             'escape':       'regexp.QuoteMeta'
         },
         'io': {

@@ -15,6 +15,7 @@ class NameMiddleware(Middleware):
         self.method_name = method_name
         self.function_name = function_name
         self.attr_name = attr_name
+        self.current_class_ = None
 
     def process(self, tree):
         self.tree = tree
@@ -59,14 +60,42 @@ class NameMiddleware(Middleware):
         node.args = self.transform(node.args)
         return node
 
+    def transform_this_method_call(self, node, in_block=False, assignment=None):
+        if self.method_name:
+            node.message = getattr(self, 'convert_to_%s' % self.method_name)(node.message)
+        node.args = self.transform(node.args)
+        return node
+
     def transform_attr(self, node, in_block=False, assignment=None):
         if self.attr_name:
             node.attr = getattr(self, 'convert_to_%s' % self.attr_name)(node.attr)
+        node.object = self.transform(node.object)
         return node
     
+    def transform_class_definition(self, node, in_block=False, assignment=None):
+        self.current_class_ = node
+        node.attrs = [self.transform_attr_name(child) for child in node.attrs]
+        node.constructor = self.transform(node.constructor)
+        node.methods = self.transform(node.methods)
+        return node
+
     def transform_attr_name(self, node, in_block=False, assignment=None):
         if self.attr_name:
-            node.attr = getattr(self, 'convert_to_%s' % self.attr_name)(node.name)
+            if node.type == 'instance_variable' and self.current_class_:
+                for l in self.current_class_.attrs:
+                    if l.name.lower() == node.name.replace('_', ''):
+                        node.name = l.name
+                        if l.is_public:
+                            node.name = node.name[0].upper() + node.name[1:]
+                        else:
+                            node.name = node.name[0].lower() + node.name[1:]
+                        return node
+            node.name = getattr(self, 'convert_to_%s' % self.attr_name)(node.name)
+            if node.type in ['class_attr', 'immutable_class_attr'] and node.is_public:
+                node.name = node.name[0].upper() + node.name[1:]
+            elif node.type in ['class_type', 'immutable_class_attr'] or node.type == 'instance_variable' and not self.current_class_:
+                node.name = node.name[0].lower() + node.name[1:]
+
         return node
 
     transform_class_attr = transform_instance_variable = transform_immutable_class_attr = transform_attr_name
