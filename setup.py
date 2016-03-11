@@ -1,4 +1,8 @@
-from distutils.core import setup
+try:
+    from setuptools import setup
+except ImportError:
+    from distutils.core import setup
+
 
 setup(
     name='pseudo',
@@ -16,6 +20,6 @@ setup(
     ],
     classifiers=[
         'Programming Language :: Python',
-        'Programming Language :: JavaScipt'
+        'Programming Language :: JavaScript'
     ],
 )
