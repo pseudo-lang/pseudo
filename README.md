@@ -88,10 +88,12 @@ close to v0.2, left: several fixes and finishing the api translation
 - [x] c#
 - [x] javascript
 - [x] go
-- [ ] c++
-- [ ] php
+
+- [~] c++
 
 v0.3/v0.4:
+
+a random sample of 
 
 - [ ] java
 - [ ] perl
@@ -99,7 +101,10 @@ v0.3/v0.4:
 - [ ] swift ?
 - [ ] c ?
 
+- [ ] lua?
+- [ ] elixir?
 - [ ] clojure ?
+- [ ] typescript ?
 
 ## Language support
 
@@ -137,7 +142,6 @@ added support for 4 more.
 * [ruby](docs/ruby.md)
 * [javascript](docs/javascript.md)
 * [c++](docs/cpp.md)
-* [php](docs/php.md)
 
 ## License
 
