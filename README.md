@@ -76,12 +76,13 @@ pip install pseudo-python
 ```
 
 - [usage](#usage)
-- [why?](#why?)
-- [language support](#language)
-- [compilers targetting pseudo](#compilers)
+- [why?](#why)
+- [language support](#language-support)
+- [compilers targetting pseudo](#compilers-targetting-pseudo)
 - [implementation](#implementation)
 - [roadmap](#roadmap)
-- [target language specific docs](#target)
+- [target language specific docs](#target-language-specific-docs)
+- [the name?](#the-name)
 
 ## usage
 
@@ -199,6 +200,13 @@ add support for a random sample of:
 * [ruby](docs/ruby.md)
 * [javascript](docs/javascript.md)
 * [c++](docs/cpp.md)
+
+## The name?
+
+well.
+
+pseudo(code)
+
 
 ## License
 
