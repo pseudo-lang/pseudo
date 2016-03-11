@@ -1,7 +1,7 @@
 C#
 ---
 
-* full support
+* support for all Pseudo v0.2 features
 * [generator](../pseudo/generators/csharp_generator.py) [api translator](../pseudo/api_translators/csharp_translator.py) [tests](../tests/test_csharp.py)
 * target version: C# 4+
 
