@@ -2,14 +2,14 @@ from setuptools import setup
 
 setup(
     name='pseudo',
-    version='0.2.2',
+    version='0.2.3',
     description='a framework for high level code generation',
     author='Alexander Ivanov',
     author_email='alehander42@gmail.com',
     url='https://github.com/alehander42/pseudo',
     download_url='https://github.com/alehander42/pseudo/archive/v0.2.tar.gz',
     keywords=['compiler', 'generation', 'c++', 'ruby', 'c#', 'javascript', 'go', 'python', 'transpiler'],
-    packages=['pseudo', 'pseudo.api_translators', 'pseudo.middlewares', 'pseudo.generators'],
+    packages=['pseudo', 'pseudo.api_translators', 'pseudo.middlewares', 'pseudo.generators', 'bin'],
     license='MIT',
     install_requires=[
         'PyYAML'
@@ -27,7 +27,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'pseudo=bin.pseudo:main',
+            'pseudo=pseudo.main:main',
         ],
     },
 )

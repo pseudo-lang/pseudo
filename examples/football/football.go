@@ -1,11 +1,11 @@
 package main
 
 import (
+	"io/ioutil"
+	"strconv"
 	"strings"
 	"os"
-	"strconv"
 	"fmt"
-	"io/ioutil"
 )
 
 func LoadResults(filename string) []Result {
@@ -22,7 +22,7 @@ func LoadResults(filename string) []Result {
 
 }
 
-func ParseResult(line string) Result {
+func ParseResult(line string) *Result {
 	awayIndex := strings.Index(line, " - ") + 3
 	resultIndex := awayIndex + strings.Index(line[awayIndex:], " ") + 1
 	goals := strings.Split(line[resultIndex:], ":")
