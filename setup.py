@@ -1,12 +1,8 @@
-try:
-    from setuptools import setup
-except ImportError:
-    from distutils.core import setup
-
+from setuptools import setup
 
 setup(
     name='pseudo',
-    version='0.2.1',
+    version='0.2.2',
     description='a framework for high level code generation',
     author='Alexander Ivanov',
     author_email='alehander42@gmail.com',
@@ -29,4 +25,9 @@ setup(
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
     ],
+    entry_points={
+        'console_scripts': [
+            'pseudo=bin.pseudo:main',
+        ],
+    },
 )

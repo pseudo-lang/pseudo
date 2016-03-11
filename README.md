@@ -99,7 +99,8 @@ print(generate_main([
   assignment(
     local('a', 'Int'),
     call(local('g'), [to_node(0), to_node('')], 'Int'))], 'rb'))
-a = g(0, '')
+    
+@ a = g(0, '')
 ```
 
 In the future Pseudo can add a lisp-like dsl for fast manual creation of ast nodes, but currently it's more useful for its main goal: consuming automatically generated pseudo ast and then transpiling it to the target languags

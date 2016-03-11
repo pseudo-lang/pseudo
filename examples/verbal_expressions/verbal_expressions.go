@@ -6,7 +6,7 @@ import (
 )
 
 type VerbalExpression struct {
-	rawSource string
+	RawSource string
 }
 
 func newVerbalExpression() *VerbalExpression {
