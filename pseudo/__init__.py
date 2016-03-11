@@ -30,7 +30,7 @@ import pseudo.generators.cpp_generator
 import pseudo.generators.golang_generator
 
 import pseudo.loader
-import pseudo.pseudo_tree
+from pseudo.pseudo_tree import Node, to_node, call, method_call, attr, assignment, local
 
 SUPPORTED_FORMATS = {'js', 'javascript', 'py', 'python', 'rb', 'ruby', 'go', 'golang', 'cs', 'csharp', 'cpp'}
 FILE_EXTENSIONS = {'js': 'js', 'javascript': 'js', 'py': 'py', 'python': 'py', 'rb': 'rb', 'ruby': 'rb', 'go': 'go', 'golang': 'go', 'cs': 'cs', 'csharp': 'cs', 'cpp': 'cpp'}
