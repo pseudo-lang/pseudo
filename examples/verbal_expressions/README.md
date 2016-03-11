@@ -1,8 +1,8 @@
-# Example 2: Verbal expressions
+# Example 3: Verbal expressions
 
 [Pseudo AST](verbal_expressions.pseudo.yaml)
 
-Generated from [verbal_expressions](https://github.com/alehander42/pseudo-python/blob/master/examples/verbal_expressions.py) using [pseudo-python](https://github.com/alehander42/pseudo-python)
+Generated from [original.py](original.py) using [pseudo-python](https://github.com/alehander42/pseudo-python)
 
 That's a simple library similar to [VerbalExpressions](https://github.com/VerbalExpressions/PythonVerbalExpressions)
 
@@ -82,7 +82,24 @@ Commands: (assuming you're in `examples/verbal_expressions`)
 
     and run with
     ```bash
-    > mcs verball_expressions.cs # or an equivalent command compiling cs files
+    > mcs verbal_expressions.cs # or an equivalent command compiling cs files
     > ./verbal_expressions.exe
+    ```
+
+
+* go
+    
+    translate to go with
+
+    ```bash
+    # from python source
+    > pseudo-python original.py verbal_expressions.go
+    #or from ast
+    > pseudo verbal_expressions.pseudo.yaml go
+    ```
+
+    and run
+    ```bash
+    > go run verbal_expressions.go
     ```
 

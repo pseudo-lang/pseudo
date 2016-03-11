@@ -1,8 +1,8 @@
-## Example 1: Football
+## Example 2: Football
 
 [Pseudo AST](football.pseudo.yaml)
 
-Generated from [football.py](https://github.com/alehander42/pseudo-python/blob/master/examples/football.py) using [pseudo-python](https://github.com/alehander42/pseudo-python)
+Generated from [original.py](original.py) using [pseudo-python](https://github.com/alehander42/pseudo-python)
 
 That's a simple command line program that
 
@@ -122,6 +122,23 @@ Commands: (assuming current)
 
     and run with
     ```bash
-    > mcs verball_expressions.cs # or an equivalent command compiling cs files
+    > mcs football.cs # or an equivalent command compiling cs files
     > ./football.exe football.txt Liverpool
+    ```
+
+
+* go
+    
+    translate to go with
+
+    ```bash
+    # from python source
+    > pseudo-python original.py football.go
+    #or from ast
+    > pseudo football.pseudo.yaml go
+    ```
+
+    and run
+    ```bash
+    > go run football.go football.txt Liverpool
     ```
