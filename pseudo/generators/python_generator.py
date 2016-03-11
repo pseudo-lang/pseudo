@@ -217,6 +217,8 @@ class PythonGenerator(CodeGenerator):
 
         interpolation_literal = '%<value>',
 
+        break_ = 'break',
+
         interpolation_placeholder = '{%<index>}',
 
         _py_listcomp = '[%<block> for %<iterators> in %<sequences>%<#test>]',

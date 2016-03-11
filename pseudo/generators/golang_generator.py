@@ -1,8 +1,10 @@
 from pseudo.code_generator import CodeGenerator, switch
-from pseudo.middlewares import GoConstructorMiddleware, TupleMiddleware, DeclarationMiddleware # GoErrorHandlingMiddleware #, GoTupleMiddleware
+from pseudo.middlewares import GoConstructorMiddleware, TupleMiddleware, DeclarationMiddleware, NameMiddleware, StandardMiddleware # GoErrorHandlingMiddleware
 from pseudo.code_generator_dsl import PseudoType
 from pseudo.pseudo_tree import Node, local
-from pseudo.helpers import general_type
+from pseudo.helpers import general_type, safe_serialize_type
+
+OPS = {'not': '!', 'or': '||', 'and': '&&'}
 
 class GolangGenerator(CodeGenerator):
     '''Go generator'''
@@ -10,7 +12,15 @@ class GolangGenerator(CodeGenerator):
     indent = 1
     use_spaces = False
 
-    middlewares = [TupleMiddleware(True), GoConstructorMiddleware, DeclarationMiddleware] # GoErrorHandlingMiddleware
+    middlewares = [TupleMiddleware(True), 
+        GoConstructorMiddleware,
+        DeclarationMiddleware, 
+        NameMiddleware(
+            normal_name='camel_case',
+            method_name='pascal_case',
+            function_name='pascal_case',
+            attr_name='pascal_case'),
+        StandardMiddleware] # GoErrorHandlingMiddleware
     
     types = {
       'Int': 'int',
@@ -20,7 +30,7 @@ class GolangGenerator(CodeGenerator):
       'List': '[]{0}',
       'Dictionary': 'map[{0}]{1}',
       'Set': 'map[{0}]struct{}',
-      'Tuple': lambda x: 'Tuple{0}'.format(', '.join(x).replace('[]', 'List').replace('[', '').replace(']', '')),
+      'Tuple': lambda x: safe_serialize_type(['Tuple'] + x),
       # uh yea, in next version we'll add some kind of smart-name / config option
       'Array': '[{1}]{0}', 
       'Void': 'void'
@@ -28,6 +38,8 @@ class GolangGenerator(CodeGenerator):
 
     templates = dict(
         module     = '''
+          package main
+
           %<#dependencies>
           %<constants:lines>
           %<custom_exceptions:lines>
@@ -48,19 +60,23 @@ class GolangGenerator(CodeGenerator):
             }''',
 
         class_definition = '''
-            struct %<name> {
+            type %<name> struct {
                %<.base>
-               %<attrs:lines>
+               %<attrs:line_join>
             }
 
             %<.constructor>
-            %<methods:lines>''',
+            %<methods:line_join>''',
 
         class_definition_base = ('extend %<base>', ''),
 
         class_definition_constructor = ('%<constructor>', ''),
 
-        class_attr = '%<name> %<@pseudo_type>',
+        class_attr = switch('is_public',
+            true         = "%<name:camel_case 'title'> %<@pseudo_type>",
+            _otherwise   = "%<name:camel_case 'lower'> %<@pseudo_type>"),
+
+        immutable_class_attr = "%<name:camel_case 'title'> %<@pseudo_type>",
 
         anonymous_function = switch(lambda a: len(a.block) == 1,
             true        = 'func (%<#params>) { %<block:first> }',
@@ -81,7 +97,11 @@ class GolangGenerator(CodeGenerator):
 
         _go_simple_initializer = "%<name>{%<args:join ', '>}",
 
+        _go_declaration = 'var %<decl> %<@decl_type>',
+
         dependency  = '"%<name>"',
+
+        break_      = 'break',
 
         local       = '%<name>',
         typename    = '%<name>',
@@ -95,11 +115,11 @@ class GolangGenerator(CodeGenerator):
         dictionary  = "%<@pseudo_type> { %<pairs:join ', '> }",
         pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
-        array       = "{%<elements:join ', '>}",
+        array       = "[...]%<#element_type>{%<elements:join ', '>}",
 
         _go_slice      = '%<sequence>[%<from_>:%<to>]',
-        _go_slice_from = '%<sequence>[%<from_>:len(%<sequence>)]',
-        _go_slice_to   = '%<sequence>[0:%<to>]',
+        _go_slice_from = '%<sequence>[%<from_>:]',
+        _go_slice_to   = '%<sequence>[:%<to>]',
         _go_slice_     = '%<sequence>[:]',
 
         assignment  = switch('first_mention',
@@ -112,9 +132,9 @@ class GolangGenerator(CodeGenerator):
             _otherwise = "%<targets:join ', '> = %<values:join ', '>"
         ),
 
-        binary_op   = '%<left> %<op> %<right>',
-        unary_op    = '%<op>%<value>',
-        comparison  = '%<left> %<op> %<right>',
+        binary_op   = '%<#binary_left> %<#op> %<#binary_right>',
+        unary_op    = '%<#op>%<value>',
+        comparison  = '%<#binary_left> %<op> %<#binary_right>',
 
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
@@ -217,13 +237,39 @@ class GolangGenerator(CodeGenerator):
             class %<name> : Exception
         ''',
 
+        simple_initializer = "%<name>{%<args:join ', '>}",
+
+        standard_iterable_call = '''
+            var _results %<@pseudo_type>
+            for %<iterators> := range %<sequences> {
+                if %<test:first> {
+                    _results = append(_results, %<block:first>)
+                }
+            }
+            _results''',
+
+        standard_iterable_call_return = '''
+            var _results %<@pseudo_type>
+            for %<iterators> := range %<sequences> {
+                if %<test:first> {
+                    _results = append(_results, %<block:first>)
+                }
+            }
+            return _results''',
+
         block = '%<block:line_join>',
 
         regex = '"%<value>"',
     )
     
     def params(self, node, depth):
-        return ', '.join('%s %s' % (q.name, PseudoType('').expand_type(q.pseudo_type, self)) for q in node.params)
+        return ', '.join(
+            '%s %s' % (
+              self._generate_node(k),
+              self.render_type(node.pseudo_type[j + 1]))
+              for j, k in enumerate(node.params))
+              
+
 
     def dependencies(self, node, depth):
         if len(node.dependencies) == 1:
@@ -233,10 +279,16 @@ class GolangGenerator(CodeGenerator):
         else:
             return ''
 
+    def element_type(self, node, _):
+        return PseudoType('').expand_type(node.pseudo_type[1], self)
+
+    def op(self, node, depth):
+        return OPS.get(node.op, node.op)
+
     # keys in pseudo can be only string or int float bool
     def initial(self, node, _):
         '''initial value for make'''
-        return {'Int': '0', 'Float': '0.0', 'String': '""', 'Bool': 'true'}.get(node.pseudo_type[1], 'nil')
+        return {'Int': '0', 'Float': '0.0', 'String': '""', 'Bool': 'true'}.get(node.slice_type[1], 'nil')
 
     def zip_iterators(self, node, depth):
         return '\n'.join(

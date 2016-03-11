@@ -22,6 +22,7 @@ class RubyTranslator(ApiTranslator):
             'slice':        expand_slice,
             'slice_from':   expand_slice,
             'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, to_node(0), to, pseudo_type),
+            'join':         '#join',
             'map':          to_method_rb_block('map'),
             'filter':       to_method_rb_block('select'),
             'reduce':       to_method_rb_block('reduce'),
@@ -119,13 +120,9 @@ class RubyTranslator(ApiTranslator):
             'write_file':   'File.write'
         },
 
-        'http': {
-            'get':          'Requests.get',
-            'post':         'Requests.post',
-        },
-
         'math': {
             'ln':           'Math.log',
+            'log':          'Math.log',
             'tan':          'Math.tan',
             'sin':          'Math.sin',
             'cos':          'Math.cos'

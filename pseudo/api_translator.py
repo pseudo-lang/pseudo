@@ -177,8 +177,10 @@ class ApiTranslator(TreeTransformer):
             if isinstance(z, NormalLeakingNode):
                 leaked_nodes, exp = z.as_expression()
             else:
-                leaked_nodes = z.as_assignment(z.temp_name(data[0]))
-                exp = local(z.temp_name(data[0]), node.pseudo_type)
+                leaked_nodes, exp = z.as_expression()
+                zz = local(z.temp_name(getattr(z, 'default', '')), node.pseudo_type)
+                leaked_nodes = z.as_assignment(zz)
+                exp = local(zz, node.pseudo_type)
             if exp is None or exp.pseudo_type == 'Void':
                 raise PseudoTypeError("pseudo can't handle values with void type in expression: %s?%s" % (module, name))
             self.leaked_nodes += leaked_nodes

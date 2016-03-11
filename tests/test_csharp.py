@@ -82,6 +82,7 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     # math
     math_ln             = 'Math.Log(z)'
+    math_log            = 'Math.Log(z, 2.0)'
     math_tan            = 'Math.Tan(z)'
     math_sin            = 'Math.Sin(z)'
     math_cos            = 'Math.Cos(z)'

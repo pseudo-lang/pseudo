@@ -60,7 +60,7 @@ class Action(FragmentGenerator):
         self.args = args
 
     def expand(self, generator, node, depth):
-        # if self.field == 'params': import pdb;pdb.set_trace()
+        if not hasattr(node, self.field): import pdb;pdb.set_trace()
         content = getattr(node, self.field)
         if self.action in ['join', 'join_lws', 'each_lpad', 'each_rpad'] and self.args and self.args[0] != '\n':
             depth = 0

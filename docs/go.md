@@ -1,13 +1,13 @@
 # go
 
-* support: everything except for error handling
-* [generator](https://github.com/alehander42/pseudo/tree/master/pseudo/generators/golang_generator.py) [api translator](https://github.com/alehander42/pseudo/tree/master/pseudo/api_translators/golang_translator.py) [tests](https://github.com/alehander42/pseudo/tree/master/tests/test_go.py)
+* experimental support: everything except for error handling
+* [generator](../pseudo/generators/golang_generator.py) [api translator](../pseudo/api_translators/golang_translator.py) [tests](../tests/test_go.py)
 * target version: Go 1.2+
 
 Go equivalents used for pseudo types and concepts:
 
-| Pseudo     | Go                   |
-|------------|----------------------|
+| Pseudo           | Go                   |
+|------------------|----------------------|
 | List[T]          | slice[T]                             |
 | Dictionary[K, V] | map[K]V                              |
 | Set[T]           | map[bool]struct{}                    |

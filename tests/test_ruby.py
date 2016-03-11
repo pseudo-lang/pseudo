@@ -71,6 +71,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     # math
     math_ln             = 'Math.log(z)'
+    math_log            = 'Math.log(z, 2.0)'
     math_tan            = 'Math.tan(z)'
     math_sin            = 'Math.sin(z)'
     math_cos            = 'Math.cos(z)'

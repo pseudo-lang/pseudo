@@ -10,11 +10,12 @@ class NameMiddleware(Middleware):
     currently used c#, go, javascript and php
     '''
 
-    def __init__(self, normal_name=None, method_name=None, function_name=None):
+    def __init__(self, normal_name=None, method_name=None, function_name=None, attr_name=None):
         self.normal_name = normal_name
         self.method_name = method_name
         self.function_name = function_name
-        
+        self.attr_name = attr_name
+
     def process(self, tree):
         self.tree = tree
         self.defined_functions = {q.name for q in self.tree.definitions if q.type == 'function_definition'}
@@ -58,6 +59,18 @@ class NameMiddleware(Middleware):
         node.args = self.transform(node.args)
         return node
 
+    def transform_attr(self, node, in_block=False, assignment=None):
+        if self.attr_name:
+            node.attr = getattr(self, 'convert_to_%s' % self.attr_name)(node.attr)
+        return node
+    
+    def transform_attr_name(self, node, in_block=False, assignment=None):
+        if self.attr_name:
+            node.attr = getattr(self, 'convert_to_%s' % self.attr_name)(node.name)
+        return node
+
+    transform_class_attr = transform_instance_variable = transform_immutable_class_attr = transform_attr_name
+    
     def convert_to_pascal_case(self, name):
         return ''.join(q.title() for q in self.words(name))
 
@@ -71,13 +84,19 @@ class NameMiddleware(Middleware):
     def words(self, name):
         if not isinstance(name, str):
             import pdb;pdb.set_trace()
-        if '_' in name:
-            return [n.lower() for n in name.split('_')]
+        if '_' in name[1:]:
+            z = [n.lower() for n in name.split('_')]
+            # if name[0] == '_':
+            #     z[:2] = ['_%s' % z[1]]
+            return z
         else:
+
             words = [name[0]]
             for c in name[1:]:
                 if c.isupper():
                     words.append(c.lower())
                 else:
                     words[-1] += c
+            # if name[0] == '_' and name[1:]:
+            #     input(words)
             return words

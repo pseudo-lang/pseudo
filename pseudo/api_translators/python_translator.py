@@ -160,6 +160,7 @@ class PythonTranslator(ApiTranslator):
 
         'math': {
             'ln':           'math.log',
+            'log':          'math.log',
             'tan':          'math.tan',
             'sin':          'math.sin',
             'cos':          'math.cos'

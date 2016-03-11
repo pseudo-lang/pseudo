@@ -73,6 +73,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     # math
     math_ln             = (['math'], 'math.log(z)')
+    math_log            = (['math'], 'math.log(z, 2.0)')
     math_tan            = (['math'], 'math.tan(z)')
     math_sin            = (['math'], 'math.sin(z)')
     math_cos            = (['math'], 'math.cos(z)')
@@ -144,7 +145,7 @@ class TestPython(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
     string_split        = 's.split(t)'
     string_trim         = 's.strip()'
     string_reversed     = 'reversed(s)'
-    string_justify      = 's.center(z, t)'
+    string_center       = 's.center(z, t)'
     string_cformat      = "s % ('z', 0)"
     string_format       = "s.format('z', 0)"
     string_present      = 's'

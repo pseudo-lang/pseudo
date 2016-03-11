@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
-from pseudo.pseudo_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr, to_node
-from pseudo.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, DictKeys, DictValues, Contains, Read
+from pseudo.pseudo_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr, to_node, local
+from pseudo.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, expand_reduce, DictKeys, DictValues, ReadFile, Find, Int, Contains, ListContains, Read
 
 class GolangTranslator(ApiTranslator):
     '''
@@ -8,21 +8,35 @@ class GolangTranslator(ApiTranslator):
 
     The DSL is explained in the ApiTranslator docstring
     '''
-    
+
     methods = {
         'List': {
             '@equivalent':  'slice',
 
-            'push':         'append',
-            'pop':          lambda assignment, *l, receiver, pseudo_type: 
-                                    assignment_updated(assignment, value=go_last(receiver)),
+            'push':         lambda receiver, element, _: assignment(receiver, call('append', [receiver, element], receiver.pseudo_type)),
+            'pop':          lambda receiver, _: assignment(receiver, Node('_go_slice_to', sequence=receiver, to=Node(
+                                                    'binary_op', op='-', left=call('len', [receiver], 'Int'), right=to_node(1), pseudo_type='Int'), pseudo_type=receiver.pseudo_type)),
             'length':       'len',
             'insert':       expand_insert,
             'slice':        expand_slice,
             'slice_from':   expand_slice,
             'slice_to':     lambda receiver, to, pseudo_type: expand_slice(receiver, None, to, pseudo_type),
+            'join':         'strings.Join(%{self}, %{0})',
             'map':          expand_map,
-            'filter':       expand_filter        
+            'filter':       expand_filter,
+            'find':         Find,
+            'reduce':       expand_reduce,
+            'contains?':    ListContains,
+            'present?':     lambda s, _: Node('binary_op',
+                                            op='>',
+                                            left=call('len', [s], 'Int'),
+                                            right=to_node(0),
+                                            pseudo_type='Boolean'),
+            'empty?':       lambda s, _: Node('binary_op',
+                                            op='==',
+                                            left=call('len', [s], 'Int'),
+                                            right=to_node(0),
+                                            pseudo_type='Boolean')
         },
         'Dictionary': {
             '@equivalent':  'map',
@@ -38,15 +52,31 @@ class GolangTranslator(ApiTranslator):
             'substr':       expand_slice,
             'substr_from':  expand_slice,
             'length':       'len',
-            'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, pseudo_type=pseudo_type),
-            'find':         '#find',
-            'count':        '#count',
-            'partition':    '#partition',
-            'split':        '#split',
-            'trim':         '#strip',
-            'format':       '#format',
+            'substr_to':    lambda receiver, to, _: expand_slice(receiver, None, to, pseudo_type='String'),
+            'find':         'strings.Index(%{self}, %{0})',
+            'count':        'strings.Count(%{self}, %{0})',
+            'split':        'strings.Split(%{self}, %{0})',
             'concat':       to_op('+'),
-            'c_format':     to_op('%')
+            'contains?':    'strings.Contains(%{self}, %{0})',
+            'present?':     lambda s, _: Node('binary_op',
+                                            op='>',
+                                            left=call('len', [s], 'Int'),
+                                            right=to_node(0),
+                                            pseudo_type='Boolean'),
+            'empty?':       lambda s, _: Node('binary_op',
+                                            op='==',
+                                            left=call('len', [s], 'Int'),
+                                            right=to_node(0),
+                                            pseudo_type='Boolean'),
+            'find_from':    lambda f, value, index, _: Node('binary_op', op='+', pseudo_type='Int', left=index, right=Node('static_call',
+                                    receiver=local('strings', 'Library'),
+                                    message='Index',
+                                    args=[
+                                        Node('_go_slice_from', sequence=f, from_=index, pseudo_type='String'),
+                                        value
+                                    ],
+                                    pseudo_type='Int')),
+            'to_int':       Int
         },
         'Set': {
             '@equivalent':  'map[bool]struct{}',
@@ -74,14 +104,26 @@ class GolangTranslator(ApiTranslator):
         'io': {
             'display':      'fmt.Println',
             'read':         Read,
-            'read_file':    'ioutil.ReadFile',
+            'read_file':    ReadFile,
             'write_file':   'ioutil.WriteFile'
         },
         'math': {
             'ln':       'Math.Log',
+            'log':      'Math.Log',
             'tan':      'Math.Tan',
             'sin':      'Math.Sin',
             'cos':      'Math.Cos'
+        },
+        'system': {
+            'args':         'os.Args!',
+            'arg_count':    lambda _: call('len', [attr(local('os', 'Library'), 'Args', ['List', 'String'])], 'Int'),
+            
+            'index':        lambda value, _: Node('index',
+                                                sequence=attr(local('os', 'Library'),
+                                                              'Args',
+                                                              ['List', 'String']),
+                                                index=value,
+                                                pseudo_type='String')
         }
     }
 
@@ -98,6 +140,20 @@ class GolangTranslator(ApiTranslator):
         },
         'math': {
             '@all':     'math'
+        },
+        'List': {
+            'join':     'strings'
+        },
+        'String': {
+            'find':     'strings',
+            'count':    'strings',
+            'split':    'strings',
+            'contains?': 'strings',
+            'find_from': 'strings',
+            'to_int':   'strconv'
+        },
+        'system': {
+            '@all':     'os'
         }
     }
 

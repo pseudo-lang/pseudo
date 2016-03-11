@@ -20,6 +20,7 @@
     - [empty?](#empty?)
     - [concat](#concat)
     - [sort](#sort)
+    - [join](#join)
   - [Dictionary[K, V]](#dictionary)
   	- [length](#length)
     - [contains?](#contains?)
@@ -58,8 +59,11 @@
     - [to_float](#to_float)
 - [functions](#functions)
   - [math](#math)
-    - [log](#log)
+    - [ln](#ln)
     - [cos](#cos)
+    - [tan](#tan)
+    - [sin](#sin)
+    - [cot](#cot)
   - [io](#io)
     - [display](#display)
     - [read](#read)
@@ -369,13 +373,22 @@ Int#to_float() -> Float
 
 ## math
 
+Currently just several methods, add more in future versions
+and investigate edge cases
+
+### ln
+
+```javascript
+ln(x: Number) -> Float
+```
+
+the natural logarithm of x
+
 ### log
 
 ```javascript
 log(x: Number, base: Number) -> Float
 ```
-
-the logarithm of x to the given base
 
 ### cos
 
@@ -384,6 +397,20 @@ cos(x: Number) -> Float
 ```
 
 the cosine of x
+
+### tan
+
+```javascript
+tan(x: Number) -> Float
+```
+
+the tangent
+
+### sin
+
+```javascript
+sin(x: Number) -> Float
+```
 
 ## io
 

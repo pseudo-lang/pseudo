@@ -1,6 +1,6 @@
 # c++
 
-* support
+* experimental support: most of api still not supported
 * [generator](../pseudo/generators/cpp_generator.py) [api translator](../pseudo/api_translators/cpp_translator.py) [tests](../tests/test_cpp.py)
 * target version: C++11
 

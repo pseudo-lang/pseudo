@@ -5,4 +5,5 @@ from pseudo.middlewares.name_middleware import NameMiddleware
 from pseudo.middlewares.cpp_pointer_middleware import CppPointerMiddleware
 from pseudo.middlewares.cpp_display_exception_middleware import CppDisplayExceptionMiddleware
 from pseudo.middlewares.aug_assignment_middleware import AugAssignmentMiddleware
+from pseudo.middlewares.standard_middleware import StandardMiddleware
 #	go_error_handling_middleware import GoErrorHandlingMiddleware

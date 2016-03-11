@@ -114,6 +114,7 @@ IoWriteFile = standard_call('io', 'write_file', [to_node('z.py'), local('source'
 
 INT_EXAMPLE = local('z', 'Int')
 MathLn      = standard_call('math', 'ln', [INT_EXAMPLE], 'Float')
+MathLog     = standard_call('math', 'log', [INT_EXAMPLE, to_node(2.0)], 'Float')
 MathTan     = standard_call('math', 'tan', [INT_EXAMPLE], 'Float')
 MathSin     = standard_call('math', 'sin', [INT_EXAMPLE], 'Float')
 MathCos     = standard_call('math', 'cos', [INT_EXAMPLE], 'Float')

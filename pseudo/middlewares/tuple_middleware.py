@@ -71,18 +71,19 @@ class TupleMiddleware(Middleware):
     def with_constructor(self, t):
         t = t[1]
         t.name = camel_case(t.name)
-        t.constructor = Node('constructor',
-            params=[local(field.name, field.pseudo_type) for field in t.attrs],
-            this=typename(t.name),
-            pseudo_type = ['Function'] + [field.pseudo_type for field in t.attrs] + [t.name],
-            return_type=t.name,
-            block=[
-                assignment(
-                    Node('instance_variable', name=field.name, pseudo_type=field.pseudo_type),
-                    local(field.name, field.pseudo_type),
-                    first_mention=False)
-                for field
-                in t.attrs])
+        if self.all == False:
+            t.constructor = Node('constructor',
+                params=[local(field.name, field.pseudo_type) for field in t.attrs],
+                this=typename(t.name),
+                pseudo_type = ['Function'] + [field.pseudo_type for field in t.attrs] + [t.name],
+                return_type=t.name,
+                block=[
+                    assignment(
+                        Node('instance_variable', name=field.name, pseudo_type=field.pseudo_type),
+                        local(field.name, field.pseudo_type),
+                        first_mention=False)
+                    for field
+                    in t.attrs])
         return t
 
     def transform_tuple(self, node, in_block=False, assignment=None):

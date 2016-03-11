@@ -86,6 +86,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     # math
     math_ln             = 'Math.log(z)'
+    math_log            = 'Math.log(z, 2.0)'
     math_tan            = 'Math.tan(z)'
     math_sin            = 'Math.sin(z)'
     math_cos            = 'Math.cos(z)'
@@ -162,7 +163,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     string_split        = 's.split(t)'
     string_trim         = 's.trim()'
     string_reversed     = "s.split('').reverse().join('')"
-    string_justify      = '_.pad(s, z, t)'
+    string_center       = '_.pad(s, z, t)'
     string_present      = 's'
     string_empty        = '_.isEmpty(s)'
     string_contains     = '_.contains(s, t)'

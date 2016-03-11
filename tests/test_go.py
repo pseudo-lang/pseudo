@@ -20,7 +20,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
 
     def gen_special(self, source):
-        lines = source.split('\n')
+        lines = source.split('\n')[2:] # package main
         main_index = lines.index('func main() {')
         main = '\n'.join([line[1:] for line in lines[main_index + 1:-2]]).strip()
         l = 0
@@ -60,7 +60,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     instance_variable = 'this.egg'
 
-    attr = 'e.egg'
+    attr = 'e.Egg'
 
     local_assignment = 'egg = ham'
 
@@ -70,7 +70,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     call = 'map(x)'
 
-    method_call = 'e.filter(42)'
+    method_call = 'e.Filter(42)'
 
     standard_call = [
         ({'fmt'}, 'fmt.Println(42)'),
@@ -78,12 +78,14 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
             reader, err := bufio.NewReader(os.Stdin)
             reader.ReadString("\\n")''')),
         ({'math'}, 'Math.Log(ham)'),
-        ({'io/ioutil'}, 'source := ioutil.ReadFile("f.py")')
+        ({'io/ioutil'}, dedent_with_tabs('''\
+                            _contents, _ := ioutil.ReadFile("f.py")
+                            source := string(_contents)'''))
     ]
 
     standard_method_call = [
         'len(l)',
-        '"l"[0:2]'
+        '"l"[:2]'
     ]
 
     # io
@@ -91,10 +93,13 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
     io_read             = ({'bufio', 'os'}, dedent_with_tabs('''\
                                 reader, err := bufio.NewReader(os.Stdin)
                                 source := reader.ReadString("\\n")'''))
-    io_read_file        = 'source := ioutil.ReadFile("z.py")'
+    io_read_file        = dedent_with_tabs('''\
+                            _contents, _ := ioutil.ReadFile("z.py")
+                            source := string(_contents)''')
     io_write_file       = 'ioutil.WriteFile("z.py", source)'
 
     math_ln             = ({'math'}, 'Math.Log(z)')
+    math_log            = ({'math'}, 'Math.Log(z, 2.0)')
     math_tan            = ({'math'}, 'Math.Tan(z)')
     math_sin            = ({'math'}, 'Math.Sin(z)')
     math_cos            = ({'math'}, 'Math.Cos(z)')
@@ -108,101 +113,110 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
                             _, _contains := words[s]
                             _contains''')
 
-    # dictionary_length   = 'len(pointers)'
+    dictionary_length   = 'len(pointers)'
     dictionary_contains = dedent_with_tabs('''\
                             _, _contains := pointers[s]
                             _contains''')
 
     dictionary_keys     =  dedent_with_tabs('''\
-                            _pointers_keys := make([]string, "", len(pointers))
-                            _pointers_index := 0
-                            for _pointers_key, _ := range pointers {
-                                _pointers_keys[_pointers_index] = _pointers_key
-                                _pointers_index += 1
-                            }
-                            
-                            _pointers_keys''')
-    dictionary_values   = dedent_with_tabs('''\
-                            _pointers_values := make([]int, 0, len(pointers))
-                            _pointers_index := 0
-                            for _, _pointers_value := range pointers {
-                                _pointers_values[_pointers_index] = _pointers_value
-                                _pointers_index += 1
+                            _pointersKeys := make([]string, "", len(pointers))
+                            _pointersIndex := 0
+                            for _pointersKey, _ := range pointers {
+                                _pointersKeys[_pointersIndex] = _pointersKey
+                                _pointersIndex += 1
                             }
 
-                            _pointers_values''')
+                            _pointersKeys''')
+    dictionary_values   = dedent_with_tabs('''\
+                            _pointersValues := make([]int, 0, len(pointers))
+                            _pointersIndex := 0
+                            for _, _pointersValue := range pointers {
+                                _pointersValues[_pointersIndex] = _pointersValue
+                                _pointersIndex += 1
+                            }
+
+                            _pointersValues''')
 
     tuple_length        = '2'
 
     array_length        = '10'
 
+    list_push           = "cpus := append(cpus, \"\")"
+    list_pop            = "cpus := cpus[:len(cpus) - 1]"
+    list_length         = "len(cpus)"
+    list_map            = dedent_with_tabs('''\
+                            _results := make([]string, "", len(cpus))
+                            for _index, value := range cpus {
+                                _results[_index] = value + "a"
+                            }
 
+                            _results''')
+        
+    list_filter         = dedent_with_tabs('''\
+                            var _results []string
+                            for _index, value := range cpus {
+                                if len(value) == 0 {
+                                    _results := append(_results, value)
+                                } 
+
+                            }
+
+                            _results''')
     
-        # 'cpus = append(cpus, planet)', #cpus.push(planet)
-        # 'planet, cpus = cpus[len(cpus) - 1], cpus[:len(cpus) - 1]' # planet = cpus.pop()
-        # 'len(cpus)', # cpu.length
-        # dedent_with_tabs('''\
-        #     cpus = append(cpus, 0)
-        #     copy(cpus[x + 1:], cpus[x:])
-        #     cpus[x] = planet
-        #     '''), # cpu.insert_at(planet, x)
-        # 'cpus = append([]int{planet}, cpus...)', # cpu.unshift(planet)
-        # 'planet, cpus := cpus[0], cpus[1:]', # planet = cpu.shift()
-        # 'cpus = append(cpus[:x], cpus[x + 1:]...)', # cpus.remove_at(x)
-        # 'starfleet := cpus[2:4]', # starfleet = cpus[2:4]
-        # 'starfleet := cpus[x:]', # starfleet = cpus[x:]
-        # dedent_with_tabs('''\
-        #     repeated_cpus := cpus
-        #     for _ := range(3) {
-        #         repeated_cpus = append(repeated_cpus, cpus)
-        #     }                
-        #     sh(repeated_cpus)
-        #     '''), # sh(cpus * 4)
-        # dedent_with_tabs('''\
-        #     found := -1
-        #     for as_index, as_element := range as {
-        #         if as_element == query {
-        #             found := as_index
-        #             break
-        #         }
-        #     }
-        #     sh(found, 2)
-        #     '''), # sh(as.find(query), 2)
-        # (['strings'],
-        #  'sh(2, strings.Join(cpus, "\n"))'), # sh(2, '\n'.join(cpus))
+    list_find           = dedent_with_tabs('''\
+                            _found := -1
+                            for _cpusIndex, _cpusElement := range cpus {
+                                if _cpusElement == s {
+                                    _found := _cpusIndex
+                                    break
+                                } 
 
-        # dedent_with_tabs('''\
-        #     reversed_cpus := make([]int, len(cpus))
-        #     for cpus_index, cpus_element := range len(cpus) {
-        #         reversed_cpus[len(cpus) - cpus_index - 1] = cpus_element
-        #     }
-        #     sh(reversed_cpus)
-        #     '''), # sh(cpus.reverse())
+                            }
 
+                            _found''')
 
-        # # Dictionary
+    list_reduce         = dedent_with_tabs('''\
+                            value := ""
+                            for _, other := range cpus {
+                                result := value + other
+                                value := result
+                            }
 
-        # dedent_with_tabs('''
-        #     cpus_keys := make([]int, len(cpus))
-        #     cpus_index := 0
-        #     for cpus_key, _ := range cpus {
-        #         cpus_keys[cpu_index] = cpus_key
-        #         cpus_index += 1
-        #     }
-        #     sh(cpus_keys[:2])
-        #     '''), # sh(cpu.keys()[:2])
+                            value''')
 
-        # dedent_with_tabs('''
-        #     cpus_values := make([]int, len(cpus))
-        #     cpus_index := 0
-        #     for _, cpus_value := range cpus {
-        #         cpus_values[cpus_index] = cpus_key
-        #         cpus_index += 1
-        #     }
-        #     sh(cpus_keys[4])
-        #     '''),
+    list_contains       = dedent_with_tabs('''\
+                            _contains := false
+                            for _, _cpusElement := range cpus {
+                                if _cpusElement == s {
+                                    _contains := true
+                                    break
+                                } 
 
-        # 'len(cpus)',
+                            }
+
+                            _contains''')
+
+    list_present        = 'len(cpus) > 0'
+
+    list_empty          = 'len(cpus) == 0'
+
+    list_slice          = 'cpus[2:len(cpus) - 1]'
+    list_slice_from     = 'cpus[2:]'
+    list_slice_to       = 'cpus[:2]'
+
+    string_length       = 'len(s)'
+    string_contains     = 'strings.Contains(s, t)'
+    string_empty        = 'len(s) == 0'
+    string_substr       = 's[1:len(s) - 1]'
+    string_substr_from  = 's[2:]'
+    string_substr_to    = 's[:len(s) - 2]'
+    string_find         = 'strings.Index(s, t)'
+    string_find_from    = 'z + strings.Index(s[z:], t)'
+    string_count        = ({'strings'}, 'strings.Count(s, t)')
+    string_split        = ({'strings'}, 'strings.Split(s, t)')
+    string_to_int       = ({'strconv'}, dedent_with_tabs('''\
+                            _int, _ := strconv.Atoi(s)
+                            _int'''))
 
         # # String
 
@@ -250,7 +264,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         {'fmt'},
         dedent_with_tabs('''\
             if egg == ham {
-                l[0:2]
+                l[:2]
             } else if egg == ham {
                 fmt.Println(4.2)
             } else {
@@ -291,14 +305,14 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         }''')
 
     function_definition = dedent_with_tabs('''\
-        func weird(z int) int {
+        func Weird(z int) int {
             fixed := fix(z)
             return fixed
         }''')
 
     method_definition = (
         dedent_with_tabs('''\
-            func parse(this *A, source string) []string {
+            func Parse(this *A, source string) []string {
                 this.ast = 0
                 return []string {source}
             }'''))

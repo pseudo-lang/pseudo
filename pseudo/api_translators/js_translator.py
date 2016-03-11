@@ -153,13 +153,9 @@ class JSTranslator(ApiTranslator):
             'write_file':   "fs.writeFileSync(%{0}, %{1}, 'utf8')",
         },
 
-        'http': {
-            'get':          'http.get',
-            'post':         'http.post',
-        },
-
         'math': {
             'ln':           'Math.log',
+            'log':          'Math.log',
             'tan':          'Math.tan',
             'sin':          'Math.sin',
             'cos':          'Math.cos'

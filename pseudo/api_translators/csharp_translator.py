@@ -23,6 +23,7 @@ class CSharpTranslator(ApiTranslator):
             'slice_from':   lambda l, from_, pseudo_type: method_call(l, 'Drop', [Node('binary_op', op='-', left=attr(l, 'Length', 'Int'), right=to_node(-from_.value), pseudo_type='Int') if from_.type == 'int' and from_.value < 0 else from_], pseudo_type=pseudo_type),
             'slice_to':     lambda l, to, pseudo_type: method_call(l, 'Take', [Node('binary_op', op='-', left=attr(l, 'Length', 'Int'), right=to_node(-to.value), pseudo_type='Int') if to.type == 'int' and to.value < 0 else to], pseudo_type=pseudo_type),
             'slice_':       '#Slice',
+            'join':         lambda l, delimiter, _: method_call(delimiter, 'Join', [receiver], 'String'),
             'map':          linq('Select'),
             'filter':       linq('Where'),
             'reduce':       linq('Aggregate', False, swap=True),
@@ -140,6 +141,7 @@ class CSharpTranslator(ApiTranslator):
 
         'math': {
             'ln':          'Math.Log',
+            'log':         'Math.Log',
             'tan':         'Math.Tan',
             'sin':         'Math.Sin',
             'cos':         'Math.Cos'
