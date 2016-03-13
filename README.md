@@ -6,12 +6,11 @@
 
 [![Join the chat at https://gitter.im/alehander42/pseudo](https://badges.gitter.im/alehander42/pseudo.svg)](https://gitter.im/alehander42/pseudo?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-Pseudo is a library for generating idiomatic and readable code in different high level languages and a system for language translation: its goal is to be able to translate any code expressed with pseudo AST to any of its target languages.
+Pseudo takes an algorithm / a simple program and generates idiomatic code for it in Python, JavaScript, C#, Go and Ruby.
 
 Pseudo achieves that with translation on two layers: it uses the target language syntax and it can express standard library methods/api of language X using language Y's native standard library
 
-  
-Pseudo specifies an ast format corresponding to a very clear and somehow limited subset of a language:
+Pseudo consumes "Pseudo AST" which corresponds to a very clear, statically typed and somehow limited subset of a language:
 
   * basic types and collections and standard library methods for them
   
@@ -55,6 +54,47 @@ Each example contains a detailed README and working translations to Python, JS, 
 [a football results processing command line tool](examples/football)
 
 [a verbal expressions-like library ported to all the target languages](examples/verbal_expressions)
+
+### architecture
+
+```ruby
+PSEUDO AST:
+   NORMAL CODE     PSEUDO STANDARD LIBRARY INVOCATIONS     
+      ||                    ||
+      ||                    ||
+      ||              API TRANSLATOR
+      ||                    ||
+      ||                    ||
+      ||                    \/
+      ||              IDIOMATIC TARGET LANGUAGE 
+      ||              STANDARD LIBRARY INVOCATIONS        
+      ||                    ||     
+      \/                    \/
+  STANDARD OR LANGUAGE-SPECIFIC MIDDLEWARES
+              e.g.
+    name camel_case/snake_case middleware
+    convert-tuples-to-classes middleware
+    convert-exception-based errors handling
+    to return-based error handling middleware
+              etc
+
+              ||
+              ||
+              ||
+              ||
+  TARGET LANGUAGE CODE GENERATOR
+
+      defined with a dsl aware
+      that handles formatting
+         automatically
+              ||
+              ||
+              ||
+              \/
+
+      Python / C# / Go / JS / Ruby
+```
+
 
 ## use cases
 
@@ -107,7 +147,6 @@ a = g(0, '')
 
 In the future Pseudo can add a lisp-like dsl for fast manual creation of ast nodes, but currently it's more useful for its main goal: consuming automatically generated pseudo ast and then transpiling it to the target languags
 
-![Imgur](http://i.imgur.com/LDxDjQC.jpg)
 
 ## why?
 
