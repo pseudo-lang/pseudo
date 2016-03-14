@@ -128,6 +128,22 @@ pip install pseudo-python
 
 ## usage
 
+you can directly generate pseudo ast from Python using Pseudo-Python
+```bash
+pseudo-python a.py # generates a.pseudo.yaml
+```
+and then translate the ast
+```bash
+pseudo a.pseudo.yaml go # or ruby / js / csharp / py / cpp
+```
+or you can directly translate from python to another language
+
+```bash
+pseudo-python a.py b.rb # or c.cs
+```
+
+
+
 ```python
 pseudo.generate(pseudo_ast, language)
 ```
