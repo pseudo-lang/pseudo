@@ -201,7 +201,7 @@ That has a lot of advantages:
 added support for 4 more.
 
 * Easy to test: there is a simple test dsl too which helps all 
-language tests to share input examples [like that](pseudo/tests/test_ruby.py)
+language tests to share input examples [like that](tests/test_ruby.py)
 
 However language translation is related to a lot of details and
 a lot of little gotchas, tuning and refining some of them took days. Pseudo uses different abstractions to streamline the process and to reuse logic across languages.
