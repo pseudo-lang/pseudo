@@ -152,7 +152,7 @@ In the future Pseudo can add a lisp-like dsl for fast manual creation of ast nod
 
 Supporting full-blown Ruby to Python/Javascript to C++ auto translation is hard.
 
-However often we need to just exress an algorithm, a self-contained core of a library, a simple command line tool and the act of manual porting to another languages feels somehow .. primitive. 
+However often we need to just express an algorithm, a self-contained core of a library, a simple command line tool and the act of manual porting to another languages feels somehow .. primitive. 
 
 Often that code is(or can be) expressed in very similar way, with
 similar constructs and basic types and data structures. On that level a lot of languages are very similar and the only real difference is syntax and methods api. That's a feasible task for automatic translation and actually the existance of `pseudo` is to fullfill the needs of several other existing projects/ideas.
