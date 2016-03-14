@@ -157,7 +157,7 @@ However often we need to just express an algorithm, a self-contained core of a l
 Often that code is(or can be) expressed in very similar way, with
 similar constructs and basic types and data structures. On that level a lot of languages are very similar and the only real difference is syntax and methods api. That's a feasible task for automatic translation and actually the existance of `pseudo` is to fullfill the needs of several other existing projects/ideas.
 
-Another powerful thing about Pseudon is its standard library.
+Another powerful thing about Pseudo is its standard library.
 It can accumulate a serious number of methods/idioms and it can act like e.g. a truly cross-platform, target-language-aware equivalent of lodash
 
 Pseudo is still young (it's basically less than two weeks old), 
