@@ -4,11 +4,6 @@
 
 Generated from [original.py](original.py) using [pseudo-python](https://github.com/alehander42/pseudo-python)
 
-
- to [VerbalExpressions](https://github.com/VerbalExpressions/PythonVerbalExpressions)
-
-It defines a DSL for more readable definition of regular expressions and uses it with the example from [VerbalExpressions README](https://github.com/VerbalExpressions/PythonVerbalExpressions)
-
 It demonstrates 
 
 * Type inference
