@@ -59,7 +59,7 @@ C# equivalents used for pseudo types and concepts:
   		public String Away { get { return away; } }
 
   		private readonly Tuple<int, int> goals;
-  		public Tuple<int, int> { get { return goals; } }
+  		public Tuple<int, int> Goals { get { return goals; } }
 
   		public Result(string host, string away, Tuple<int, int> goals)
   		{
