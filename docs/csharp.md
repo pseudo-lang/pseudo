@@ -26,7 +26,11 @@ C# equivalents used for pseudo types and concepts:
 
 # niceties
 
-* Converting tuples to classes and automatically inferring meaningful names for them based on usage in the program: e.g. in [football.cs](../examples/football.py):
+* Converting tuples to classes
+
+  Pseudo tries to infer meaningful names for tuples and their fields based on their usage in the program. If it succeeds, it converts them to classes with readonly properties, otherwise it uses `Tuple<..>` and `.Item1..Item9`
+  
+  e.g. in [football.cs](../examples/football.py):
   
   ```python
   return line[:away_index - 3], line[away_index:result_index - 1], (int(goals[0]), int(goals[1]))
