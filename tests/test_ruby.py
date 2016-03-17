@@ -31,7 +31,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     local = 'egg'
 
-    set_  = 'Set.new([2])'
+    set_  = (['set'], 'Set.new([2])')
 
     tuple_ = '[2, 42.2]'
 
@@ -118,10 +118,10 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
     dictionary_values   = 'pointers.values'
 
     # Set
-    set_length          = 'words.length'
-    set_contains        = 'words.include?(s)'
-    set_union           = 'words | words'
-    set_intersection    = 'words.intersection(words)'
+    set_length          = (['set'], 'words.length')
+    set_contains        = (['set'], 'words.include?(s)')
+    set_union           = (['set'], 'words | words')
+    set_intersection    = (['set'], 'words.intersection(words)')
 
     # Tuple
     tuple_length        = 'flowers.length'
