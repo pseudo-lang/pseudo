@@ -54,7 +54,7 @@ GENERATORS = {
                 '%sGenerator' % NAMES[format])
     for format in SUPPORTED_FORMATS
 }
-
+        
 def generate_main(main, language):
     '''
     generate output code for main in `language`
@@ -84,6 +84,16 @@ def generate_main(main, language):
     else:
         q = base_node
     return generate(q, language)
+
+def generate_from_yaml(pseudo_ast, language):
+    '''
+    generate output code in `language`
+
+    converts yaml input to a Node-based pseudo internal tree and
+    passes it to `generate
+
+    '''
+    return pseudo.generate(pseudo.loader.as_tree(pseudo_ast), language)
 
 
 def generate(pseudo_ast, language):

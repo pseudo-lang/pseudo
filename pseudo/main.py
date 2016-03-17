@@ -40,7 +40,7 @@ def main():
 
     for format in output_formats:
       if format in pseudo.SUPPORTED_FORMATS:
-        output_source = pseudo.generate(pseudo.loader.as_tree(intermediate_code), format)
+        output_source = pseudo.generate_from_yaml(intermediate_code, format)
         with open('%s.%s' % (base, pseudo.FILE_EXTENSIONS[format]), 'w') as f:
             f.write(output_source)
       else:

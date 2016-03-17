@@ -145,7 +145,11 @@ pseudo-python a.py b.rb # or c.cs
 
 
 ```python
-pseudo.generate(pseudo_ast, language)
+pseudo.generate(pseudo_ast, language) # pseudo_ast is a plain dict or a pseudo Node-based tree
+```
+
+```python
+pseudo.generate_from_yaml(pseudo_ast, language) # pseudo_ast is yaml-encoded pseudo ast
 ```
 
 For quick experiments it's easier to use `generate_main`
