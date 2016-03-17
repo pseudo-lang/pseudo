@@ -1,0 +1,321 @@
+constants: []
+custom_exceptions: []
+definitions:
+- attrs:
+  - {is_public: false, name: raw_source, pseudo_type: String, type: class_attr}
+  base: null
+  constructor:
+    block:
+    - pseudo_type: Void
+      target: {name: raw_source, pseudo_type: String, type: instance_variable}
+      type: assignment
+      value: {pseudo_type: String, type: string, value: ''}
+    name: __init__
+    params: []
+    pseudo_type: [Function, VerbalExpression]
+    return_type: null
+    this: {name: VerbalExpression, type: typename}
+    type: constructor
+  methods:
+  - block:
+    - pseudo_type: Regexp
+      type: implicit_return
+      value:
+        args:
+        - {name: raw_source, pseudo_type: String, type: instance_variable}
+        function: compile
+        namespace: regexp
+        pseudo_type: Regexp
+        type: standard_call
+    is_public: true
+    name: compile
+    params: []
+    pseudo_type: [Function, Regexp]
+    return_type: Regexp
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: Void
+      target: {name: raw_source, pseudo_type: String, type: instance_variable}
+      type: assignment
+      value:
+        args:
+        - {pseudo_type: String, type: string, value: ^}
+        message: concat
+        pseudo_type: String
+        receiver: {name: raw_source, pseudo_type: String, type: instance_variable}
+        type: standard_method_call
+    - pseudo_type: VerbalExpression
+      type: implicit_return
+      value: {pseudo_type: VerbalExpression, type: this}
+    is_public: true
+    name: start_of_line
+    params: []
+    pseudo_type: [Function, VerbalExpression]
+    return_type: VerbalExpression
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: Void
+      target: {name: raw_source, pseudo_type: String, type: instance_variable}
+      type: assignment
+      value:
+        args:
+        - args:
+          - {pseudo_type: String, type: interpolation_literal, value: (}
+          - index: 0
+            pseudo_type: String
+            type: interpolation_placeholder
+            value:
+              args:
+              - {name: letter, pseudo_type: String, type: local}
+              function: escape
+              namespace: regexp
+              pseudo_type: String
+              type: standard_call
+          - {pseudo_type: String, type: interpolation_literal, value: ')?'}
+          pseudo_type: String
+          type: interpolation
+        message: concat
+        pseudo_type: String
+        receiver: {name: raw_source, pseudo_type: String, type: instance_variable}
+        type: standard_method_call
+    - pseudo_type: VerbalExpression
+      type: implicit_return
+      value: {pseudo_type: VerbalExpression, type: this}
+    is_public: true
+    name: maybe
+    params:
+    - {name: letter, pseudo_type: Function, type: local}
+    pseudo_type: [Function, String, VerbalExpression]
+    return_type: VerbalExpression
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: Void
+      target: {name: raw_source, pseudo_type: String, type: instance_variable}
+      type: assignment
+      value:
+        args:
+        - args:
+          - {pseudo_type: String, type: interpolation_literal, value: (}
+          - index: 0
+            pseudo_type: String
+            type: interpolation_placeholder
+            value:
+              args:
+              - {name: word, pseudo_type: String, type: local}
+              function: escape
+              namespace: regexp
+              pseudo_type: String
+              type: standard_call
+          - {pseudo_type: String, type: interpolation_literal, value: )}
+          pseudo_type: String
+          type: interpolation
+        message: concat
+        pseudo_type: String
+        receiver: {name: raw_source, pseudo_type: String, type: instance_variable}
+        type: standard_method_call
+    - pseudo_type: VerbalExpression
+      type: implicit_return
+      value: {pseudo_type: VerbalExpression, type: this}
+    is_public: true
+    name: find
+    params:
+    - {name: word, pseudo_type: Function, type: local}
+    pseudo_type: [Function, String, VerbalExpression]
+    return_type: VerbalExpression
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: Void
+      target: {name: raw_source, pseudo_type: String, type: instance_variable}
+      type: assignment
+      value:
+        args:
+        - args:
+          - {pseudo_type: String, type: interpolation_literal, value: '[^'}
+          - index: 0
+            pseudo_type: String
+            type: interpolation_placeholder
+            value:
+              args:
+              - {name: letter, pseudo_type: String, type: local}
+              function: escape
+              namespace: regexp
+              pseudo_type: String
+              type: standard_call
+          - {pseudo_type: String, type: interpolation_literal, value: ']*'}
+          pseudo_type: String
+          type: interpolation
+        message: concat
+        pseudo_type: String
+        receiver: {name: raw_source, pseudo_type: String, type: instance_variable}
+        type: standard_method_call
+    - pseudo_type: VerbalExpression
+      type: implicit_return
+      value: {pseudo_type: VerbalExpression, type: this}
+    is_public: true
+    name: anything_but
+    params:
+    - {name: letter, pseudo_type: Function, type: local}
+    pseudo_type: [Function, String, VerbalExpression]
+    return_type: VerbalExpression
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: Void
+      target: {name: raw_source, pseudo_type: String, type: instance_variable}
+      type: assignment
+      value:
+        args:
+        - {pseudo_type: String, type: string, value: $}
+        message: concat
+        pseudo_type: String
+        receiver: {name: raw_source, pseudo_type: String, type: instance_variable}
+        type: standard_method_call
+    - pseudo_type: VerbalExpression
+      type: implicit_return
+      value: {pseudo_type: VerbalExpression, type: this}
+    is_public: true
+    name: end_of_line
+    params: []
+    pseudo_type: [Function, VerbalExpression]
+    return_type: VerbalExpression
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: RegexpMatch
+      type: implicit_return
+      value:
+        args:
+        - {name: word, pseudo_type: String, type: local}
+        message: match
+        pseudo_type: RegexpMatch
+        receiver:
+          args: []
+          message: compile
+          pseudo_type: Regexp
+          type: this_method_call
+        type: standard_method_call
+    is_public: true
+    name: match
+    params:
+    - {name: word, pseudo_type: Function, type: local}
+    pseudo_type: [Function, String, RegexpMatch]
+    return_type: RegexpMatch
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  - block:
+    - pseudo_type: String
+      type: implicit_return
+      value: {name: raw_source, pseudo_type: String, type: instance_variable}
+    is_public: true
+    name: source
+    params: []
+    pseudo_type: [Function, String]
+    return_type: String
+    this: {name: VerbalExpression, type: typename}
+    type: method_definition
+  name: VerbalExpression
+  type: class_definition
+dependencies: []
+main:
+- pseudo_type: Void
+  target: {name: v, pseudo_type: VerbalExpression, type: local}
+  type: assignment
+  value:
+    args: []
+    class_name: VerbalExpression
+    pseudo_type: VerbalExpression
+    type: new_instance
+- pseudo_type: Void
+  target: {name: a, pseudo_type: VerbalExpression, type: local}
+  type: assignment
+  value:
+    args: []
+    message: end_of_line
+    pseudo_type: VerbalExpression
+    receiver:
+      args:
+      - {pseudo_type: String, type: string, value: ' '}
+      message: anything_but
+      pseudo_type: VerbalExpression
+      receiver:
+        args:
+        - {pseudo_type: String, type: string, value: www.}
+        message: maybe
+        pseudo_type: VerbalExpression
+        receiver:
+          args:
+          - {pseudo_type: String, type: string, value: '://'}
+          message: find
+          pseudo_type: VerbalExpression
+          receiver:
+            args:
+            - {pseudo_type: String, type: string, value: s}
+            message: maybe
+            pseudo_type: VerbalExpression
+            receiver:
+              args:
+              - {pseudo_type: String, type: string, value: http}
+              message: find
+              pseudo_type: VerbalExpression
+              receiver:
+                args: []
+                message: start_of_line
+                pseudo_type: VerbalExpression
+                receiver: {name: v, pseudo_type: VerbalExpression, type: local}
+                type: method_call
+              type: method_call
+            type: method_call
+          type: method_call
+        type: method_call
+      type: method_call
+    type: method_call
+- pseudo_type: Void
+  target: {name: test_url, pseudo_type: String, type: local}
+  type: assignment
+  value: {pseudo_type: String, type: string, value: 'https://www.google.com'}
+- block:
+  - args:
+    - {pseudo_type: String, type: string, value: Valid URL}
+    function: display
+    namespace: io
+    pseudo_type: Void
+    type: standard_call
+  otherwise:
+    block:
+    - args:
+      - {pseudo_type: String, type: string, value: Invalid URL}
+      function: display
+      namespace: io
+      pseudo_type: Void
+      type: standard_call
+    pseudo_type: Void
+    type: else_statement
+  pseudo_type: Void
+  test:
+    args: []
+    message: has_match
+    pseudo_type: Boolean
+    receiver:
+      args:
+      - {name: test_url, pseudo_type: String, type: local}
+      message: match
+      pseudo_type: RegexpMatch
+      receiver: {name: a, pseudo_type: VerbalExpression, type: local}
+      type: method_call
+    type: standard_method_call
+  type: if_statement
+- args:
+  - args: []
+    message: source
+    pseudo_type: String
+    receiver: {name: a, pseudo_type: VerbalExpression, type: local}
+    type: method_call
+  function: display
+  namespace: io
+  pseudo_type: Void
+  type: standard_call
+type: module

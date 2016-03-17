@@ -203,6 +203,8 @@ class JSGenerator(CodeGenerator):
 
         block = '%<block:semi>',
 
+        not_null_check = '%<value>',
+
         regex = '/%<value>/',
     )
     

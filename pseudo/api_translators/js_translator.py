@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, call, to_node, attr, local
-
+from pseudo.api_translators.js_api_handlers import empty, present
 
 LODASH = local('_', 'Library')
 
@@ -38,8 +38,8 @@ class JSTranslator(ApiTranslator):
             'any?':         '_.any(%{self}, %{0})',
             'all?':         '_.all(%{self}, %{0})',
             'sort':         '#sort',
-            'empty?':       '_.isEmpty(%{self})',
-            'present?':     lambda receiver, _: receiver,
+            'empty?':       empty,
+            'present?':     present,
             'find':         '#indexOf',
             'contains?':    '_.contains(%{self}, %{0})'
         },
@@ -49,7 +49,9 @@ class JSTranslator(ApiTranslator):
             'length':       '.length!',
             'keys':         'Object.keys(%{self})',
             'values':       'Object.values(%{self})',
-            'contains?':    '#hasOwnProperty'
+            'contains?':    '#hasOwnProperty',
+            'present?':     present,
+            'empty?':       empty
         },
         'String': {
             '@equivalent':  'String',
@@ -83,7 +85,7 @@ class JSTranslator(ApiTranslator):
                                 'String'),
             'center':      '_.pad(%{self}, %{0}, %{1})',
             'present?':     lambda f, _: f,
-            'empty?':       '_.isEmpty(%{self})',
+            'empty?':       lambda f, _: Node('unary_op', op='not', value=f, pseudo_type='Boolean'),
             'contains?':    '_.contains(%{self}, %{0})',
             'to_int':       'parseInt',
             'pad_left':     '_.padLeft(%{self}, %{0}, %{1})',
@@ -105,7 +107,9 @@ class JSTranslator(ApiTranslator):
             'length':       '.length!',
             'contains?':    '_.contains(%{self}, %{0})',
             'intersection': '_.intersection(%{self}, %{0})',
-            'union':        '_.union(%{self}, %{0})'
+            'union':        '_.union(%{self}, %{0})',
+            'present?':     present,
+            'empty?':       empty
         },
         'RegexpMatch': {
             '@equivalent':  'Array',
@@ -158,7 +162,8 @@ class JSTranslator(ApiTranslator):
             'log':          'Math.log',
             'tan':          'Math.tan',
             'sin':          'Math.sin',
-            'cos':          'Math.cos'
+            'cos':          'Math.cos',
+            'pow':          'Math.pow'
         },
 
         'regexp': {

@@ -11,6 +11,20 @@ def expand_push(receiver, element):
 def expand_insert(receiver, index, element):
     return call('append', [])
 
+def empty(s, _):
+    return Node('binary_op',
+                op='==',
+                left=call('len', [s], 'Int'),
+                right=to_node(0),
+                pseudo_type='Boolean')
+
+def present(s, _):
+    return Node('binary_op',
+                op='>',
+                left=call('len', [s], 'Int'),
+                right=to_node(0),
+                pseudo_type='Boolean')    
+
 class ExpandMap(BizarreLeakingNode):
     def temp_name(self, target):
         if isinstance(target, str):

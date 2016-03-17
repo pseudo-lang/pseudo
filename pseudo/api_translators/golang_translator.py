@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, call, if_statement, for_each_with_index_statement, assignment, attr, to_node, local
-from pseudo.api_translators.go_api_handlers import expand_insert, expand_slice, expand_map, expand_filter, expand_reduce, DictKeys, DictValues, ReadFile, Find, Int, Contains, ListContains, Read
+from pseudo.api_translators.go_api_handlers import present, empty, expand_insert, expand_slice, expand_map, expand_filter, expand_reduce, DictKeys, DictValues, ReadFile, Find, Int, Contains, ListContains, Read
 
 class GolangTranslator(ApiTranslator):
     '''
@@ -27,16 +27,8 @@ class GolangTranslator(ApiTranslator):
             'find':         Find,
             'reduce':       expand_reduce,
             'contains?':    ListContains,
-            'present?':     lambda s, _: Node('binary_op',
-                                            op='>',
-                                            left=call('len', [s], 'Int'),
-                                            right=to_node(0),
-                                            pseudo_type='Boolean'),
-            'empty?':       lambda s, _: Node('binary_op',
-                                            op='==',
-                                            left=call('len', [s], 'Int'),
-                                            right=to_node(0),
-                                            pseudo_type='Boolean')
+            'present?':     present,
+            'empty?':       empty
         },
         'Dictionary': {
             '@equivalent':  'map',
@@ -44,7 +36,9 @@ class GolangTranslator(ApiTranslator):
             'length':       'len',
             'contains?':     Contains,
             'keys':          DictKeys,
-            'values':        DictValues
+            'values':        DictValues,
+            'present?':      present,
+            'empty?':        empty
         },
         'String': {
             '@equivalent':  'str',
@@ -58,16 +52,8 @@ class GolangTranslator(ApiTranslator):
             'split':        'strings.Split(%{self}, %{0})',
             'concat':       to_op('+'),
             'contains?':    'strings.Contains(%{self}, %{0})',
-            'present?':     lambda s, _: Node('binary_op',
-                                            op='>',
-                                            left=call('len', [s], 'Int'),
-                                            right=to_node(0),
-                                            pseudo_type='Boolean'),
-            'empty?':       lambda s, _: Node('binary_op',
-                                            op='==',
-                                            left=call('len', [s], 'Int'),
-                                            right=to_node(0),
-                                            pseudo_type='Boolean'),
+            'present?':     present,
+            'empty?':       empty,
             'find_from':    lambda f, value, index, _: Node('binary_op', op='+', pseudo_type='Int', left=index, right=Node('static_call',
                                     receiver=local('strings', 'Library'),
                                     message='Index',
@@ -106,7 +92,9 @@ class GolangTranslator(ApiTranslator):
             '@equivalent':  'map[bool]struct{}',
 
             'length':       'len',
-            'contains?':    Contains
+            'contains?':    Contains,
+            'present?':     present,
+            'empty?':       empty
         },
         'Tuple': {
             '@equivalent':  'L',
@@ -132,11 +120,12 @@ class GolangTranslator(ApiTranslator):
             'write_file':   'ioutil.WriteFile'
         },
         'math': {
-            'ln':       'Math.Log',
-            'log':      'Math.Log',
-            'tan':      'Math.Tan',
-            'sin':      'Math.Sin',
-            'cos':      'Math.Cos'
+            'ln':       'math.Log',
+            'log':      'math.Log',
+            'tan':      'math.Tan',
+            'sin':      'math.Sin',
+            'cos':      'math.Cos',
+            'pow':      'math.Pow'
         },
         'system': {
             'args':         'os.Args!',

@@ -103,3 +103,8 @@ class Display(NormalLeakingNode):
                 for arg
                 in self.args], None
 
+
+def empty(l, _):
+    return Node('unary_op', 
+        op='not', 
+        pseudo_type='Boolean', value=method_call(l, 'Any', [], 'Boolean'))

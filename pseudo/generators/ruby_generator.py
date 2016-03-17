@@ -131,6 +131,8 @@ class RubyGenerator(CodeGenerator):
               %<block:line_join>
             end''',
 
+        not_null_check = '!%<value>.nil?',
+
         while_statement = '''
             while %<test>
               %<block:line_join>

@@ -229,6 +229,8 @@ class PythonGenerator(CodeGenerator):
 
         _py_step = '%<sequence>[::%<step>]',
 
+        not_null_check = '%<value> is not None',
+
         aug_assignment = '%<target> %<op>= %<value>',
 
         standard_iterable_call = '[%<block:first> for %<iterators> in %<sequences> if %<test:first>]',

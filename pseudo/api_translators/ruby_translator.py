@@ -43,7 +43,12 @@ class RubyTranslator(ApiTranslator):
             'length':       '#length',
             'keys':         '#keys',
             'values':       '#values',
-            'contains?':    '#include?'
+            'contains?':    '#include?',
+            'present?':     lambda receiver, _: Node('unary_op', 
+                                op='not',
+                                value=method_call(receiver, 'empty?', [], 'Boolean'),
+                                pseudo_type='Boolean'),
+            'empty?':       '#empty?'
         },
         'Set': {
             '@equivalent':  'Set',
@@ -51,7 +56,12 @@ class RubyTranslator(ApiTranslator):
             'length':       '#length',
             'contains?':    '#include?',
             'union':        to_op('|'),
-            'intersection': '#intersection'
+            'intersection': '#intersection',
+            'present?':     lambda receiver, _: Node('unary_op', 
+                                op='not',
+                                value=method_call(receiver, 'empty?', [], 'Boolean'),
+                                pseudo_type='Boolean'),
+            'empty?':       '#empty?'
         },
         'Tuple': {
             '@equivalent':  'Array',
@@ -127,7 +137,9 @@ class RubyTranslator(ApiTranslator):
             'log':          'Math.log',
             'tan':          'Math.tan',
             'sin':          'Math.sin',
-            'cos':          'Math.cos'
+            'cos':          'Math.cos',
+            'pow':          lambda left, right, pseudo_type: Node('binary_op',
+                                op='**', left=left, right=right, pseudo_type=pseudo_type)
         },
 
         'regexp': {
@@ -149,5 +161,9 @@ class RubyTranslator(ApiTranslator):
     dependencies = {
         'http':     {
             '@all':     'Requests'
+        },
+
+        'Set': {
+            '@all': 'set'
         }
     }

@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, attr, to_node, local, call
-from pseudo.api_translators.csharp_api_handlers import expand_slice, Display, normalize, pad, split, linq
+from pseudo.api_translators.csharp_api_handlers import expand_slice, Display, normalize, pad, split, linq, empty
 
 class CSharpTranslator(ApiTranslator):
     '''
@@ -31,7 +31,7 @@ class CSharpTranslator(ApiTranslator):
             'any?':         linq('Any'),
             'concat':       '#AddRange',
             'present?':     '#Any',
-            'empty?':       lambda l, _: Node('unary_op', op='not', pseudo_type='Boolean', value=method_call(l, 'Any', [], 'Boolean')),
+            'empty?':       empty,
             'find':         '#IndexOf',
             'contains?':    '#Contains',
             'sort':         '#Sort'
@@ -42,7 +42,9 @@ class CSharpTranslator(ApiTranslator):
             'length':       '.Length!',
             'keys':         '#Keys',
             'values':       '#Values',
-            'contains?':    '#Contains'
+            'contains?':    '#Contains',
+            'present?':     '#Any',
+            'empty?':       empty
         },
         'String': {
             '@equivalent':  'String',
@@ -96,7 +98,9 @@ class CSharpTranslator(ApiTranslator):
             'length':       '.Length!',
             'contains?':    '#Contains',
             'union':        '#Union',
-            'intersection': '#Intersection'
+            'intersection': '#Intersection',
+            'present?':     '#Any',
+            'empty?':       empty
         },
         'Regexp': {
             '@equivalent': 'Regexp',
@@ -144,7 +148,8 @@ class CSharpTranslator(ApiTranslator):
             'log':         'Math.Log',
             'tan':         'Math.Tan',
             'sin':         'Math.Sin',
-            'cos':         'Math.Cos'
+            'cos':         'Math.Cos',
+            'pow':         'Math.Pow'
         },
 
         'http': {
@@ -179,7 +184,7 @@ class CSharpTranslator(ApiTranslator):
             '@all':     'System.Text'
         },
         'Dictionary': {
-            '@all':     'System.Collections.Generic'
+            '@all':     'System.Collections.Generic',
         },
         'io': {
             'read_file':    'System.IO',

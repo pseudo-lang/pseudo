@@ -105,8 +105,14 @@ class CSharpGenerator(CodeGenerator):
         null        = 'null',
 
         simple_initializer = "new %<name>(%<args:join ', '>)",
-        list        = "new[] {%<elements:join ', '>}",
-        dictionary  = "new %<@pseudo_type> { %<pairs:join ', '> }",
+        list        = switch(lambda l: len(l.elements) > 0,
+                            true =          "new[] {%<elements:join ', '>}",
+                            _otherwise =    "Enumerable.Empty<int>()"
+                    ),
+        dictionary  = switch(lambda d: len(d.pairs) > 0,
+                            true =  "new %<@pseudo_type> { %<pairs:join ', '> }",
+                            _otherwise = "new Dictionary<int, int> {}"
+                    ),
         pair        = "{%<key>, %<value>}",
         attr        = "%<object>.%<attr>",
 
@@ -126,6 +132,11 @@ class CSharpGenerator(CodeGenerator):
                             )'''),
 
         array       = "new[] { %<elements:join ', '> }",
+
+        set         = switch(lambda s: len(s.elements) > 0,
+                        true        = "new %<@pseudo_type>(new[] {%<elements:join ', '>})",
+                        _otherwise  = "new HashSet<int>()"
+                    ),
 
         char        = "%<#char>",
         binary_op   = '%<#binary_left> %<#op> %<#binary_right>',
@@ -217,6 +228,8 @@ class CSharpGenerator(CodeGenerator):
         interpolation_literal = "%<value>",
 
         index_assignment = '%<sequence>[%<index>] = %<value>',
+
+        not_null_check = '%<value> != null',
 
         constant = '%<constant> = %<init>',
 

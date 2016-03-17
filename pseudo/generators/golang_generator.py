@@ -115,8 +115,14 @@ class GolangGenerator(CodeGenerator):
         boolean     = '%<value>',
         null        = 'nil',
 
-        list        = "%<@pseudo_type> {%<elements:join ', '>}",
-        dictionary  = "%<@pseudo_type> { %<pairs:join ', '> }",
+        list        = switch(lambda l: len(l.elements) > 0,
+                        true        = "%<@pseudo_type> {%<elements:join ', '>}",
+                        _otherwise  = "[]int {}"
+                    ),
+        dictionary  = switch(lambda l: len(l.pairs) > 0,
+                        true        = "%<@pseudo_type> { %<pairs:join ', '> }",
+                        _otherwise  = "map[int]int {}"
+                    ),
         pair        = "%<key>: %<value>",
         attr        = "%<object>.%<attr>",
         array       = "[...]%<#element_type>{%<elements:join ', '>}",
@@ -141,6 +147,10 @@ class GolangGenerator(CodeGenerator):
         unary_op    = '%<#op>%<value>',
         comparison  = '%<#binary_left> %<op> %<#binary_right>',
 
+        set         = switch(lambda l: len(l.elements) > 0,
+                        true        = "%<@pseudo_type> { #set_pairs }",
+                        _otherwise  = "map[int]struct{} {}"
+                    ),
         static_call = "%<receiver>.%<message>(%<args:join ', '>)",
         call        = "%<function>(%<args:join ', '>)",
         method_call = "%<receiver>.%<message>(%<args:join ', '>)",
@@ -149,6 +159,8 @@ class GolangGenerator(CodeGenerator):
         this        = 'this',
 
         instance_variable = 'this.%<name>',
+
+        not_null_check = 'false', #'%<value> != nil',
 
         throw_statement = 'throw %<exception>(%<value>)',
 

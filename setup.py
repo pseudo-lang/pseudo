@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pseudo',
-    version='0.2.4',
+    version='0.2.6',
     description='a framework for high level code generation',
     author='Alexander Ivanov',
     author_email='alehander42@gmail.com',

@@ -26,11 +26,15 @@
     - [contains?](#contains?)
     - [keys](#keys)
     - [values](#values)
+    - [present?](#present?)
+    - [empty?](#empty?)
   - [Set[T]](#set)
     - [length](#length)
     - [contains?](#contains?)
     - [union](#union)
     - [intersection](#intersection)
+    - [present?](#present?)
+    - [empty?](#empty?)
   - [Tuple[T1, T2..]](#tuple)
     - [length](#length)
   - [Array[T, length]](#array)
@@ -210,6 +214,18 @@ Dictionary#keys() -> List[K]
 Dictionary#values() -> List[V]
 ```
 
+### present?
+
+```javascript
+Dictionary#present?() -> Boolean
+```
+
+### empty?
+
+```javascript
+Dictionary#empty?() -> Boolean
+```
+
 ## Set[T]
 
 ### length
@@ -234,6 +250,16 @@ Set#union(right: Set[T]) -> Set[T]
 
 ```javascript
 Set#intersection(right: Set[T]) -> Set[T]
+```
+
+### present?
+
+```javascript
+Set#present?() -> Boolean
+```
+
+```javascript
+Set#empty?() -> Boolean
 ```
 
 ## Tuple[T1, T2..]

@@ -127,8 +127,8 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
                           return value.length == 0;
                         });''')
     list_find       = 'cpus.indexOf(s)'
-    list_present    = 'cpus'
-    list_empty      = '_.isEmpty(cpus)'
+    list_present    = 'cpus.length > 0'
+    list_empty      = 'cpus.length == 0'
     list_contains   = '_.contains(cpus, s)'
     list_sort       = 'cpus.sort()'
 
@@ -165,7 +165,7 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     string_reversed     = "s.split('').reverse().join('')"
     string_center       = '_.pad(s, z, t)'
     string_present      = 's'
-    string_empty        = '_.isEmpty(s)'
+    string_empty        = '!s'
     string_contains     = '_.contains(s, t)'
     string_to_int       = 'parseInt(s)'
     string_pad_left     = '_.padLeft(s, 0, t)'

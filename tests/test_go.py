@@ -77,7 +77,7 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
         ({'bufio', 'os'}, dedent_with_tabs('''\
             reader, err := bufio.NewReader(os.Stdin)
             reader.ReadString("\\n")''')),
-        ({'math'}, 'Math.Log(ham)'),
+        ({'math'}, 'math.Log(ham)'),
         ({'io/ioutil'}, dedent_with_tabs('''\
                             _contents, _ := ioutil.ReadFile("f.py")
                             source := string(_contents)'''))
@@ -98,11 +98,11 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
                             source := string(_contents)''')
     io_write_file       = 'ioutil.WriteFile("z.py", source)'
 
-    math_ln             = ({'math'}, 'Math.Log(z)')
-    math_log            = ({'math'}, 'Math.Log(z, 2.0)')
-    math_tan            = ({'math'}, 'Math.Tan(z)')
-    math_sin            = ({'math'}, 'Math.Sin(z)')
-    math_cos            = ({'math'}, 'Math.Cos(z)')
+    math_ln             = ({'math'}, 'math.Log(z)')
+    math_log            = ({'math'}, 'math.Log(z, 2.0)')
+    math_tan            = ({'math'}, 'math.Tan(z)')
+    math_sin            = ({'math'}, 'math.Sin(z)')
+    math_cos            = ({'math'}, 'math.Cos(z)')
     
     # regexp    
     regexp_compile      = ({'regexp'}, 'regexp.MustCompile(s)')

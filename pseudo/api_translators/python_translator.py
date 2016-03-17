@@ -67,8 +67,9 @@ class PythonTranslator(ApiTranslator):
             'values':       lambda receiver, pseudo_type: call(
                                 local('list', ['Function', 'Any', 'List']),
                                 [method_call(receiver, 'values', [], ['dict_values', pseudo_type[1]])],
-                                pseudo_type=pseudo_type)
-
+                                pseudo_type=pseudo_type),
+            'present?':     lambda receiver, _: receiver,
+            'empty?':       lambda receiver, _: Node('unary_op', op='not', value=receiver, pseudo_type='Boolean')
         },
         'String': {
             '@equivalent':  'str',
@@ -110,7 +111,9 @@ class PythonTranslator(ApiTranslator):
             'length':       'len',
             'contains?':    contains,
             'union':        to_op('|'),
-            'intersection': to_op('-')
+            'intersection': to_op('-'),
+            'present?':     lambda receiver, _: receiver,
+            'empty?':       lambda receiver, _: Node('unary_op', op='not', value=receiver, pseudo_type='Boolean')
         },
         'Tuple': {
             '@equivalent':  'tuple',
@@ -169,7 +172,9 @@ class PythonTranslator(ApiTranslator):
             'log':          'math.log',
             'tan':          'math.tan',
             'sin':          'math.sin',
-            'cos':          'math.cos'
+            'cos':          'math.cos',
+            'pow':          lambda left, right, pseudo_type: Node('binary_op',
+                                op='**', left=left, right=right, pseudo_type=pseudo_type)
         },
 
         'regexp': {
