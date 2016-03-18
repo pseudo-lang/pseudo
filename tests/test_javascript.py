@@ -49,6 +49,8 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
 
     dictionary = '{la: 0}'
 
+    neg_index = "'la'['la'.length - 2]"
+
     list_ = "['la']"
 
     local = 'egg'

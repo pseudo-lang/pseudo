@@ -4,6 +4,14 @@ from pseudo.pseudo_tree import Node, local
 
 OPS = {'not': '!', 'and': '&&', 'or': '||'}
 
+def index_switch(s):
+    if isinstance(s.sequence.pseudo_type, list) and s.sequence.pseudo_type[0] == 'Tuple':
+        return 'tuple'
+    elif s.index.type != 'int' or s.index.value >= 0:
+        return 'normal'
+    else:
+        return 'z'
+
 class CSharpGenerator(CodeGenerator):
     '''CSharp code generator'''
 
@@ -216,9 +224,10 @@ class CSharpGenerator(CodeGenerator):
         implicit_return = 'return %<value>',
         explicit_return = 'return %<value>',
 
-        index            = switch(lambda s: isinstance(s.sequence.pseudo_type, list) and s.sequence.pseudo_type[0] == 'Tuple',
-            true             = '%<sequence>.Item%<#tuple_index>',
-            _otherwise       = '%<sequence>[%<index>]'
+        index            = switch(index_switch,
+            tuple           = '%<sequence>.Item%<#tuple_index>',
+            normal          = '%<sequence>[%<index>]',
+            _otherwise      = '%<sequence>[%<sequence>.Length - %<#index>]'
         ),
 
         interpolation = "string.Format(\"%<args:join ''>\",  %<#placeholders>)",
@@ -396,5 +405,9 @@ class CSharpGenerator(CodeGenerator):
         input()
         return '!!!'
 
+    def index(self, node, depth):
+        return str(-node.index.value)
+
     def placeholders(self, node, depth):
         return ', '.join(self._generate_node(child.value) for child in node.args[1::2])
+

@@ -243,7 +243,9 @@ class GolangGenerator(CodeGenerator):
 
         aug_assignment =  '%<target> %<op>= %<value>',
 
-        index            = '%<sequence>[%<index>]',
+        index            = switch(lambda i: i.index.type != 'int' or i.index.value >= 0,
+                                true        = '%<sequence>[%<index>]',
+                                _otherwise  = '%<sequence>[len(%<sequence>) - %<#index>]'),
 
         interpolation =     "fmt.Sprintf(\"%<args:join ''>\", %<#placeholderz>)",
 
@@ -328,6 +330,9 @@ class GolangGenerator(CodeGenerator):
 
     def placeholderz(self, node, _):
         return ', '.join(self._generate_node(placeholder.value) for placeholder in node.args[1::2])
+
+    def index(self, node, depth):
+        return str(-node.index.value)
 
     def return_type(self, node, depth):
         format = self.render_type(node.return_type)

@@ -487,6 +487,8 @@ ClassConstructor = [Node('class_definition',
 
 Index = [Node('index', sequence=to_node('la'), pseudo_type='String', index=to_node(2))]
 
+NegIndex = [Node('index', sequence=to_node('la'), pseudo_type='String', index=to_node(-2))]
+
 Regex = [Node('regex', value='[a-b]', pseudo_type='Regexp')]
 
 Tuple = [Node('tuple', elements=[to_node(2), to_node(42.2)], pseudo_type=['Tuple', 'Int', 'Float'])]

@@ -51,6 +51,8 @@ class TestCSharp(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic 
 
     dictionary = 'new Dictionary<string, int> { {"la", 0} }'
 
+    neg_index = '"la"["la".Length - 2]'
+
     list_ = 'new[] {"la"}'
 
     local = 'egg'

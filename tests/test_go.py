@@ -52,6 +52,8 @@ class TestGo(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitc
 
     dictionary = 'map[string]int { "la": 0 }'
 
+    neg_index = '"la"[len("la") - 2]'
+
     list_ = '[]string {"la"}'
 
     local = 'egg'

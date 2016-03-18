@@ -5,6 +5,14 @@ from pseudo.middlewares import DeclarationMiddleware
 JS_NAME = re.compile(r'[a-zA-Z][a-zA-Z_0-9]*')
 OPS = {'not': '!', 'and': '&&', 'or': '||'}
 
+def index_switch(i):
+    if i.index.type == 'string' and JS_NAME.match(i.index.value):
+        return 'string'
+    elif i.index.type == 'int' and i.index.value < 0:
+        return 'z'
+    else:
+        return 'normal'
+
 class JSGenerator(CodeGenerator):
     '''JS generator'''
 
@@ -179,9 +187,10 @@ class JSGenerator(CodeGenerator):
         explicit_return = 'return %<value>',
 
         index = switch(
-            lambda i: i.index.type == 'string' and JS_NAME.match(i.index.value),
-              true       = '%<sequence>.%<index.value>',
-              _otherwise = '%<sequence>[%<index>]'
+            index_switch,
+              string       = '%<sequence>.%<index.value>',
+              normal       = '%<sequence>[%<index>]',
+              _otherwise   = '%<sequence>[%<sequence>.length - %<#index>]'
         ),
 
         interpolation = "%<args:join ' + '>",
@@ -221,6 +230,7 @@ class JSGenerator(CodeGenerator):
             self._generate_node(n, depth).lstrip() 
             for n
             in node.args)
+
     def comparison(self, node, depth):
         if node.left.type == 'binary_op' and node.left.op == '-' and node.left.right.type == 'int' and node.right.type == 'int':
             node.right.value += node.left.right.value
@@ -228,3 +238,5 @@ class JSGenerator(CodeGenerator):
 
         return '%s %s %s' % (self.binary_left(node, depth), node.op, self.binary_right(node, depth))
 
+    def index(self, node, depth):
+        return str(-node.index.value)

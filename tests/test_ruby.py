@@ -31,7 +31,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     local = 'egg'
 
-    set_  = (['set'], 'Set.new([2])')
+    set_  = (['set'], 'Set.new([2])')   
 
     tuple_ = '[2, 42.2]'
 
@@ -248,6 +248,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
           @b = b
         end''')
 
+    neg_index = "'la'[-2]"
     index = "'la'[2]"
 
     try_statement = [
