@@ -1,3 +1,12 @@
+0.2.10
+
+18.03.2016
+
+Fixes:
+
+    * Fix negative index handling
+
+
 0.2.8
 
 18.03.2016
