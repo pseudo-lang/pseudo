@@ -1,14 +1,22 @@
+0.2.8
+
+18.03.2016
+
+Fixes:
+
+    * Use `Object.keys(length)` , not `length`
+
 0.2.6
     
-    17.03.2016
+17.03.2016
 
-    Fixes:
+Fixes:
 
-        * Use `math:pow`
+    * Use `math:pow`
 
-    Features:
+Features:
 
-        * Support `Dictionary#empty?`
-        * Support `Dictionary#present?`
-        * Support `Set#empty?`
-        * Support `Set#present?`
+    * Support `Dictionary#empty?`
+    * Support `Dictionary#present?`
+    * Support `Set#empty?`
+    * Support `Set#present?`

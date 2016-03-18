@@ -133,13 +133,13 @@ class TestJavascript(unittest.TestCase, metaclass=suite.TestLanguage): # dark ma
     list_sort       = 'cpus.sort()'
 
     # # Hash
-    dictionary_length   = 'pointers.length'
+    dictionary_length   = 'Object.keys(pointers).length'
     dictionary_contains = 'pointers.hasOwnProperty(s)'
     dictionary_keys     = 'Object.keys(pointers)'
     dictionary_values   = 'Object.values(pointers)'
 
     # Set
-    set_length          = 'words.length'
+    set_length          = 'Object.keys(words).length'
     set_contains        = '_.contains(words, s)'
     set_union           = '_.union(words, words)'
     set_intersection    = '_.intersection(words, words)'

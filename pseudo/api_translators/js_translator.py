@@ -1,6 +1,6 @@
 from pseudo.api_translator import ApiTranslator, to_op
 from pseudo.pseudo_tree import Node, method_call, call, to_node, attr, local
-from pseudo.api_translators.js_api_handlers import empty, present
+from pseudo.api_translators.js_api_handlers import empty, present, object_len
 
 LODASH = local('_', 'Library')
 
@@ -46,7 +46,7 @@ class JSTranslator(ApiTranslator):
         'Dictionary': {
             '@equivalent':  'Object',
 
-            'length':       '.length!',
+            'length':       object_len,
             'keys':         'Object.keys(%{self})',
             'values':       'Object.values(%{self})',
             'contains?':    '#hasOwnProperty',
@@ -104,7 +104,7 @@ class JSTranslator(ApiTranslator):
         'Set': {
             '@equivalent': 'Object',
 
-            'length':       '.length!',
+            'length':       object_len,
             'contains?':    '_.contains(%{self}, %{0})',
             'intersection': '_.intersection(%{self}, %{0})',
             'union':        '_.union(%{self}, %{0})',
