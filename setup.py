@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='pseudo',
-    version='0.2.10',
+    version='0.2.12',
     description='a framework for idiomatic code generation',
     author='Alexander Ivanov',
     author_email='alehander42@gmail.com',

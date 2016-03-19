@@ -268,29 +268,7 @@ PSEUDO AST:
 
 ## Roadmap
 
-v0.3/v0.4:
-
-* Stabilize standard library and ast spec
-* Support some async/await-based code
-* Support the concept of multiple files, folder/library structure
-and generate idiomatic `gem`/`npm package`/`go`/`c#` folder structures
-* Add more methods and functions to the standard library
-* Eventually work on the next pseudo-<lang> compiler after pseudo-python
-
-
-add support for a random sample of:
-
-- [ ] java
-- [ ] perl
-
-- [ ] swift ?
-- [ ] c ?
-
-- [ ] lua?
-- [ ] elixir?
-- [ ] clojure ?
-- [ ] typescript ?
-
+[Roadmap](roadmap.md)
 
 ## Target language specific docs
 
