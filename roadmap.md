@@ -4,8 +4,9 @@ Main goals:
 
 * Implement fully the initial version of the pseudo standard library
 * Test generated code using the target runtime / compilers
-* Fix C++ support, add support for Swift, Java and PHP as targets
-* Port a non-trivial library using Pseudo-Python (css-layout? machine-learning? ideas)
+* Fix C++ support, add initial support for Swift, Java and Nim as targets
+* Finish "functional" mode and add initial support for Haskell
+* 1-2 more non-trivial apps using Pseudo-Python
 
 pseudo-python:
 
@@ -16,13 +17,12 @@ pseudo-python:
 
 v0.5:
 
-* Experimental Clojure / Haskell support
-* Support async/await-based code
+* Support some form of concurrency
 * Support the concept of multiple files, folder/library structure
 and generate idiomatic `gem`/`npm package`/`go`/`c#` folder structures
 * Work on the next pseudo-<lang> compiler after pseudo-python: pseudo-js / pseudo-ruby ?
 
 pseudo-python
 
-* Infer purity of functions
-* Support multiple-file sources
+* Add more capabilities to the type system ?
+* Infer purity of functions?

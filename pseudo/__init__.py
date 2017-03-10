@@ -10,7 +10,8 @@ or as a pseudo AST to readable and idiomatic code in any of
 the supported target languages. 
 
 Supported target languages currently are 
-Python, Ruby, C#, JavaScript, Go 
+Python, Ruby, C#, JavaScript, Go
+Soon: C++, Java, Nim
 '''
 
 import pseudo.api_translators

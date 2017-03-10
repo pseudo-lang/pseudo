@@ -268,6 +268,8 @@ PSEUDO AST:
 
 ## Roadmap
 
+Pseudo has undergone some changes through the last year in my local repo, the new release somewhere in the next months should contain some of this roadmap.
+
 [Roadmap](roadmap.md)
 
 ## Target language specific docs

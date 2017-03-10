@@ -466,7 +466,7 @@ reads a line from STDIN
 args() -> List[String]
 ```
 
-returns a list with command line args
+returns a list with all the command line args
 
 ### arg_count
 

@@ -4,7 +4,6 @@ from pseudo import generate
 from pseudo.pseudo_tree import Node
 import suite
 
-#v
 class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bitches
 
     _language = 'ruby'
@@ -31,7 +30,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
 
     local = 'egg'
 
-    set_  = (['set'], 'Set.new([2])')   
+    set_  = (['set'], 'Set.new([2])')
 
     tuple_ = '[2, 42.2]'
 
@@ -249,6 +248,7 @@ class TestRuby(unittest.TestCase, metaclass=suite.TestLanguage): # dark magic bi
         end''')
 
     neg_index = "'la'[-2]"
+
     index = "'la'[2]"
 
     try_statement = [
