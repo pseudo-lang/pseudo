@@ -321,8 +321,8 @@ ForStatement = [
 
     Node('for_range_statement', 
         index=local('j', 'Int'),
-        first=Node('int', value=0),
-        last=Node('int', value=42),
+        start=Node('int', value=0),
+        end=Node('int', value=42),
         step=Node('int', value=2),
         block=[
             call(local('analyze', ['Function', 'Int', 'Int']),

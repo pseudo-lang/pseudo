@@ -148,10 +148,10 @@ class PythonGenerator(CodeGenerator):
                 %<block:line_join_pass>''',
     
         for_range_statement = '''
-            for %<index> in range(%<.first>%<last>%<.step>):
+            for %<index> in range(%<.first>%<end>%<.step>):
                 %<block:line_join_pass>''',
 
-        for_range_statement_first = ('%<first>, ', ''), 
+        for_range_statement_first = ('%<start>, ', ''), 
 
         for_range_statement_step = (', %<step>', ''),
 

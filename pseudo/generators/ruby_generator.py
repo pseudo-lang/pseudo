@@ -156,11 +156,11 @@ class RubyGenerator(CodeGenerator):
             end''',
 
         for_range_statement = '''
-            (%<.first>...%<last>)%<.step>.each do |%<index>|
+            (%<.first>...%<end>)%<.step>.each do |%<index>|
               %<block:line_join>
             end''',
 
-        for_range_statement_first = ('%<first>', '0'),
+        for_range_statement_first = ('%<start>', '0'),
 
         for_range_statement_step = ('.step(%<step>)', ''),
 

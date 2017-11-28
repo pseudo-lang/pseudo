@@ -173,11 +173,11 @@ class CppGenerator(CodeGenerator):
         ),
         
         for_range_statement = '''
-            for(int %<index> = %<.first>; %<index> != %<last>; %<index> += %<.step>) {
+            for(int %<index> = %<.first>; %<index> != %<end>; %<index> += %<.step>) {
                 %<block:semi>
             }''',
 
-        for_range_statement_first = ('%<first>', '0'),
+        for_range_statement_first = ('%<start>', '0'),
 
         for_range_statement_step = ('%<step>', '1'),
 

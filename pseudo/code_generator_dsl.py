@@ -91,9 +91,9 @@ class SubTemplate(FragmentGenerator):
         self.field = field
 
     def expand(self, generator, node, depth):
-        if not hasattr(node, self.field):
-            print(node.y)
-        f = getattr(node, self.field)
+        # if not hasattr(node, self.field):
+        #     print(self.field)
+        f = getattr(node, self.field, None)
         layout, default = generator._parsed_templates['%s_%s' % (self.a, self.field)]
         if not f:
             # input(default)

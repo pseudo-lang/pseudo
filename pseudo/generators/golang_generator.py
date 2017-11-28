@@ -214,11 +214,11 @@ class GolangGenerator(CodeGenerator):
         ),
         
         for_range_statement = '''
-            for %<index> := %<.first>; %<index> != %<last>; %<index> += %<.step> {
+            for %<index> := %<.first>; %<index> != %<end>; %<index> += %<.step> {
                 %<block:line_join>
             }''',
 
-        for_range_statement_first = ('%<first>', '0'),
+        for_range_statement_first = ('%<start>', '0'),
 
         for_range_statement_step = ('%<step>', '1'),
 
