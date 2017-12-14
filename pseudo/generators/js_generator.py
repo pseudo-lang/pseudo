@@ -21,7 +21,7 @@ class JSGenerator(CodeGenerator):
     middlewares = [DeclarationMiddleware]
 
     templates = dict(
-        module     = "%<dependencies:lines>%<constants:lines>%<custom_exceptions:lines>%<definitions:lines>%<main:semi>",
+        module     = "%<dependencies:lines>\n_ = require('lodash');\n%<constants:lines>%<custom_exceptions:lines>%<definitions:lines>%<main:semi>",
 
         function_definition   = '''
             function %<name>(%<params:join ', '>) {
@@ -235,7 +235,8 @@ class JSGenerator(CodeGenerator):
         if node.left.type == 'binary_op' and node.left.op == '-' and node.left.right.type == 'int' and node.right.type == 'int':
             node.right.value += node.left.right.value
             node.left = node.left.left
-
+        if node.op == '==' and isinstance(node.left.pseudo_type, list) and node.left.pseudo_type[0] == 'List':
+            return '_.isEqual(%s, %s)' % (self.binary_left(node, depth), self.binary_right(node, depth))
         return '%s %s %s' % (self.binary_left(node, depth), node.op, self.binary_right(node, depth))
 
     def index(self, node, depth):

@@ -3,6 +3,7 @@
 import sys
 import os
 import types
+sys.path.append("/home/alehander42/pseudo")
 import pseudo
 import pseudo.loader
 import yaml

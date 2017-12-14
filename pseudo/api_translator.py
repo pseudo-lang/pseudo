@@ -87,7 +87,7 @@ class ApiTranslator(TreeTransformer):
                     self.standard_dependencies |= set(m)
                 else:
                     self.standard_dependencies.add(m)
-        
+
         transformed.dependencies = [
             Node('dependency', name=name) for name in self.standard_dependencies]
 
