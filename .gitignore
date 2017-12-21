@@ -63,3 +63,5 @@ docs/_build/
 target/
 
 node_modules/
+log
+library_tests_cache/

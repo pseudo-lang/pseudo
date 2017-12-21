@@ -86,7 +86,7 @@ class JSTranslator(ApiTranslator):
             'center':      '_.pad(%{self}, %{0}, %{1})',
             'present?':     lambda f, _: f,
             'empty?':       lambda f, _: Node('unary_op', op='not', value=f, pseudo_type='Boolean'),
-            'contains?':    '_.contains(%{self}, %{0})',
+            'contains?':    '_.includes(%{self}, %{0})',
             'to_int':       'parseInt',
             'pad_left':     '_.padLeft(%{self}, %{0}, %{1})',
             'pad_right':    '_.padRight(%{self}, %{0}, %{1})'

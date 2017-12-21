@@ -57,7 +57,7 @@ for path in library_tests_cache/*.py; do
       fi
     fi
 
-    pseudo "$file.pseudo.yaml" cs >> log 2>&1
+    python3 $PSEUDO "$file.pseudo.yaml" cs >> log 2>&1
     if [[ ! $? -eq 0 ]]; then
       printf "${FAIL} pseudo cs $path\n"
     else
@@ -74,7 +74,7 @@ for path in library_tests_cache/*.py; do
       fi
     fi
 
-    pseudo "$file.pseudo.yaml" go >> log 2>&1
+    python3 $PSEUDO "$file.pseudo.yaml" go >> log 2>&1
     if [[ ! $? -eq 0 ]]; then
       printf "${FAIL} pseudo go $path\n"
     else
