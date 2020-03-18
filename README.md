@@ -10,6 +10,12 @@ Pseudo takes an algorithm / a simple program and generates idiomatic code for it
 
 Pseudo achieves that with translation on two layers: it uses the target language syntax and it can express standard library methods/api of language X using language Y's native standard library
 
+# git history
+
+Sorry: I lied, remaking the git history in a way that it appears most of the work is after 1 march: I was finishing my work in a company in february and I wanted to hide the fact i've worked on pseudo in that time: I actually started more active work somewhere around 20-th february if I remember correctly, somewhere around the second half of february. I am not sure if i have that original git history anymore: sorry to Clevertech(the company)/any observers, this was a really ugly thing to do.
+
+# concept
+
 Pseudo consumes "Pseudo AST" which corresponds to a very clear, statically typed and somehow limited subset of a language:
 
   * basic types and collections and standard library methods for them
